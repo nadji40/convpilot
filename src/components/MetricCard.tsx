@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { View, Text } from 'react-native';
-import { colors, shadow } from '../theme';
+import { darkColors, lightColors, shadow } from '../theme';
+import { useTheme } from '../contexts/AppContext';
 
 export function MetricCard({
   label,
@@ -19,6 +20,9 @@ export function MetricCard({
   right?: ReactNode;
   tone?: 'neutral' | 'positive' | 'negative';
 }) {
+  const { isDark } = useTheme();
+  const colors = isDark ? darkColors : lightColors;
+  
   const deltaColor = tone === 'positive' ? colors.success : tone === 'negative' ? colors.danger : colors.textSecondary;
   return (
     <View

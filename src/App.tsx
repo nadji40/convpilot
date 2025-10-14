@@ -1,9 +1,11 @@
 import { View, Text, ScrollView } from 'react-native';
-import { colors } from './theme';
+import { darkColors, lightColors } from './theme';
 import { MetricCard } from './components/MetricCard';
 import { Section } from './components/Section';
 import { ChartCard } from './components/ChartCard';
 import { Sidebar } from './components/Sidebar';
+import { AppProviders, useTheme, useLanguage, useSidebar, useLoading } from './contexts/AppContext';
+import { SkeletonChart, SkeletonMetric, SkeletonList } from './components/SkeletonLoader';
 import {
   LineChart,
   Line,
@@ -62,14 +64,72 @@ const topWorst = [
   { name: 'GENFIT 2025', change: '-5%', positive: false },
 ];
 
-const COLORS = [colors.chartColors.blue, colors.chartColors.green, colors.chartColors.orange, colors.chartColors.purple, colors.chartColors.pink];
+function Dashboard() {
+  const { isDark } = useTheme();
+  const { t } = useLanguage();
+  const { isCollapsed } = useSidebar();
+  const { isLoading } = useLoading();
+  const colors = isDark ? darkColors : lightColors;
 
-export function App() {
+  const COLORS = [colors.chartColors.blue, colors.chartColors.green, colors.chartColors.orange, colors.chartColors.purple, colors.chartColors.pink];
+
+  if (isLoading) {
+    return (
+      <View style={{ backgroundColor: colors.background, minHeight: '100vh', flexDirection: 'row' }}>
+        <Sidebar />
+        <View style={{ 
+          flex: 1, 
+          marginLeft: isCollapsed ? 80 : 280,
+          padding: 20,
+          height: '100vh',
+          overflow: 'auto' as any
+        }}>
+          <View style={{ gap: 20 }}>
+            <SkeletonChart />
+            <View style={{ flexDirection: 'row', gap: 24 }}>
+              <View style={{ flex: 2, gap: 20 }}>
+                <SkeletonChart />
+                <View style={{ flexDirection: 'row', gap: 20 }}>
+                  <SkeletonChart />
+                  <SkeletonChart />
+                </View>
+                <View style={{ flexDirection: 'row', gap: 16 }}>
+                  <View style={{ flex: 1, gap: 16 }}>
+                    <SkeletonMetric />
+                    <SkeletonMetric />
+                    <SkeletonMetric />
+                  </View>
+                  <View style={{ flex: 1, gap: 16 }}>
+                    <SkeletonMetric />
+                    <SkeletonMetric />
+                    <SkeletonMetric />
+                  </View>
+                  <SkeletonChart />
+                </View>
+              </View>
+              <View style={{ flex: 1, gap: 20 }}>
+                <SkeletonList items={3} />
+                <SkeletonList items={2} />
+                <SkeletonList items={3} />
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={{ backgroundColor: colors.background, minHeight: '100vh', flexDirection: 'row' }}>
       <Sidebar />
-      <View style={{ flex: 1, padding: 20 }}>
-        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 20 }}>
+      <View style={{ 
+        flex: 1, 
+        marginLeft: isCollapsed ? 80 : 280,
+        padding: 20,
+        height: '100vh',
+        overflow: 'auto' as any
+      }}>
+        <ScrollView style={{ flex: 1, height: '100%' }} contentContainerStyle={{ gap: 20 }}>
         {/* Header */}
         <View
           style={{
@@ -81,7 +141,7 @@ export function App() {
           }}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Text style={{ color: colors.textPrimary, fontSize: 32, fontWeight: '900', letterSpacing: 2 }}>CONVPILOT</Text>
+            <Text style={{ color: colors.textPrimary, fontSize: 32, fontWeight: '900', letterSpacing: 2, fontFamily: 'Playfair Display' }}>CONVPILOT</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
               <View style={{ 
                 width: 32, 
@@ -91,11 +151,11 @@ export function App() {
                 alignItems: 'center', 
                 justifyContent: 'center' 
               }}>
-                <Text style={{ color: colors.background, fontSize: 14, fontWeight: '700' }}>JC</Text>
+                <Text style={{ color: colors.background, fontSize: 14, fontWeight: '700' }}>MT</Text>
               </View>
               <View>
-                <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: '600' }}>Jane Cooper</Text>
-                <Text style={{ color: colors.textSecondary, fontSize: 12 }}>jane.cooper@email.com</Text>
+                <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: '600' }}>Meriem Tarzaali</Text>
+                <Text style={{ color: colors.textSecondary, fontSize: 12 }}>meriem.tarzaali@email.com</Text>
               </View>
             </View>
           </View>
@@ -104,7 +164,7 @@ export function App() {
         {/* Market cap and 1D changes */}
         <View style={{ flexDirection: 'row', gap: 24 }}>
           <View style={{ flex: 2, gap: 20 }}>
-            <Section title="Market Cap: 43 Mds EUR" right={<Text style={{ color: colors.accentGreen, fontSize: 16, fontWeight: '600' }}>1D CHANGES +72,852,654.23 EUR</Text>}>
+            <Section title={t('dashboard.market_cap')} right={<Text style={{ color: colors.accentGreen, fontSize: 16, fontWeight: '600' }}>{t('dashboard.1d_changes')}</Text>}>
               <ChartCard>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={lineData} margin={{ left: 6, right: 6, top: 6, bottom: 6 }}>
@@ -129,9 +189,9 @@ export function App() {
               </ChartCard>
 
               <View style={{ flexDirection: 'row', gap: 20 }}>
-                <ChartCard title="Scatter: CB universe">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <ScatterChart>
+                <ChartCard title={t('dashboard.scatter_cb_universe')}>
+                  <ResponsiveContainer width="100%" height={260}>
+                    <ScatterChart width={400} height={260} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
                       <XAxis type="number" dataKey="x" name="convexity" tick={{ fill: colors.textSecondary }} stroke={colors.muted} />
                       <YAxis type="number" dataKey="y" name="price" tick={{ fill: colors.textSecondary }} stroke={colors.muted} />
                       <Tooltip 
@@ -150,7 +210,7 @@ export function App() {
                     </ScatterChart>
                   </ResponsiveContainer>
                 </ChartCard>
-                <ChartCard title="Profiles">
+                <ChartCard title={t('dashboard.profiles')}>
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie 
@@ -181,16 +241,16 @@ export function App() {
 
               <View style={{ flexDirection: 'row', gap: 16 }}>
                 <View style={{ flex: 1, gap: 16 }}>
-                  <MetricCard label="Delta" value="45%" />
-                  <MetricCard label="VEGA" value="0.3%" />
-                  <MetricCard label="VEGA" value="0.3%" />
+                  <MetricCard label={t('metrics.delta')} value="45%" />
+                  <MetricCard label={t('metrics.vega')} value="0.3%" />
+                  <MetricCard label={t('metrics.vega')} value="0.3%" />
                 </View>
                 <View style={{ flex: 1, gap: 16 }}>
-                  <MetricCard label="YTM" value="3%" />
-                  <MetricCard label="Prime" value="60%" />
-                  <MetricCard label="Duration" value="2" />
+                  <MetricCard label={t('metrics.ytm')} value="3%" />
+                  <MetricCard label={t('metrics.prime')} value="60%" />
+                  <MetricCard label={t('metrics.duration')} value="2" />
                 </View>
-                <ChartCard title="Market Cap breakdown">
+                <ChartCard title={t('dashboard.market_cap_breakdown')}>
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie 
@@ -224,15 +284,15 @@ export function App() {
 
           {/* Right sidebar */}
           <View style={{ flex: 1, gap: 20 }}>
-            <Section title="One day changes">
+            <Section title={t('dashboard.one_day_changes')}>
               <View style={{ gap: 12 }}>
-                <MetricCard label="CB Performance" value="+1.5%" tone="positive" />
-                <MetricCard label="Equity performance" value="+3%" tone="positive" />
-                <MetricCard label="Delta adjusted performance" value="1%" tone="neutral" />
+                <MetricCard label={t('metrics.cb_performance')} value="+1.5%" tone="positive" />
+                <MetricCard label={t('metrics.equity_performance')} value="+3%" tone="positive" />
+                <MetricCard label={t('metrics.delta_adjusted_performance')} value="1%" tone="neutral" />
               </View>
             </Section>
 
-            <Section title="Top and Worst Performance of the Month">
+            <Section title={t('dashboard.top_worst_performance')}>
               <View style={{ gap: 12 }}>
                 {topWorst.map((row) => (
                   <View
@@ -255,7 +315,7 @@ export function App() {
               </View>
             </Section>
 
-            <Section title="Inflows/ outflows">
+            <Section title={t('dashboard.inflows_outflows')}>
               <View style={{ gap: 12 }}>
                 {inflows.map((row) => (
                   <View
@@ -282,5 +342,13 @@ export function App() {
         </ScrollView>
       </View>
     </View>
+  );
+}
+
+export function App() {
+  return (
+    <AppProviders>
+      <Dashboard />
+    </AppProviders>
   );
 }
