@@ -6,7 +6,7 @@ export function Section({ title, children, right }: { title: string; children: R
   return (
     <View style={{ gap: 12 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text style={{ color: colors.textPrimary, fontSize: 18, fontWeight: '700', letterSpacing: 0.4 }}>{title}</Text>
+        <Text style={{ color: colors.textPrimary, fontSize: 20, fontWeight: '800', letterSpacing: 0.5 }}>{title}</Text>
         {right}
       </View>
       {children}
