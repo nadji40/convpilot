@@ -123,6 +123,33 @@
       .news-ticker-container:hover {
         animation-play-state: paused;
       }
+      
+      /* Ensure modal appears on top */
+      .modal-overlay {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        z-index: 999999 !important;
+        pointer-events: auto !important;
+      }
+      
+      .modal-content {
+        position: relative !important;
+        z-index: 1000000 !important;
+      }
+      
+      /* Ensure root and body don't interfere */
+      #root {
+        position: relative;
+        z-index: 1;
+      }
+      
+      /* Force modal to be on top of everything */
+      body > div[class*="modal"] {
+        z-index: 999999 !important;
+      }
     </style>
   </head>
   <body>

@@ -15,32 +15,46 @@ export const TechnicalDocumentationModal = ({ isVisible, onClose }: TechnicalDoc
   if (!isVisible) return null;
 
   return (
-    <View style={{
-      position: 'fixed' as any,
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.8)',
-      zIndex: 99999,
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 20,
-    }}>
-      <View style={{
-        width: '90%',
-        maxWidth: 900,
-        maxHeight: '90%',
-        backgroundColor: isDark ? 'rgba(26, 26, 26, 0.98)' : 'rgba(255, 255, 255, 0.98)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderColor: colors.border,
-        borderWidth: 1,
-        borderRadius: 20,
-        overflow: 'hidden' as any,
-        boxShadow: '0 25px 50px rgba(0, 0, 0, 0.4)',
-        animation: 'fadeInScale 0.3s ease-out',
-      }}>
+    <View 
+      className="modal-overlay"
+      onPress={onClose}
+      style={{
+        position: 'fixed' as any,
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '100vw',
+        height: '100vh',
+        backgroundColor: 'rgba(0, 0, 0, 0.85)',
+        zIndex: 999999,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 20,
+        display: 'flex',
+      }}
+    >
+      <TouchableOpacity 
+        activeOpacity={1}
+        onPress={(e) => e.stopPropagation()}
+        className="modal-content"
+        style={{
+          width: '90%',
+          maxWidth: 900,
+          maxHeight: '90%',
+          backgroundColor: isDark ? 'rgba(26, 26, 26, 0.98)' : 'rgba(255, 255, 255, 0.98)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderColor: colors.border,
+          borderWidth: 1,
+          borderRadius: 20,
+          overflow: 'hidden' as any,
+          boxShadow: '0 25px 50px rgba(0, 0, 0, 0.4)',
+          animation: 'fadeInScale 0.3s ease-out',
+          zIndex: 1000000,
+          position: 'relative' as any,
+        }}
+      >
         {/* Header */}
         <View style={{
           flexDirection: 'row',
@@ -487,7 +501,7 @@ export const TechnicalDocumentationModal = ({ isVisible, onClose }: TechnicalDoc
             </Text>
           </View>
         </ScrollView>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 };
