@@ -94,7 +94,7 @@ const translations = {
     'metrics.duration': 'Duration',
     
     // Other
-    'currency.us_dollar': 'US Dollar',
+    'currency.us_dollar': 'EUR',
     'dark_mode': 'Dark Mode',
     'light_mode': 'Light Mode',
   },
