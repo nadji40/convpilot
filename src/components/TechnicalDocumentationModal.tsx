@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { darkColors, lightColors } from '../theme';
 import { useTheme } from '../contexts/AppContext';
+import { Portal } from './Portal';
 
 interface TechnicalDocumentationModalProps {
   isVisible: boolean;
@@ -15,25 +16,26 @@ export const TechnicalDocumentationModal = ({ isVisible, onClose }: TechnicalDoc
   if (!isVisible) return null;
 
   return (
-    <View 
-      className="modal-overlay"
-      onPress={onClose}
-      style={{
-        position: 'fixed' as any,
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        width: '100vw',
-        height: '100vh',
-        backgroundColor: 'rgba(0, 0, 0, 0.85)',
-        zIndex: 999999,
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 20,
-        display: 'flex',
-      }}
-    >
+    <Portal>
+      <View 
+        className="modal-overlay"
+        onPress={onClose}
+        style={{
+          position: 'fixed' as any,
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          width: '100vw',
+          height: '100vh',
+          backgroundColor: 'rgba(0, 0, 0, 0.9)',
+          zIndex: 2147483647,
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 20,
+          display: 'flex',
+        }}
+      >
       <TouchableOpacity 
         activeOpacity={1}
         onPress={(e) => e.stopPropagation()}
@@ -51,7 +53,7 @@ export const TechnicalDocumentationModal = ({ isVisible, onClose }: TechnicalDoc
           overflow: 'hidden' as any,
           boxShadow: '0 25px 50px rgba(0, 0, 0, 0.4)',
           animation: 'fadeInScale 0.3s ease-out',
-          zIndex: 1000000,
+          zIndex: 2147483647,
           position: 'relative' as any,
         }}
       >
@@ -503,5 +505,6 @@ export const TechnicalDocumentationModal = ({ isVisible, onClose }: TechnicalDoc
         </ScrollView>
       </TouchableOpacity>
     </View>
+    </Portal>
   );
 };
