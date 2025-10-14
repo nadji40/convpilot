@@ -53,17 +53,6 @@ const sizeDonut = [
   { name: 'Large Cap', value: 67 },
 ];
 
-const inflows = [
-  { name: 'ACCOR 2029', change: '+12M', color: colors.success },
-  { name: 'AIR FRANCE 2025', change: '+6M', color: colors.success },
-  { name: 'ADIDAS 2025', change: '-3M', color: colors.danger },
-];
-
-const topWorst = [
-  { name: 'AMADEUS IT GROUP 2025', change: '+10%', positive: true },
-  { name: 'GENFIT 2025', change: '-5%', positive: false },
-];
-
 function Dashboard() {
   const { isDark } = useTheme();
   const { t } = useLanguage();
@@ -72,6 +61,17 @@ function Dashboard() {
   const colors = isDark ? darkColors : lightColors;
 
   const COLORS = [colors.chartColors.blue, colors.chartColors.green, colors.chartColors.orange, colors.chartColors.purple, colors.chartColors.pink];
+
+  const inflows = [
+    { name: 'ACCOR 2029', change: '+12M', color: colors.success },
+    { name: 'AIR FRANCE 2025', change: '+6M', color: colors.success },
+    { name: 'ADIDAS 2025', change: '-3M', color: colors.danger },
+  ];
+
+  const topWorst = [
+    { name: 'AMADEUS IT GROUP 2025', change: '+10%', positive: true },
+    { name: 'GENFIT 2025', change: '-5%', positive: false },
+  ];
 
   if (isLoading) {
     return (
