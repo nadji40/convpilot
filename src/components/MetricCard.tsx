@@ -36,17 +36,17 @@ export function MetricCard({
         ...shadow.card,
       }}
     >
-      <Text style={{ color: colors.textSecondary, fontSize: 12, letterSpacing: 0.5, textTransform: 'uppercase', fontWeight: '600' }}>{label}</Text>
+      <Text style={{ color: colors.textSecondary, fontSize: 12, letterSpacing: 0.5, textTransform: 'uppercase', fontWeight: '600', fontFamily: 'Playfair Display' }}>{label}</Text>
       <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' }}>
         <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 8 }}>
-          {prefix ? <Text style={{ color: colors.textSecondary, fontSize: 16 }}>{prefix}</Text> : null}
-          <Text style={{ color: colors.textPrimary, fontSize: 26, fontWeight: '700' }}>{value}</Text>
-          {suffix ? <Text style={{ color: colors.textSecondary, fontSize: 16 }}>{suffix}</Text> : null}
+          {prefix ? <Text style={{ color: colors.textSecondary, fontSize: 16, fontFamily: 'Playfair Display' }}>{prefix}</Text> : null}
+          <Text style={{ color: colors.textPrimary, fontSize: 26, fontWeight: '700', fontFamily: 'Playfair Display' }}>{value}</Text>
+          {suffix ? <Text style={{ color: colors.textSecondary, fontSize: 16, fontFamily: 'Playfair Display' }}>{suffix}</Text> : null}
         </View>
         {right}
       </View>
       {delta ? (
-        <Text style={{ color: deltaColor, fontSize: 13 }}> {delta}</Text>
+        <Text style={{ color: deltaColor, fontSize: 13, fontFamily: 'Playfair Display' }}> {delta}</Text>
       ) : null}
     </View>
   );

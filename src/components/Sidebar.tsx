@@ -54,7 +54,8 @@ function SidebarItem({ icon, label, active = false, onClick, collapsed = false }
         <Text style={{
           color: active ? colors.textPrimary : colors.textSecondary,
           fontSize: 14,
-          fontWeight: active ? '600' : '500'
+          fontWeight: active ? '600' : '500',
+          fontFamily: 'Playfair Display',
         }}>
           {label}
         </Text>
@@ -139,7 +140,8 @@ export function Sidebar({ children }: SidebarProps) {
             fontWeight: '600',
             textTransform: 'uppercase',
             letterSpacing: 1,
-            marginBottom: 8
+            marginBottom: 8,
+            fontFamily: 'Playfair Display',
           }}>
             {t('nav.navigation') || 'NAVIGATION'}
           </Text>
@@ -186,7 +188,8 @@ export function Sidebar({ children }: SidebarProps) {
             fontWeight: '600',
             textTransform: 'uppercase',
             letterSpacing: 1,
-            marginBottom: 8
+            marginBottom: 8,
+            fontFamily: 'Playfair Display',
           }}>
             ACCOUNT
           </Text>
@@ -226,10 +229,10 @@ export function Sidebar({ children }: SidebarProps) {
             onPress={() => setLanguage(language === 'en' ? 'fr' : 'en')}
             style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
           >
-            <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: '500' }}>
+            <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: '500', fontFamily: 'Playfair Display' }}>
               {language === 'en' ? 'English' : 'Français'}
             </Text>
-            <Text style={{ color: colors.textMuted, fontSize: 12 }}>▼</Text>
+            <Text style={{ color: colors.textMuted, fontSize: 12, fontFamily: 'Playfair Display' }}>▼</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -248,10 +251,10 @@ export function Sidebar({ children }: SidebarProps) {
           alignItems: 'center',
           justifyContent: 'space-between'
         }}>
-          <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: '500' }}>
+          <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: '500', fontFamily: 'Playfair Display' }}>
             {t('currency.us_dollar')}
           </Text>
-          <Text style={{ color: colors.textMuted, fontSize: 12 }}>▼</Text>
+          <Text style={{ color: colors.textMuted, fontSize: 12, fontFamily: 'Playfair Display' }}>▼</Text>
         </View>
       )}
 
@@ -264,7 +267,7 @@ export function Sidebar({ children }: SidebarProps) {
         gap: isCollapsed ? 8 : 0,
       }}>
         {!isCollapsed && (
-          <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: '500' }}>
+          <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: '500', fontFamily: 'Playfair Display' }}>
             {isDark ? t('dark_mode') : t('light_mode')}
           </Text>
         )}

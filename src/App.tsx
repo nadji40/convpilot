@@ -159,11 +159,11 @@ function Dashboard() {
                 alignItems: 'center', 
                 justifyContent: 'center' 
               }}>
-                <Text style={{ color: colors.background, fontSize: 14, fontWeight: '700' }}>MT</Text>
+                <Text style={{ color: colors.background, fontSize: 14, fontWeight: '700', fontFamily: 'Playfair Display' }}>MT</Text>
               </View>
               <View>
-                <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: '600' }}>Meriem Tarzaali</Text>
-                <Text style={{ color: colors.textSecondary, fontSize: 12 }}>meriem.tarzaali@email.com</Text>
+                <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: '600', fontFamily: 'Playfair Display' }}>Meriem Tarzaali</Text>
+                <Text style={{ color: colors.textSecondary, fontSize: 12, fontFamily: 'Playfair Display' }}>meriem.tarzaali@email.com</Text>
               </View>
             </View>
           </View>
@@ -172,7 +172,7 @@ function Dashboard() {
         {/* Market cap and 1D changes */}
         <View style={{ flexDirection: 'row', gap: 24 }}>
           <View style={{ flex: 2, gap: 20 }}>
-            <Section title={t('dashboard.market_cap')} right={<Text style={{ color: colors.accentGreen, fontSize: 16, fontWeight: '600' }}>{t('dashboard.1d_changes')}</Text>}>
+            <Section title={t('dashboard.market_cap')} right={<Text style={{ color: colors.accentGreen, fontSize: 16, fontWeight: '600', fontFamily: 'Playfair Display' }}>{t('dashboard.1d_changes')}</Text>}>
               <ChartCard>
                 <ResponsiveContainer width="100%" height={260}>
                   <LineChart data={lineData} width={800} height={260} margin={{ left: 6, right: 6, top: 6, bottom: 6 }}>
@@ -316,8 +316,8 @@ function Dashboard() {
                       justifyContent: 'space-between',
                     }}
                   >
-                    <Text style={{ color: colors.textPrimary }}>{row.name}</Text>
-                    <Text style={{ color: row.positive ? colors.success : colors.danger, fontWeight: '700' }}>{row.change}</Text>
+                    <Text style={{ color: colors.textPrimary, fontFamily: 'Playfair Display' }}>{row.name}</Text>
+                    <Text style={{ color: row.positive ? colors.success : colors.danger, fontWeight: '700', fontFamily: 'Playfair Display' }}>{row.change}</Text>
                   </View>
                 ))}
               </View>
@@ -339,8 +339,8 @@ function Dashboard() {
                       justifyContent: 'space-between',
                     }}
                   >
-                    <Text style={{ color: colors.textPrimary }}>{row.name}</Text>
-                    <Text style={{ color: row.color, fontWeight: '700' }}>{row.change}</Text>
+                    <Text style={{ color: colors.textPrimary, fontFamily: 'Playfair Display' }}>{row.name}</Text>
+                    <Text style={{ color: row.color, fontWeight: '700', fontFamily: 'Playfair Display' }}>{row.change}</Text>
                   </View>
                 ))}
               </View>
