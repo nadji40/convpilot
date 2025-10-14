@@ -97,7 +97,7 @@ function Dashboard() {
             <View style={{ flexDirection: 'row', gap: 24 }}>
               <View style={{ flex: 2, gap: 20 }}>
                 <SkeletonChart />
-                <View style={{ flexDirection: 'row', gap: 20 }}>
+                <View style={{ flexDirection: 'row', gap: 20, minHeight: 320 }}>
                   <SkeletonChart />
                   <SkeletonChart />
                 </View>

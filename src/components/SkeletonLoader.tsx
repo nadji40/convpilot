@@ -55,12 +55,28 @@ export const SkeletonCard = ({ children }: { children?: React.ReactNode }) => {
   );
 };
 
-export const SkeletonChart = () => (
-  <SkeletonCard>
-    <Skeleton height={16} width="40%" />
-    <Skeleton height={200} width="100%" borderRadius={8} />
-  </SkeletonCard>
-);
+export const SkeletonChart = () => {
+  const { isDark } = useTheme();
+  const colors = isDark ? darkColors : lightColors;
+  
+  return (
+    <View
+      style={{
+        backgroundColor: colors.surfaceCard,
+        borderColor: colors.border,
+        borderWidth: 1,
+        borderRadius: 16,
+        padding: 16,
+        gap: 12,
+        minHeight: 300,
+        flex: 1,
+      }}
+    >
+      <Skeleton height={16} width="40%" />
+      <Skeleton height={260} width="100%" borderRadius={8} />
+    </View>
+  );
+};
 
 export const SkeletonMetric = () => (
   <SkeletonCard>
