@@ -23,16 +23,16 @@ export function MetricCard({
   return (
     <View
       style={{
-        backgroundColor: colors.surface,
+        backgroundColor: colors.surfaceCard,
         borderColor: colors.border,
         borderWidth: 1,
-        borderRadius: 14,
-        padding: 16,
-        gap: 8,
+        borderRadius: 16,
+        padding: 18,
+        gap: 10,
         ...shadow.card,
       }}
     >
-      <Text style={{ color: colors.textSecondary, fontSize: 12, letterSpacing: 0.5 }}>{label}</Text>
+      <Text style={{ color: colors.textSecondary, fontSize: 12, letterSpacing: 0.5, textTransform: 'uppercase', fontWeight: '600' }}>{label}</Text>
       <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' }}>
         <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 8 }}>
           {prefix ? <Text style={{ color: colors.textSecondary, fontSize: 16 }}>{prefix}</Text> : null}

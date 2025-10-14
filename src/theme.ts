@@ -1,18 +1,35 @@
 import { PlatformColor } from 'react-native';
 
 export const colors = {
-  background: '#0f1218',
-  surface: '#141925',
-  surfaceElev: '#1a2132',
-  border: '#242b3b',
-  textPrimary: '#e8eefc',
-  textSecondary: '#9fb1d1',
-  accent: '#2ad3a7',
-  accent2: '#66b3ff',
-  danger: '#ff5c5c',
-  warn: '#ffc857',
-  success: '#2ad3a7',
-  muted: '#4e5d7a',
+  background: '#0a0a0a',
+  surface: '#1a1a1a',
+  surfaceElev: '#2a2a2a',
+  surfaceCard: '#161616',
+  border: '#333333',
+  borderLight: '#404040',
+  textPrimary: '#ffffff',
+  textSecondary: '#b3b3b3',
+  textMuted: '#808080',
+  accent: '#00d4aa',
+  accent2: '#4a9eff',
+  accentBlue: '#4a9eff',
+  accentGreen: '#00d4aa',
+  accentPurple: '#8b5cf6',
+  accentOrange: '#f59e0b',
+  accentPink: '#ec4899',
+  danger: '#ef4444',
+  warn: '#f59e0b',
+  success: '#10b981',
+  muted: '#6b7280',
+  chartColors: {
+    blue: '#4a9eff',
+    green: '#00d4aa', 
+    purple: '#8b5cf6',
+    orange: '#f59e0b',
+    pink: '#ec4899',
+    cyan: '#06b6d4',
+    yellow: '#eab308'
+  }
 };
 
 export const shadow = {
