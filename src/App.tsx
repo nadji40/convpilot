@@ -174,8 +174,8 @@ function Dashboard() {
           <View style={{ flex: 2, gap: 20 }}>
             <Section title={t('dashboard.market_cap')} right={<Text style={{ color: colors.accentGreen, fontSize: 16, fontWeight: '600', fontFamily: 'Playfair Display' }}>{t('dashboard.1d_changes')}</Text>}>
               <ChartCard>
-                <ResponsiveContainer width="100%" height={260}>
-                  <LineChart data={lineData} width={800} height={260} margin={{ left: 6, right: 6, top: 6, bottom: 6 }}>
+                <ResponsiveContainer width="100%" height={280}>
+                  <LineChart data={lineData} margin={{ left: 20, right: 20, top: 20, bottom: 20 }}>
                     <XAxis dataKey="month" stroke={colors.muted} tick={{ fill: colors.textSecondary, fontSize: 12 }} />
                     <YAxis stroke={colors.muted} tick={{ fill: colors.textSecondary, fontSize: 12 }} />
                     <Tooltip 
