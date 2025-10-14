@@ -50,30 +50,10 @@ export const NewsTickerBar = () => {
           gap: 16,
         }}>
           <View style={{
-            backgroundColor: colors.accentBlue,
-            paddingHorizontal: 12,
-            paddingVertical: 6,
-            borderRadius: 20,
-            flexShrink: 0,
-          }}>
-            <Text style={{
-              color: colors.background,
-              fontSize: 12,
-              fontWeight: '700',
-              fontFamily: 'Playfair Display',
-              textTransform: 'uppercase',
-              letterSpacing: 1,
-            }}>
-              LIVE NEWS
-            </Text>
-          </View>
-          
-          <View style={{
             flex: 1,
             overflow: 'hidden' as any,
             height: 20,
             position: 'relative' as any,
-            marginLeft: 16, // Add margin to prevent overlap with sidebar
           }}>
             <View style={{
               position: 'absolute' as any,
