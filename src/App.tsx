@@ -1,3 +1,4 @@
+import React from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import { darkColors, lightColors } from './theme';
 import { MetricCard } from './components/MetricCard';
@@ -59,6 +60,13 @@ function Dashboard() {
   const { isCollapsed } = useSidebar();
   const { isLoading } = useLoading();
   const colors = isDark ? darkColors : lightColors;
+
+  // Apply theme class to body for scrollbar styling
+  React.useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.body.className = isDark ? '' : 'light-theme';
+    }
+  }, [isDark]);
 
   const COLORS = [colors.chartColors.blue, colors.chartColors.green, colors.chartColors.orange, colors.chartColors.purple, colors.chartColors.pink];
 
@@ -191,7 +199,7 @@ function Dashboard() {
               <View style={{ flexDirection: 'row', gap: 20 }}>
                 <ChartCard title={t('dashboard.scatter_cb_universe')}>
                   <ResponsiveContainer width="100%" height={260}>
-                    <ScatterChart width={400} height={260} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                    <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
                       <XAxis type="number" dataKey="x" name="convexity" tick={{ fill: colors.textSecondary }} stroke={colors.muted} />
                       <YAxis type="number" dataKey="y" name="price" tick={{ fill: colors.textSecondary }} stroke={colors.muted} />
                       <Tooltip 
@@ -212,15 +220,15 @@ function Dashboard() {
                 </ChartCard>
                 <ChartCard title={t('dashboard.profiles')}>
                   <ResponsiveContainer width="100%" height={260}>
-                    <PieChart width={400} height={260}>
+                    <PieChart>
                       <Pie 
                         dataKey="value" 
                         data={profilePie} 
                         cx="50%" 
                         cy="50%" 
                         outerRadius={80} 
-                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                        labelStyle={{ fontSize: '10px', fill: colors.textPrimary, fontWeight: '500' }}
+                        label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+                        labelStyle={{ fontSize: '12px', fill: colors.textPrimary, fontWeight: '600' }}
                       >
                         {profilePie.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -252,14 +260,14 @@ function Dashboard() {
                 </View>
                 <ChartCard title={t('dashboard.market_cap_breakdown')}>
                   <ResponsiveContainer width="100%" height={260}>
-                    <PieChart width={300} height={260}>
+                    <PieChart>
                       <Pie 
                         dataKey="value" 
                         data={sizeDonut} 
                         cx="50%" 
                         cy="50%" 
-                        innerRadius={40} 
-                        outerRadius={80} 
+                        innerRadius={50} 
+                        outerRadius={90} 
                         label={({ value }) => `${value}%`}
                         labelStyle={{ fontSize: '14px', fill: colors.textPrimary, fontWeight: '600' }}
                       >

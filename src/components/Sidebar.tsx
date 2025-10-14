@@ -39,10 +39,14 @@ function SidebarItem({ icon, label, active = false, onClick, collapsed = false }
         gap: 12,
         padding: 12,
         borderRadius: 12,
-        backgroundColor: active ? colors.surfaceElev : 'transparent',
+        backgroundColor: active 
+          ? (isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)')
+          : 'transparent',
         borderColor: active ? colors.borderLight : 'transparent',
         borderWidth: 1,
         justifyContent: collapsed ? 'center' : 'flex-start',
+        backdropFilter: active ? 'blur(10px)' : 'none',
+        WebkitBackdropFilter: active ? 'blur(10px)' : 'none',
       }}
     >
       {icon}
@@ -75,7 +79,9 @@ export function Sidebar({ children }: SidebarProps) {
   return (
     <View style={{
       width: isCollapsed ? 80 : 280,
-      backgroundColor: colors.surface,
+      backgroundColor: isDark ? 'rgba(26, 26, 26, 0.8)' : 'rgba(248, 249, 250, 0.8)',
+      backdropFilter: 'blur(20px)',
+      WebkitBackdropFilter: 'blur(20px)',
       borderRightColor: colors.border,
       borderRightWidth: 1,
       padding: isCollapsed ? 12 : 20,
@@ -86,12 +92,16 @@ export function Sidebar({ children }: SidebarProps) {
       top: 0,
       zIndex: 1000,
       transition: 'width 0.3s ease',
+      boxShadow: isDark 
+        ? '0 8px 32px rgba(0, 0, 0, 0.37)' 
+        : '0 8px 32px rgba(31, 38, 135, 0.37)',
     }}>
       {/* Header with toggle */}
       <View style={{
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: isCollapsed ? 'center' : 'space-between',
+        paddingTop: 8,
       }}>
         {!isCollapsed && (
           <Text style={{
@@ -99,11 +109,19 @@ export function Sidebar({ children }: SidebarProps) {
             fontSize: 18,
             fontWeight: '900',
             letterSpacing: 1,
+            fontFamily: 'Playfair Display',
           }}>
             CONVPILOT
           </Text>
         )}
-        <TouchableOpacity onPress={toggleSidebar} style={{ padding: 4 }}>
+        <TouchableOpacity 
+          onPress={toggleSidebar} 
+          style={{ 
+            padding: 8,
+            borderRadius: 8,
+            backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+          }}
+        >
           {isCollapsed ? (
             <MenuIcon size={20} color={colors.textSecondary} />
           ) : (
@@ -193,7 +211,9 @@ export function Sidebar({ children }: SidebarProps) {
       {/* Language Selector */}
       {!isCollapsed && (
         <View style={{
-          backgroundColor: colors.surfaceCard,
+          backgroundColor: isDark ? 'rgba(22, 22, 22, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
           borderColor: colors.border,
           borderWidth: 1,
           borderRadius: 12,
@@ -217,7 +237,9 @@ export function Sidebar({ children }: SidebarProps) {
       {/* Currency Selector */}
       {!isCollapsed && (
         <View style={{
-          backgroundColor: colors.surfaceCard,
+          backgroundColor: isDark ? 'rgba(22, 22, 22, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
           borderColor: colors.border,
           borderWidth: 1,
           borderRadius: 12,
