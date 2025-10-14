@@ -71,6 +71,29 @@
       .light-theme * {
         scrollbar-color: #c1c1c1 #f1f3f4;
       }
+      
+      /* News ticker animation */
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      
+      @keyframes slideOut {
+        from {
+          opacity: 1;
+          transform: translateX(0);
+        }
+        to {
+          opacity: 0;
+          transform: translateX(-30px);
+        }
+      }
     </style>
   </head>
   <body>
