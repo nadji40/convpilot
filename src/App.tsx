@@ -166,8 +166,8 @@ function Dashboard() {
           <View style={{ flex: 2, gap: 20 }}>
             <Section title={t('dashboard.market_cap')} right={<Text style={{ color: colors.accentGreen, fontSize: 16, fontWeight: '600' }}>{t('dashboard.1d_changes')}</Text>}>
               <ChartCard>
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={lineData} margin={{ left: 6, right: 6, top: 6, bottom: 6 }}>
+                <ResponsiveContainer width="100%" height={260}>
+                  <LineChart data={lineData} width={800} height={260} margin={{ left: 6, right: 6, top: 6, bottom: 6 }}>
                     <XAxis dataKey="month" stroke={colors.muted} tick={{ fill: colors.textSecondary, fontSize: 12 }} />
                     <YAxis stroke={colors.muted} tick={{ fill: colors.textSecondary, fontSize: 12 }} />
                     <Tooltip 
@@ -211,16 +211,16 @@ function Dashboard() {
                   </ResponsiveContainer>
                 </ChartCard>
                 <ChartCard title={t('dashboard.profiles')}>
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
+                  <ResponsiveContainer width="100%" height={260}>
+                    <PieChart width={400} height={260}>
                       <Pie 
                         dataKey="value" 
                         data={profilePie} 
                         cx="50%" 
                         cy="50%" 
-                        outerRadius={90} 
+                        outerRadius={80} 
                         label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                        labelStyle={{ fontSize: '12px', fill: colors.textPrimary, fontWeight: '500' }}
+                        labelStyle={{ fontSize: '10px', fill: colors.textPrimary, fontWeight: '500' }}
                       >
                         {profilePie.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -251,15 +251,15 @@ function Dashboard() {
                   <MetricCard label={t('metrics.duration')} value="2" />
                 </View>
                 <ChartCard title={t('dashboard.market_cap_breakdown')}>
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
+                  <ResponsiveContainer width="100%" height={260}>
+                    <PieChart width={300} height={260}>
                       <Pie 
                         dataKey="value" 
                         data={sizeDonut} 
                         cx="50%" 
                         cy="50%" 
-                        innerRadius={50} 
-                        outerRadius={85} 
+                        innerRadius={40} 
+                        outerRadius={80} 
                         label={({ value }) => `${value}%`}
                         labelStyle={{ fontSize: '14px', fill: colors.textPrimary, fontWeight: '600' }}
                       >
