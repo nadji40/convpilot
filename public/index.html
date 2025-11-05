@@ -4,9 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CONVPILOT - Convertible Bonds Dashboard</title>
+    <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link href="css/normalize.css" rel="stylesheet" type="text/css">
+    <link href="css/webflow.css" rel="stylesheet" type="text/css">
+    <link href="css/convpilot.webflow.css" rel="stylesheet" type="text/css">
     <style>
       html, body, #root { height: 100%; margin: 0; }
       body { 
@@ -170,6 +174,84 @@
       /* Override any possible conflicting z-indexes */
       .modal-overlay * {
         z-index: inherit !important;
+      }
+      
+      /* Landing page animations */
+      @keyframes fadeInBlur {
+        from {
+          opacity: 0;
+          transform: translate3d(0, 25px, 0);
+          filter: blur(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translate3d(0, 0, 0);
+          filter: blur(0);
+        }
+      }
+      
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      /* Apply fade-in animation to login and dashboard elements */
+      .page-wrapper {
+        animation: fadeInBlur 0.6s ease-out;
+      }
+      
+      .log-in-form {
+        animation: fadeInUp 0.8s ease-out 0.2s both;
+      }
+      
+      /* Button hover effect like landing page */
+      .button-primary-inner,
+      .submit.w-button {
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .button-primary-inner:hover,
+      .submit.w-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(10, 124, 255, 0.3);
+      }
+      
+      /* Card entrance animation */
+      .metric-card,
+      .chart-card {
+        animation: fadeInUp 0.6s ease-out both;
+      }
+      
+      /* Stagger animation for cards */
+      .metric-card:nth-child(1) { animation-delay: 0.1s; }
+      .metric-card:nth-child(2) { animation-delay: 0.2s; }
+      .metric-card:nth-child(3) { animation-delay: 0.3s; }
+      
+      /* Smooth transitions for all interactive elements */
+      button,
+      a,
+      input {
+        transition: all 0.3s ease;
+      }
+      
+      /* Dashboard section fade in */
+      @keyframes sectionFadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
     </style>
   </head>

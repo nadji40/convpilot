@@ -138,3 +138,7 @@ export const SunIcon = ({ size = 20, color = colors.textSecondary }: IconProps) 
   </View>
 );
 
+
+
+
+
