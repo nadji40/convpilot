@@ -68,6 +68,16 @@ module.exports = {
           to: 'images',
           noErrorOnMissing: true,
         },
+        { 
+          from: 'public/js', 
+          to: 'js',
+          noErrorOnMissing: true,
+        },
+        {
+          from: 'public/landing.html',
+          to: 'landing.html',
+          noErrorOnMissing: true,
+        },
       ],
     }),
   ],
