@@ -4,7 +4,12 @@ import { AppProviders } from './contexts/AppContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Landing } from './pages/Landing';
 import { Login } from './pages/Login';
-import { Dashboard } from './pages/Dashboard';
+import { Sidebar } from './components/Sidebar';
+import { Overview } from './pages/dashboard/Overview';
+import { Universe } from './pages/dashboard/Universe';
+import { Instrument } from './pages/dashboard/Instrument';
+import { Aggregations } from './pages/dashboard/Aggregations';
+import { Portfolio } from './pages/dashboard/Portfolio';
 
 // Protected route wrapper
 const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ children }) => {
@@ -14,7 +19,12 @@ const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ children }
     return <Navigate to="/login" replace />;
   }
   
-  return children;
+  return (
+    <>
+      <Sidebar />
+      {children}
+    </>
+  );
 };
 
 function AppRoutes() {
@@ -26,7 +36,39 @@ function AppRoutes() {
         path="/dashboard" 
         element={
           <ProtectedRoute>
-            <Dashboard />
+            <Overview />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/dashboard/universe" 
+        element={
+          <ProtectedRoute>
+            <Universe />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/dashboard/instrument/:isin" 
+        element={
+          <ProtectedRoute>
+            <Instrument />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/dashboard/aggregations" 
+        element={
+          <ProtectedRoute>
+            <Aggregations />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/dashboard/portfolio" 
+        element={
+          <ProtectedRoute>
+            <Portfolio />
           </ProtectedRoute>
         } 
       />

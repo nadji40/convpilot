@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { darkColors, lightColors, typography } from '../theme';
 import { useTheme, useLanguage, useSidebar } from '../contexts/AppContext';
 import {
@@ -86,9 +87,17 @@ export function Sidebar({ children }: SidebarProps) {
   const { t, language, setLanguage } = useLanguage();
   const { isCollapsed, toggleSidebar } = useSidebar();
   const colors = isDark ? darkColors : lightColors;
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const iconColor = colors.textSecondary;
   const activeIconColor = colors.accent;
+
+  const isActive = (path: string) => {
+    if (path === '/dashboard' && location.pathname === '/dashboard') return true;
+    if (path !== '/dashboard' && location.pathname.startsWith(path)) return true;
+    return false;
+  };
 
   return (
     <View style={{
@@ -126,9 +135,9 @@ export function Sidebar({ children }: SidebarProps) {
         )}
         {isCollapsed && (
           <img 
-            src="/images/Logo.png" 
+            src="/images/favicon.png" 
             alt="CONVPILOT" 
-            style={{ height: 28, width: 'auto' }}
+            style={{ height: 28, width: 28, objectFit: 'contain' }}
           />
         )}
         <TouchableOpacity 
@@ -166,20 +175,32 @@ export function Sidebar({ children }: SidebarProps) {
           </Text>
         )}
         <SidebarItem 
-          icon={<OverviewIcon size={20} color={activeIconColor} />} 
-          label={t('nav.overview')} 
-          active 
+          icon={<OverviewIcon size={20} color={isActive('/dashboard') ? activeIconColor : iconColor} />} 
+          label="Overview" 
+          active={isActive('/dashboard')}
           collapsed={isCollapsed}
+          onClick={() => navigate('/dashboard')}
         />
         <SidebarItem 
-          icon={<ChartIcon size={20} color={iconColor} />} 
-          label={t('nav.cb_report')} 
+          icon={<ChartIcon size={20} color={isActive('/dashboard/universe') ? activeIconColor : iconColor} />} 
+          label="CB Universe" 
+          active={isActive('/dashboard/universe')}
           collapsed={isCollapsed}
+          onClick={() => navigate('/dashboard/universe')}
         />
         <SidebarItem 
-          icon={<ReportIcon size={20} color={iconColor} />} 
-          label={t('nav.market_report')} 
+          icon={<ReportIcon size={20} color={isActive('/dashboard/aggregations') ? activeIconColor : iconColor} />} 
+          label="Aggregations" 
+          active={isActive('/dashboard/aggregations')}
           collapsed={isCollapsed}
+          onClick={() => navigate('/dashboard/aggregations')}
+        />
+        <SidebarItem 
+          icon={<PerformanceIcon size={20} color={isActive('/dashboard/portfolio') ? activeIconColor : iconColor} />} 
+          label="Portfolio" 
+          active={isActive('/dashboard/portfolio')}
+          collapsed={isCollapsed}
+          onClick={() => navigate('/dashboard/portfolio')}
         />
         <SidebarItem 
           icon={<StarIcon size={20} color={iconColor} />} 
@@ -187,13 +208,8 @@ export function Sidebar({ children }: SidebarProps) {
           collapsed={isCollapsed}
         />
         <SidebarItem 
-          icon={<PerformanceIcon size={20} color={iconColor} />} 
-          label={t('nav.performance')} 
-          collapsed={isCollapsed}
-        />
-        <SidebarItem 
           icon={<TargetIcon size={20} color={iconColor} />} 
-          label={t('nav.performance_simulation')} 
+          label="Simulations" 
           collapsed={isCollapsed}
         />
       </View>

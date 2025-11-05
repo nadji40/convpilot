@@ -8,7 +8,7 @@ The dashboard has been successfully aligned with the landing page design. All co
 
 ### 1. Authentication System
 - Created `AuthContext` for state management
-- Mock credentials: `demo@convpilot.com` / `password123`
+- Mock credentials: `meriem@convpilot.net` / `password123`
 - Login state persisted in localStorage
 - Protected routes redirect to login when not authenticated
 
@@ -58,7 +58,7 @@ The dashboard has been successfully aligned with the landing page design. All co
    - Navigate to `http://localhost:5173`
    - You should be redirected to `/login` (not authenticated)
    - Enter credentials:
-     - Email: `demo@convpilot.com`
+     - Email: `meriem@convpilot.net`
      - Password: `password123`
    - Click "Log in"
    - You should be redirected to `/dashboard`
@@ -108,7 +108,7 @@ The production build will be in the `dist/` directory with all assets properly c
 
 ## Mock Credentials
 
-**Email:** `demo@convpilot.com`  
+**Email:** `meriem@convpilot.net`  
 **Password:** `password123`
 
 These credentials are hardcoded in `src/contexts/AuthContext.tsx` and can be updated as needed.

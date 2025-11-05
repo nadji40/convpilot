@@ -10,7 +10,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const MOCK_CREDENTIALS = {
-  email: 'demo@convpilot.com',
+  email: 'meriem@convpilot.net',
   password: 'password123',
   name: 'Meriem Tarzaali',
 };

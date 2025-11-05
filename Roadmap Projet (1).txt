@@ -1,0 +1,222 @@
+Cahier de charge Projet – Outil Convertibles
+Objectif général
+Créer une plateforme d’analyse et de suivi des obligations convertibles destinée aux professionnels de la finance.
+L’objectif final est de disposer d’un outil professionnel, modulable, pouvant être hébergé chez le client, en SaaS, ou dans un environnement Bloomberg selon les contraintes techniques et juridiques.
+
+1. Architecture générale du projet
+Données
+* Arrêter la Liste de base : lister les obligations convertibles actives sur le marché (codes Bloomberg «  ISIN »)  : 
+o Volumétrie cible
+• Phase 1 : 
+* (MVP) : ~50 OC (Une partie du marché européen)
+* Version finale : ~150 OC : tout le marché européen.
+
+• Phase 2 : Extension au marché américain (plus gros univers, plusieurs centaines d’OC)
+• Phase 3 : Extension Asie
+
+* Deux types de données : (voir fichier excel : « Detailed list of fields »)
+o Statiques (une seule fois) : caractéristiques de l’émission (émetteur, coupon, échéance, ratio de conversion, clauses, call/put…).
+o Variables (mises à jour quotidiennes) 
+
+* Gestion multi-clients : prévoir la possibilité d’avoir des paramètres personnalisés par client (si les inputs sont personnalisables).  Chaque client définit ses critères initiaux (ex : zone Europe, devise EUR, capitalisation >100M) (affichage), il peut également personnaliser quelques inputs (les outpus seront par conséquent différents, donc bases différentes ?) 
+* L’outil génère une liste d’OC initiale, évolutive dans le temps (entrées, sorties). 
+o Une décision technique est attendue du développeur :
+• Laisser le client gérer lui-même les ajouts/suppressions via interface,
+• Ou confier cette gestion à l’administrateur
+Base de données
+* Une base principale contenant toutes les OC.
+* Possibilité de sous-comptes par client 
+* Historique des données pour chaque jour de mise à jour
+o Une pour des données agrégées 
+o Et Une pour chaque OC
+Connexion Bloomberg : 
+Les données proviennent de Bloomberg, via API ou connexion terminal client.
+Trois options techniques envisagées :
+1. Hébergement chez Bloomberg (intégration directe avec leurs API),
+2. Version SaaS hébergée sur un serveur externe,
+3. Installation chez le client.
+Le choix dépendra des coûts, droits de licence et retours des clients.
+
+
+
+Phase 1 – Construction d’un MVP
+Objectif : Valider l’architecture et l’ergonomie du produit, avec des données fictives. Créer une première version fonctionnelle, sans dépendance Bloomberg.
+Actions clés : 
+* Concevoir une base de données structurée. ( la base doit permettre une mise à jour quotidienne et conserver un historique), avec une liste OC dynamique ( entrées/ sorties) : voir tous les fields dans le fichier excel 
+* Remplir cette base avec des données fictives représentatives. 
+* Mettre en place une API interne simple pour interroger la base (même si les données sont factices).
+* Créer un front-office (dashboard) avec quelques écrans de visualisation ( Figma + excel ) : 
+o Overview
+o Vue instrument (fiche obligation convertible fictive).
+o Vue portefeuille (liste + quelques agrégats).
+o Attribution de performance
+NB : La connexion API avec la majorité des Fields a été déjà écrites et testé sous Python. 
+Phase 2 – Test marché et discussion bloomberg :
+ Objectif : Vérifier l’intérêt du marché avec le MVP
+Attendu : 
+* Tester les calculs et la cohérence des indicateurs.
+* Maintenir le MVP et corriger rapidement les bugs de démo.
+* Ajouter éventuellement quelques fonctionnalités légères selon feedback (ex : export Excel, ajout de filtres simples).
+* Héberger la solution sur un cloud léger pour donner accès aux testeurs ??
+
+Phase 3 – Intégration Bloomberg et version complète V1 (Europe) 
+Objectif : Passer d’un prototype à un produit prêt à être testé en conditions réelles.
+Travail attendu du développeur
+* Intégrer la connexion Bloomberg (choix API selon licence )
+* Completer la liste des OC : passer de 50 au nombre exact en Europe (dans 150 OCs ) 
+* Remplacer la data fictive par les vraies données Bloomberg dans la base.
+* Mettre en place un pipeline de mise à jour automatique (sauvegarde + historisation).
+* Implémenter quelques formules clés 
+* Améliorer le front-office : filtres, recherche, graphiques plus avancés.
+
+Phase 4  – Extension & évolution : 
+Objectif : Faire évoluer le produit et élargir son marché.
+Actions clés :
+* Intégrer d’autres sources de données (Refinitiv, ICE , index…).
+* Intégrer d’autre  OCs : marché américain ; asiatique ….
+* Développer une version mobile ???
+* Integrer l’IA pour l’analyse 
+* Rajouter module consulting …..
+* 
+
+ Annexes : 
+Annexe A – Liste détaillée des champs à récupérer et à calculer(champs statiques et dynamiques) : Excel fourni
+
+Annexe B – liste détaillée des champs à historiser CB par CB avec data fictive. 
+
+Annexe C – liste détaillée des champs à historiser pour tous l’univers ( données agrégées) avec filtre par secteur + data fictive 
+
+Annexe D : Data fictive : news excel folder
+Annexe D : Figma (front-end).
+
+
+
+
+
+
+
+
+
+
+
+
+
+ANNEXE A : Liste détaillée des champs Bloomberg (champs statiques et dynamiques).
+
+
+Voir le fihier excel : “ Detailed list of fields “ 
+
+*  Sheet 1 – Static Fields
+Tous les champs statiques liés aux caractéristiques des obligations convertibles et de l’émetteur.
+*  Sheet 2 – Daily Fields & Greeks:
+Tous les champs calculés quotidiennement par Bloomberg et par formule propriétaire.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ANNEXE B : Liste détaillée champs à historiser CB par CB
+
+
+Voir le fihier excel : “ Detailed list of fields “ 
+
+Chaque soir, pour chaque obligation convertible (OC), toutes les données dynamiques (prix, volatilité, fair value, sensibilités, etc.) doivent être historisées sans perte, avec un horodatage.
+
+
+*  Sheet 2 – Daily CB hist
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Annexe C – liste détaillée des champs à historiser pour tous l’univers ( données agrégées) selon plusieurs filtres ( secteur, profil, maturité, taille…)
+
+Une deuxième historisation doit être réalisée au niveau agrégé selon plusieurs filtres.
+L’objectif est de permettre des analyses croisées par secteur, par profil OC, par maturité, par taille et par qualité de crédit (rating).
+Étape 1 : Filtre primaire
+On applique d’abord un filtre principal (exemple : Secteur).
+* Pour chaque secteur, calculer toutes les métriques agrégées : Market Cap, currency, country, outputs, 
+
+2. Étape 2 : Filtres croisés secondaires
+Une fois que l’agrégation par secteur est calculée, il faut croiser avec les autres dimensions.
+Par exemple :
+* Dans le filtre Secteur, calculer aussi :
+o Répartition par Profil dans chaque secteur,
+o Répartition par Taille dans chaque secteur,
+o Répartition par Rating dans chaque secteur.
+o Répartition par Maturité dans chaque secteur.
+Exemple attendu :
+* « Dans le secteur Media, quelle est la part des OC profil Mixte ? »
+* « Dans le secteur Technologie, quelle est la répartition par rating (IG/HY/NR) ? »
+
+3. Étape 3 : Rotation des filtres primaires
+Le même mécanisme doit être appliqué lorsque le filtre primaire change.
+* Par Profil :
+o Répartition des secteurs dans chaque profil,
+o Répartition des tailles dans chaque profil,
+o Répartition des ratings dans chaque profil.
+o Répartition des maturités dans chaque profil.
+* Par Taille :
+o Répartition par Secteur,
+o Répartition par Profil,
+o Répartition par Rating.
+o Répartition par maturité.
+* Par Rating :
+o Répartition par Secteur,
+o Répartition par Profil,
+o Répartition par Taille.
+o Répartition par maturité 
+* Par maturité
+o Répartition par Secteur,
+o Répartition par Profil,
+o Répartition par Taille.
+o Répartition par rating
+
+4. Résumé attendu
+En pratique, le développeur doit prévoir une structure relationnelle ou un moteur analytique permettant :
+* Des agrégations de premier niveau (par secteur, profil, taille, rating, maturité),
+* Des agrégations croisées (exemple : Profils par Secteur, Ratings par Taille…),
+
+ En clair, il ne s’agit pas de coder une boucle spécifique pour chaque filtre, mais de concevoir une structure qui permette de croiser dynamiquement n’importe quel filtre avec n’importe quel autre.
+Voir fichie excel : « Aggregation template » + “ Detailed list of fields
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

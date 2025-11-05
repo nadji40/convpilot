@@ -78,7 +78,7 @@ Updated `webpack.config.js` to copy:
 3. Can explore About, Platform, Pricing, etc.
 4. Clicks "Log in" button
 5. Taken to `/login` page
-6. Enters credentials: `demo@convpilot.com` / `password123`
+6. Enters credentials: `meriem@convpilot.net` / `password123`
 7. Redirected to `/dashboard`
 8. Can logout from dashboard
 
@@ -119,7 +119,7 @@ npm run dev
 - Login and try `/` → Redirected to `/dashboard`
 
 ## Mock Credentials
-- **Email:** `demo@convpilot.com`
+- **Email:** `meriem@convpilot.net`
 - **Password:** `password123`
 
 ## Build for Production

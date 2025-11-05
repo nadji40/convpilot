@@ -18,7 +18,7 @@ export const Login: React.FC = () => {
     if (success) {
       navigate('/dashboard');
     } else {
-      setError('Invalid email or password. Try demo@convpilot.com / password123');
+      setError('Invalid email or password. Try meriem@convpilot.net / password123');
     }
   };
 
@@ -108,7 +108,7 @@ export const Login: React.FC = () => {
                   </div>
                 </div>
                 <div className="sign-text-wrap">
-                  <div className="text-default">Demo credentials: demo@convpilot.com / password123</div>
+                  <div className="text-default">Demo credentials: meriem@convpilot.net / password123</div>
                 </div>
               </form>
             </div>
