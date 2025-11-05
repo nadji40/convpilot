@@ -4,6 +4,11 @@ import { AppProviders } from './contexts/AppContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Landing } from './pages/Landing';
 import { Login } from './pages/Login';
+import { Contact } from './pages/Contact';
+import { Pricing } from './pages/Pricing';
+import { PrivacyPolicy } from './pages/PrivacyPolicy';
+import { TermsAndConditions } from './pages/TermsAndConditions';
+import { Platform } from './pages/Platform';
 import { Sidebar } from './components/Sidebar';
 import { Overview } from './pages/dashboard/Overview';
 import { Universe } from './pages/dashboard/Universe';
@@ -32,6 +37,15 @@ function AppRoutes() {
     <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
+      
+      {/* Public pages - accessible without authentication */}
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/pricing" element={<Pricing />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+      <Route path="/platform" element={<Platform />} />
+      
+      {/* Protected dashboard routes */}
       <Route 
         path="/dashboard" 
         element={

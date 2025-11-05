@@ -78,6 +78,31 @@ module.exports = {
           to: 'landing.html',
           noErrorOnMissing: true,
         },
+        {
+          from: 'public/contact.html',
+          to: 'contact.html',
+          noErrorOnMissing: true,
+        },
+        {
+          from: 'public/pricing.html',
+          to: 'pricing.html',
+          noErrorOnMissing: true,
+        },
+        {
+          from: 'public/privacy-policy.html',
+          to: 'privacy-policy.html',
+          noErrorOnMissing: true,
+        },
+        {
+          from: 'public/terms-and-conditions.html',
+          to: 'terms-and-conditions.html',
+          noErrorOnMissing: true,
+        },
+        {
+          from: 'public/platform.html',
+          to: 'platform.html',
+          noErrorOnMissing: true,
+        },
       ],
     }),
   ],
