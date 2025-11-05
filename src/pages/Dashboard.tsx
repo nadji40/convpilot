@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView } from 'react-native';
-import { darkColors, lightColors } from '../theme';
+import { darkColors, lightColors, typography } from '../theme';
 import { MetricCard } from '../components/MetricCard';
 import { Section } from '../components/Section';
 import { ChartCard } from '../components/ChartCard';
@@ -78,7 +78,14 @@ export const Dashboard: React.FC = () => {
     navigate('/login');
   };
 
-  const COLORS = [colors.chartColors.blue, colors.chartColors.green, colors.chartColors.orange, colors.chartColors.purple, colors.chartColors.pink];
+  const COLORS = [
+    colors.chartColors.blue, 
+    colors.chartColors.cyan,
+    colors.chartColors.green, 
+    colors.chartColors.purple, 
+    colors.chartColors.orange,
+    colors.chartColors.pink
+  ];
 
   const inflows = [
     { name: 'ACCOR 2029', change: '+12M', color: colors.success },
@@ -148,56 +155,86 @@ export const Dashboard: React.FC = () => {
         <View style={{ 
           flex: 1, 
           marginLeft: isCollapsed ? 80 : 280,
-          padding: 20,
+          padding: 24,
           height: 'calc(100vh - 49px)',
-          overflow: 'auto' as any
+          overflow: 'auto' as any,
+          backgroundColor: colors.background,
         }}>
-          <ScrollView style={{ flex: 1, height: '100%' }} contentContainerStyle={{ gap: 20 }}>
+          <ScrollView style={{ flex: 1, height: '100%' }} contentContainerStyle={{ gap: 24 }}>
           {/* Header */}
           <View
             style={{
               backgroundColor: colors.surface,
               borderColor: colors.border,
               borderWidth: 1,
-              borderRadius: 16,
-              padding: 20,
+              borderRadius: parseInt(colors.borderRadius.regular),
+              padding: 24,
+              animation: 'fadeInUp 0.6s ease-out',
             }}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-              <img src="/images/Logo.png" alt="CONVPILOT" style={{ height: 40 }} />
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              <img src="/images/Logo.png" alt="CONVPILOT" style={{ height: 42, width: 'auto' }} />
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
                 <View style={{ 
-                  width: 32, 
-                  height: 32, 
-                  borderRadius: 16, 
-                  backgroundColor: colors.accentGreen, 
+                  width: 40, 
+                  height: 40, 
+                  borderRadius: parseInt(colors.borderRadius.rounded), 
+                  backgroundColor: colors.accent,
                   alignItems: 'center', 
-                  justifyContent: 'center' 
+                  justifyContent: 'center',
+                  boxShadow: `0 4px 12px ${colors.accent}40`,
                 }}>
-                  <Text style={{ color: colors.background, fontSize: 14, fontWeight: '700', fontFamily: 'Playfair Display' }}>
+                  <Text style={{ 
+                    color: '#ffffff', 
+                    fontSize: parseInt(typography.fontSize.default), 
+                    fontWeight: '700', 
+                    fontFamily: typography.fontFamily.heading 
+                  }}>
                     {user?.name.split(' ').map(n => n[0]).join('')}
                   </Text>
                 </View>
                 <View>
-                  <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: '600', fontFamily: 'Playfair Display' }}>
+                  <Text style={{ 
+                    color: colors.textPrimary, 
+                    fontSize: parseInt(typography.fontSize.default), 
+                    fontWeight: '600', 
+                    fontFamily: typography.fontFamily.heading 
+                  }}>
                     {user?.name || 'User'}
                   </Text>
-                  <Text style={{ color: colors.textSecondary, fontSize: 12, fontFamily: 'Playfair Display' }}>
+                  <Text style={{ 
+                    color: colors.textSecondary, 
+                    fontSize: parseInt(typography.fontSize.small),
+                    fontFamily: typography.fontFamily.body 
+                  }}>
                     {user?.email || 'user@email.com'}
                   </Text>
                 </View>
                 <button 
                   onClick={handleLogout}
+                  className="logout-button"
                   style={{
                     marginLeft: 12,
-                    padding: '8px 16px',
-                    backgroundColor: colors.surface,
+                    padding: '10px 20px',
+                    backgroundColor: colors.surfaceCard,
                     color: colors.textPrimary,
                     border: `1px solid ${colors.border}`,
-                    borderRadius: 8,
+                    borderRadius: parseInt(colors.borderRadius.medium),
                     cursor: 'pointer',
-                    fontFamily: 'Playfair Display',
-                    fontSize: 14
+                    fontFamily: typography.fontFamily.body,
+                    fontSize: parseInt(typography.fontSize.default),
+                    fontWeight: '500',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.surfaceElev;
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = `0 4px 12px ${colors.border}`;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.surfaceCard;
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
                   }}
                 >
                   Logout

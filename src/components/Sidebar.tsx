@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { darkColors, lightColors } from '../theme';
+import { darkColors, lightColors, typography } from '../theme';
 import { useTheme, useLanguage, useSidebar } from '../contexts/AppContext';
 import {
   OverviewIcon,
@@ -37,25 +37,38 @@ function SidebarItem({ icon, label, active = false, onClick, collapsed = false }
         flexDirection: 'row',
         alignItems: 'center',
         gap: 12,
-        padding: 12,
-        borderRadius: 12,
+        padding: collapsed ? 12 : 14,
+        borderRadius: parseInt(colors.borderRadius.regular),
         backgroundColor: active 
-          ? (isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)')
+          ? colors.surfaceElev
           : 'transparent',
-        borderColor: active ? colors.borderLight : 'transparent',
+        borderColor: active ? colors.border : 'transparent',
         borderWidth: 1,
         justifyContent: collapsed ? 'center' : 'flex-start',
-        backdropFilter: active ? 'blur(10px)' : 'none',
-        WebkitBackdropFilter: active ? 'blur(10px)' : 'none',
+        transition: 'all 0.3s ease',
+        cursor: 'pointer',
+      }}
+      onHoverIn={(e: any) => {
+        if (!active) {
+          e.currentTarget.style.backgroundColor = isDark ? 'rgba(31, 35, 39, 0.5)' : 'rgba(0, 0, 0, 0.03)';
+        }
+      }}
+      onHoverOut={(e: any) => {
+        if (!active) {
+          e.currentTarget.style.backgroundColor = 'transparent';
+        }
       }}
     >
-      {icon}
+      <View style={{ opacity: active ? 1 : 0.7 }}>
+        {icon}
+      </View>
       {!collapsed && (
         <Text style={{
           color: active ? colors.textPrimary : colors.textSecondary,
-          fontSize: 14,
-          fontWeight: active ? '600' : '500',
-          fontFamily: 'Playfair Display',
+          fontSize: parseInt(typography.fontSize.default),
+          fontWeight: active ? '600' : '400',
+          fontFamily: typography.fontFamily.body,
+          letterSpacing: -0.011,
         }}>
           {label}
         </Text>
@@ -75,73 +88,79 @@ export function Sidebar({ children }: SidebarProps) {
   const colors = isDark ? darkColors : lightColors;
 
   const iconColor = colors.textSecondary;
-  const activeIconColor = colors.textPrimary;
+  const activeIconColor = colors.accent;
 
   return (
     <View style={{
       width: isCollapsed ? 80 : 280,
-      backgroundColor: isDark ? 'rgba(26, 26, 26, 0.8)' : 'rgba(248, 249, 250, 0.8)',
-      backdropFilter: 'blur(20px)',
-      WebkitBackdropFilter: 'blur(20px)',
+      backgroundColor: colors.surface,
       borderRightColor: colors.border,
       borderRightWidth: 1,
-      padding: isCollapsed ? 12 : 20,
-      gap: 24,
+      padding: isCollapsed ? 16 : 24,
+      gap: 28,
       height: '100vh',
       position: 'fixed' as any,
       left: 0,
       top: 0,
       zIndex: 1000,
-      transition: 'width 0.3s ease',
-      boxShadow: isDark 
-        ? '0 8px 32px rgba(0, 0, 0, 0.37)' 
-        : '0 8px 32px rgba(31, 38, 135, 0.37)',
+      transition: 'all 0.4s ease',
+      overflowY: 'auto' as any,
+      overflowX: 'hidden' as any,
     }}>
-      {/* Header with toggle */}
+      {/* Header with Logo and Toggle */}
       <View style={{
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: isCollapsed ? 'center' : 'space-between',
-        paddingTop: 8,
+        paddingTop: 4,
+        marginBottom: 12,
       }}>
         {!isCollapsed && (
-          <Text style={{
-            color: colors.textPrimary,
-            fontSize: 18,
-            fontWeight: '900',
-            letterSpacing: 1,
-            fontFamily: 'Playfair Display',
-          }}>
-            CONVPILOT
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <img 
+              src="/images/Logo.png" 
+              alt="CONVPILOT" 
+              style={{ height: 32, width: 'auto' }}
+            />
+          </View>
+        )}
+        {isCollapsed && (
+          <img 
+            src="/images/Logo.png" 
+            alt="CONVPILOT" 
+            style={{ height: 28, width: 'auto' }}
+          />
         )}
         <TouchableOpacity 
           onPress={toggleSidebar} 
           style={{ 
             padding: 8,
-            borderRadius: 8,
-            backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+            borderRadius: parseInt(colors.borderRadius.small),
+            backgroundColor: colors.surfaceCard,
+            borderWidth: 1,
+            borderColor: colors.border,
+            transition: 'all 0.3s ease',
           }}
         >
           {isCollapsed ? (
-            <MenuIcon size={20} color={colors.textSecondary} />
+            <MenuIcon size={18} color={colors.textSecondary} />
           ) : (
-            <CloseIcon size={20} color={colors.textSecondary} />
+            <CloseIcon size={18} color={colors.textSecondary} />
           )}
         </TouchableOpacity>
       </View>
 
       {/* Navigation Section */}
-      <View style={{ gap: 4 }}>
+      <View style={{ gap: 6 }}>
         {!isCollapsed && (
           <Text style={{
             color: colors.textMuted,
-            fontSize: 11,
+            fontSize: parseInt(typography.fontSize.xsmall),
             fontWeight: '600',
             textTransform: 'uppercase',
-            letterSpacing: 1,
+            letterSpacing: 1.2,
             marginBottom: 8,
-            fontFamily: 'Playfair Display',
+            fontFamily: typography.fontFamily.body,
           }}>
             {t('nav.navigation') || 'NAVIGATION'}
           </Text>
@@ -180,16 +199,16 @@ export function Sidebar({ children }: SidebarProps) {
       </View>
 
       {/* Account Section */}
-      <View style={{ gap: 4 }}>
+      <View style={{ gap: 6 }}>
         {!isCollapsed && (
           <Text style={{
             color: colors.textMuted,
-            fontSize: 11,
+            fontSize: parseInt(typography.fontSize.xsmall),
             fontWeight: '600',
             textTransform: 'uppercase',
-            letterSpacing: 1,
+            letterSpacing: 1.2,
             marginBottom: 8,
-            fontFamily: 'Playfair Display',
+            fontFamily: typography.fontFamily.body,
           }}>
             ACCOUNT
           </Text>
@@ -211,50 +230,68 @@ export function Sidebar({ children }: SidebarProps) {
         />
       </View>
 
-      {/* Language Selector */}
+      {/* Language & Currency Selectors */}
       {!isCollapsed && (
-        <View style={{
-          backgroundColor: isDark ? 'rgba(22, 22, 22, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-          backdropFilter: 'blur(10px)',
-          WebkitBackdropFilter: 'blur(10px)',
-          borderColor: colors.border,
-          borderWidth: 1,
-          borderRadius: 12,
-          padding: 12,
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
+        <View style={{ gap: 12 }}>
+          {/* Language Selector */}
           <TouchableOpacity
             onPress={() => setLanguage(language === 'en' ? 'fr' : 'en')}
-            style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
+            style={{
+              backgroundColor: colors.surfaceCard,
+              borderColor: colors.border,
+              borderWidth: 1,
+              borderRadius: parseInt(colors.borderRadius.medium),
+              padding: 14,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              transition: 'all 0.3s ease',
+            }}
           >
-            <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: '500', fontFamily: 'Playfair Display' }}>
+            <Text style={{ 
+              color: colors.textPrimary, 
+              fontSize: parseInt(typography.fontSize.default), 
+              fontWeight: '500', 
+              fontFamily: typography.fontFamily.body 
+            }}>
+              {language === 'en' ? 'EN' : 'FR'}
+            </Text>
+            <Text style={{ 
+              color: colors.textMuted, 
+              fontSize: parseInt(typography.fontSize.small),
+              fontFamily: typography.fontFamily.body 
+            }}>
               {language === 'en' ? 'English' : 'Français'}
             </Text>
-            <Text style={{ color: colors.textMuted, fontSize: 12, fontFamily: 'Playfair Display' }}>▼</Text>
           </TouchableOpacity>
-        </View>
-      )}
 
-      {/* Currency Selector */}
-      {!isCollapsed && (
-        <View style={{
-          backgroundColor: isDark ? 'rgba(22, 22, 22, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-          backdropFilter: 'blur(10px)',
-          WebkitBackdropFilter: 'blur(10px)',
-          borderColor: colors.border,
-          borderWidth: 1,
-          borderRadius: 12,
-          padding: 12,
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: '500', fontFamily: 'Playfair Display' }}>
-            {t('currency.us_dollar')}
-          </Text>
-          <Text style={{ color: colors.textMuted, fontSize: 12, fontFamily: 'Playfair Display' }}>▼</Text>
+          {/* Currency Selector */}
+          <View style={{
+            backgroundColor: colors.surfaceCard,
+            borderColor: colors.border,
+            borderWidth: 1,
+            borderRadius: parseInt(colors.borderRadius.medium),
+            padding: 14,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}>
+            <Text style={{ 
+              color: colors.textPrimary, 
+              fontSize: parseInt(typography.fontSize.default), 
+              fontWeight: '500', 
+              fontFamily: typography.fontFamily.body 
+            }}>
+              USD
+            </Text>
+            <Text style={{ 
+              color: colors.textMuted, 
+              fontSize: parseInt(typography.fontSize.small),
+              fontFamily: typography.fontFamily.body 
+            }}>
+              {t('currency.us_dollar')}
+            </Text>
+          </View>
         </View>
       )}
 
@@ -264,37 +301,49 @@ export function Sidebar({ children }: SidebarProps) {
         alignItems: 'center',
         justifyContent: isCollapsed ? 'center' : 'space-between',
         marginTop: 'auto',
+        padding: isCollapsed ? 8 : 14,
+        backgroundColor: colors.surfaceCard,
+        borderRadius: parseInt(colors.borderRadius.medium),
+        borderWidth: 1,
+        borderColor: colors.border,
         gap: isCollapsed ? 8 : 0,
       }}>
         {!isCollapsed && (
-          <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: '500', fontFamily: 'Playfair Display' }}>
-            {isDark ? t('dark_mode') : t('light_mode')}
+          <Text style={{ 
+            color: colors.textPrimary, 
+            fontSize: parseInt(typography.fontSize.default), 
+            fontWeight: '500', 
+            fontFamily: typography.fontFamily.body 
+          }}>
+            {isDark ? 'Dark' : 'Light'}
           </Text>
         )}
         <TouchableOpacity
           onPress={toggleTheme}
           style={{
-            width: 44,
-            height: 24,
-            backgroundColor: isDark ? colors.accentGreen : colors.accentBlue,
-            borderRadius: 12,
-            padding: 2,
+            width: 48,
+            height: 26,
+            backgroundColor: isDark ? colors.accent : colors.accentCyan,
+            borderRadius: parseInt(colors.borderRadius.rounded),
+            padding: 3,
             alignItems: isDark ? 'flex-end' : 'flex-start',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            transition: 'all 0.4s ease',
           }}
         >
           <View style={{
             width: 20,
             height: 20,
-            backgroundColor: colors.textPrimary,
-            borderRadius: 10,
+            backgroundColor: colors.background,
+            borderRadius: parseInt(colors.borderRadius.rounded),
             alignItems: 'center',
             justifyContent: 'center',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
           }}>
             {isDark ? (
-              <MoonIcon size={12} color={colors.background} />
+              <MoonIcon size={12} color={colors.accent} />
             ) : (
-              <SunIcon size={12} color={colors.background} />
+              <SunIcon size={12} color={colors.accentCyan} />
             )}
           </View>
         </TouchableOpacity>
