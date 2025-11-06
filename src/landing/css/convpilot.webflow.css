@@ -6597,20 +6597,20 @@ label {
 }
 
 .loader {
-  width: 8px;
-  height: 8px;
+  width: 12px;
+  height: 12px;
   position: relative;
-  border-radius: 50%;
+  border-radius: 100%;
   background: #0a7cff;
   /* Brand color */
-  animation: wave 1s ease-in infinite;
+  animation: wave 1.8s ease-in-out infinite;
 }
 
 @keyframes wave {
   0% {
-    box-shadow: 0 0 0 0px rgba(10, 124, 255, 1), 0 0 0 20px rgba(10, 124, 255, 0.2), 0 0 0 40px rgba(10, 124, 255, 0.6), 0 0 0 60px rgba(10, 124, 255, 0.4), 0 0 0 80px rgba(10, 124, 255, 0.2);
+    box-shadow: 0 0 0 0px rgba(10, 124, 255, 0.8), 0 0 0 30px rgba(10, 124, 255, 0.4), 0 0 0 60px rgba(10, 124, 255, 0.1);
   }
   100% {
-    box-shadow: 0 0 0 80px rgba(10, 124, 255, 0), 0 0 0 60px rgba(10, 124, 255, 0.2), 0 0 0 40px rgba(10, 124, 255, 0.4), 0 0 0 20px rgba(10, 124, 255, 0.6), 0 0 0 0px rgba(10, 124, 255, 1);
+    box-shadow: 0 0 0 30px rgba(10, 124, 255, 0.4), 0 0 0 60px rgba(10, 124, 255, 0.1), 0 0 0 90px rgba(10, 124, 255, 0);
   }
 }
