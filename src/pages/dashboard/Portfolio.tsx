@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text } from 'react-native';
 import { darkColors, lightColors, typography } from '../../theme';
-import { useTheme, useSidebar } from '../../contexts/AppContext';
+import { useTheme, useSidebar, useLanguage } from '../../contexts/AppContext';
 import { DashboardHeader } from '../../components/DashboardHeader';
 import { AnimatedCard } from '../../components/AnimatedCard';
 import { KPICard } from '../../components/KPICard';
@@ -26,6 +26,7 @@ import {
 export const Portfolio: React.FC = () => {
   const { isDark } = useTheme();
   const { isCollapsed } = useSidebar();
+  const { t } = useLanguage();
   const colors = isDark ? darkColors : lightColors;
 
   // Portfolio selection state (persisted to localStorage)
@@ -198,8 +199,8 @@ export const Portfolio: React.FC = () => {
         <View style={{ gap: 32, paddingBottom: 40 }}>
           {/* Header */}
           <DashboardHeader 
-            title="Portfolio Analysis"
-            description={`${portfolioBonds.length} bonds selected • Total market cap: ${formatLargeNumber(portfolioMetrics.totalMarketCap)}`}
+            title={t('dashboard.portfolio')}
+            description={`${portfolioBonds.length} ${t('dashboard.portfolio_desc')} ${formatLargeNumber(portfolioMetrics.totalMarketCap)}`}
           />
 
           {/* Portfolio KPIs */}

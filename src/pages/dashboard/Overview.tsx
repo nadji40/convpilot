@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import { darkColors, lightColors, typography } from '../../theme';
-import { useTheme, useSidebar } from '../../contexts/AppContext';
+import { useTheme, useSidebar, useLanguage } from '../../contexts/AppContext';
 import { KPICard } from '../../components/KPICard';
 import { AnimatedCard } from '../../components/AnimatedCard';
 import { WidgetContainer } from '../../components/WidgetContainer';
@@ -33,6 +33,7 @@ import {
 export const Overview: React.FC = () => {
   const { isDark } = useTheme();
   const { isCollapsed } = useSidebar();
+  const { t } = useLanguage();
   const colors = isDark ? darkColors : lightColors;
 
   const marketSummary = calculateMarketSummary(mockConvertibleBonds);
@@ -80,8 +81,8 @@ export const Overview: React.FC = () => {
         >
           {/* Header */}
           <DashboardHeader 
-            title="Dashboard Overview"
-            description="Real-time insights into the convertible bonds market"
+            title={t('dashboard.overview')}
+            description={t('dashboard.overview_desc')}
           />
 
           {/* KPI Cards */}

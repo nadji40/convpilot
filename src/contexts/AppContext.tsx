@@ -61,7 +61,8 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 const translations = {
   en: {
     // Navigation
-    'nav.overview': 'OVERVIEW',
+    'nav.overview': 'Overview',
+    'nav.navigation': 'NAVIGATION',
     'nav.cb_report': 'CB Report',
     'nav.market_report': 'Market Report',
     'nav.favorites': 'Favorites',
@@ -73,6 +74,17 @@ const translations = {
     'account.settings': 'Settings',
     'account.help': 'Help',
     
+    // Dashboard Pages
+    'dashboard.overview': 'Dashboard Overview',
+    'dashboard.overview_desc': 'Real-time insights into the convertible bonds market',
+    'dashboard.universe': 'Convertible Bonds Universe',
+    'dashboard.universe_desc': 'bonds',
+    'dashboard.aggregations': 'Cross-Filter Aggregations',
+    'dashboard.aggregations_desc': 'Analyze market breakdown across multiple dimensions',
+    'dashboard.portfolio': 'Portfolio Analysis',
+    'dashboard.portfolio_desc': 'bonds selected • Total market cap:',
+    'dashboard.instrument_desc': 'ISIN:',
+    
     // Dashboard
     'dashboard.market_cap': 'Market Cap: 43 Mds EUR',
     'dashboard.1d_changes': '1D CHANGES +72,852,654.23 EUR',
@@ -82,6 +94,10 @@ const translations = {
     'dashboard.scatter_cb_universe': 'Scatter: CB universe',
     'dashboard.profiles': 'Profiles',
     'dashboard.market_cap_breakdown': 'Market Cap breakdown',
+    
+    // Buttons
+    'button.export_csv': 'Export to CSV',
+    'button.back_to_universe': 'Back to Universe',
     
     // Metrics
     'metrics.cb_performance': 'CB Performance',
@@ -97,10 +113,13 @@ const translations = {
     'currency.us_dollar': 'EUR',
     'dark_mode': 'Dark Mode',
     'light_mode': 'Light Mode',
+    'of': 'of',
+    'tracking': 'Tracking',
   },
   fr: {
     // Navigation
-    'nav.overview': 'VUE D\'ENSEMBLE',
+    'nav.overview': 'Vue d\'ensemble',
+    'nav.navigation': 'NAVIGATION',
     'nav.cb_report': 'Rapport CB',
     'nav.market_report': 'Rapport de marché',
     'nav.favorites': 'Favoris',
@@ -112,6 +131,17 @@ const translations = {
     'account.settings': 'Paramètres',
     'account.help': 'Aide',
     
+    // Dashboard Pages
+    'dashboard.overview': 'Aperçu du tableau de bord',
+    'dashboard.overview_desc': 'Informations en temps réel sur le marché des obligations convertibles',
+    'dashboard.universe': 'Univers des obligations convertibles',
+    'dashboard.universe_desc': 'obligations',
+    'dashboard.aggregations': 'Agrégations à filtres croisés',
+    'dashboard.aggregations_desc': 'Analyser la répartition du marché à travers plusieurs dimensions',
+    'dashboard.portfolio': 'Analyse de portefeuille',
+    'dashboard.portfolio_desc': 'obligations sélectionnées • Capitalisation totale:',
+    'dashboard.instrument_desc': 'ISIN:',
+    
     // Dashboard
     'dashboard.market_cap': 'Capitalisation: 43 Mds EUR',
     'dashboard.1d_changes': 'CHANGEMENTS 1J +72,852,654.23 EUR',
@@ -121,6 +151,10 @@ const translations = {
     'dashboard.scatter_cb_universe': 'Nuage: univers CB',
     'dashboard.profiles': 'Profils',
     'dashboard.market_cap_breakdown': 'Répartition de la capitalisation',
+    
+    // Buttons
+    'button.export_csv': 'Exporter en CSV',
+    'button.back_to_universe': 'Retour à l\'univers',
     
     // Metrics
     'metrics.cb_performance': 'Performance CB',
@@ -133,9 +167,11 @@ const translations = {
     'metrics.duration': 'Durée',
     
     // Other
-    'currency.us_dollar': 'Dollar US',
+    'currency.us_dollar': 'EUR',
     'dark_mode': 'Mode sombre',
     'light_mode': 'Mode clair',
+    'of': 'de',
+    'tracking': 'Suivi',
   }
 };
 

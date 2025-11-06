@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useParams, useNavigate } from 'react-router-dom';
 import { darkColors, lightColors, typography } from '../../theme';
-import { useTheme, useSidebar } from '../../contexts/AppContext';
+import { useTheme, useSidebar, useLanguage } from '../../contexts/AppContext';
 import { DashboardHeader } from '../../components/DashboardHeader';
 import { AnimatedCard } from '../../components/AnimatedCard';
 import { KPICard } from '../../components/KPICard';
@@ -25,6 +25,7 @@ export const Instrument: React.FC = () => {
   const navigate = useNavigate();
   const { isDark } = useTheme();
   const { isCollapsed } = useSidebar();
+  const { t } = useLanguage();
   const colors = isDark ? darkColors : lightColors;
 
   // Find the bond
@@ -156,13 +157,13 @@ export const Instrument: React.FC = () => {
                   fontWeight: '600',
                 }}
               >
-                Back to Universe
+                {t('button.back_to_universe')}
               </Text>
             </TouchableOpacity>
 
             <DashboardHeader 
               title={bond.issuer}
-              description={`ISIN: ${bond.isin} • ${bond.sector} • ${bond.country}`}
+              description={`${t('dashboard.instrument_desc')} ${bond.isin} • ${bond.sector} • ${bond.country}`}
             />
           </View>
 

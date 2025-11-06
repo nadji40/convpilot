@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text } from 'react-native';
 import { useNavigate } from 'react-router-dom';
 import { darkColors, lightColors, typography } from '../../theme';
-import { useTheme, useSidebar } from '../../contexts/AppContext';
+import { useTheme, useSidebar, useLanguage } from '../../contexts/AppContext';
 import { DashboardHeader } from '../../components/DashboardHeader';
 import { SearchBar } from '../../components/SearchBar';
 import { FilterPanel } from '../../components/FilterPanel';
@@ -23,6 +23,7 @@ import {
 export const Universe: React.FC = () => {
   const { isDark } = useTheme();
   const { isCollapsed } = useSidebar();
+  const { t } = useLanguage();
   const colors = isDark ? darkColors : lightColors;
   const navigate = useNavigate();
 
@@ -240,8 +241,8 @@ export const Universe: React.FC = () => {
         <View style={{ gap: 24, paddingBottom: 40 }}>
           {/* Header */}
           <DashboardHeader 
-            title="Convertible Bonds Universe"
-            description={`${filteredData.length} of ${mockConvertibleBonds.length} bonds`}
+            title={t('dashboard.universe')}
+            description={`${filteredData.length} ${t('of')} ${mockConvertibleBonds.length} ${t('dashboard.universe_desc')}`}
           />
 
           {/* Export Button Section */}
@@ -281,7 +282,7 @@ export const Universe: React.FC = () => {
                   strokeLinejoin="round"
                 />
               </svg>
-              Export CSV
+              {t('button.export_csv')}
             </button>
           </View>
 

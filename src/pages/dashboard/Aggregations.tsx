@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text } from 'react-native';
 import { darkColors, lightColors, typography } from '../../theme';
-import { useTheme, useSidebar } from '../../contexts/AppContext';
+import { useTheme, useSidebar, useLanguage } from '../../contexts/AppContext';
 import { DashboardHeader } from '../../components/DashboardHeader';
 import { AnimatedCard } from '../../components/AnimatedCard';
 import { CrossFilterChart } from '../../components/CrossFilterChart';
@@ -24,6 +24,7 @@ type SecondaryDimension = 'sector' | 'rating' | 'size' | 'profile' | 'maturity';
 export const Aggregations: React.FC = () => {
   const { isDark } = useTheme();
   const { isCollapsed } = useSidebar();
+  const { t } = useLanguage();
   const colors = isDark ? darkColors : lightColors;
 
   const [primaryDimension, setPrimaryDimension] = useState<PrimaryDimension>('sector');
@@ -116,8 +117,8 @@ export const Aggregations: React.FC = () => {
         <View style={{ gap: 32, paddingBottom: 40 }}>
           {/* Header */}
           <DashboardHeader 
-            title="Cross-Filter Aggregations"
-            description="Analyze market breakdown across multiple dimensions"
+            title={t('dashboard.aggregations')}
+            description={t('dashboard.aggregations_desc')}
           />
 
           {/* Dimension Selectors */}
