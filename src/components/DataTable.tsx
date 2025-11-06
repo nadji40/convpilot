@@ -110,8 +110,8 @@ export function DataTable<T extends { [key: string]: any }>({
       {/* Table Body */}
       <ScrollView style={{ maxHeight: 600 }}>
         {loading ? (
-          <View style={{ padding: 40, alignItems: 'center' }}>
-            <Text style={{ color: colors.textSecondary }}>Loading...</Text>
+          <View style={{ padding: 60, alignItems: 'center', justifyContent: 'center' }}>
+            <div className="loader" />
           </View>
         ) : data.length === 0 ? (
           <View style={{ padding: 40, alignItems: 'center' }}>

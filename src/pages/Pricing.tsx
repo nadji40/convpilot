@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { PageLoader } from '../components/PageLoader';
 
 export function Pricing() {
   useEffect(() => {
@@ -6,6 +7,6 @@ export function Pricing() {
     window.location.href = '/pricing.html';
   }, []);
 
-  return <div>Loading...</div>;
+  return <PageLoader />;
 }
 

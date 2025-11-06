@@ -198,16 +198,7 @@ export function Sidebar({ children }: SidebarProps) {
           collapsed={isCollapsed}
           onClick={() => navigate('/dashboard/portfolio')}
         />
-        <SidebarItem 
-          icon={<StarIcon size={20} color={iconColor} />} 
-          label="Favorites" 
-          collapsed={isCollapsed}
-        />
-        <SidebarItem 
-          icon={<TargetIcon size={20} color={iconColor} />} 
-          label="Simulations" 
-          collapsed={isCollapsed}
-        />
+
       </View>
 
 

@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { PageLoader } from '../components/PageLoader';
 
 export function Contact() {
   useEffect(() => {
@@ -6,6 +7,6 @@ export function Contact() {
     window.location.href = '/contact.html';
   }, []);
 
-  return <div>Loading...</div>;
+  return <PageLoader />;
 }
 

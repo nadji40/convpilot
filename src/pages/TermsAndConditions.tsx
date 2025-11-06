@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { PageLoader } from '../components/PageLoader';
 
 export function TermsAndConditions() {
   useEffect(() => {
@@ -6,6 +7,6 @@ export function TermsAndConditions() {
     window.location.href = '/terms-and-conditions.html';
   }, []);
 
-  return <div>Loading...</div>;
+  return <PageLoader />;
 }
 

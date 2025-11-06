@@ -26,7 +26,7 @@ export const Landing: React.FC = () => {
       color: '#fff',
       fontFamily: 'Playfair Display, serif'
     }}>
-      <p>Loading...</p>
+      
     </div>
   );
 };

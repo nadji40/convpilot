@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { PageLoader } from '../components/PageLoader';
 
 export function Platform() {
   useEffect(() => {
@@ -6,6 +7,6 @@ export function Platform() {
     window.location.href = '/platform.html';
   }, []);
 
-  return <div>Loading...</div>;
+  return <PageLoader />;
 }
 

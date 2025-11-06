@@ -10,6 +10,7 @@ export const LanguageToggle: React.FC = () => {
   const thumbRef = useRef<HTMLDivElement>(null);
   const enRef = useRef<HTMLSpanElement>(null);
   const frRef = useRef<HTMLSpanElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
 
   const updateSliderState = () => {
     if (thumbRef.current && enRef.current && frRef.current) {
@@ -29,9 +30,21 @@ export const LanguageToggle: React.FC = () => {
     }
   };
 
+  // Update slider state when language or theme changes
   useEffect(() => {
     updateSliderState();
-  }, [language]);
+    
+    // Update track background based on theme
+    if (trackRef.current) {
+      if (isDark) {
+        trackRef.current.style.background = 'linear-gradient(135deg, rgba(31, 35, 39, 0.9), rgba(15, 18, 21, 0.95))';
+        trackRef.current.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+      } else {
+        trackRef.current.style.background = 'linear-gradient(135deg, rgba(241, 243, 244, 0.9), rgba(255, 255, 255, 0.95))';
+        trackRef.current.style.borderColor = 'rgba(0, 0, 0, 0.1)';
+      }
+    }
+  }, [language, isDark]);
 
   const handleSliderClick = (event: any) => {
     const sliderWidth = event.currentTarget.offsetWidth;
@@ -40,6 +53,11 @@ export const LanguageToggle: React.FC = () => {
     
     if (newLang !== language) {
       setLanguage(newLang);
+      
+      // Store language preference
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('convpilot-language', newLang);
+      }
     }
   };
 
@@ -50,26 +68,45 @@ export const LanguageToggle: React.FC = () => {
         onClick={handleSliderClick}
         style={{ cursor: 'pointer' }}
       >
-        <div className="lang-slider-track">
+        <div 
+          ref={trackRef}
+          className="lang-slider-track"
+          style={{
+            background: isDark 
+              ? 'linear-gradient(135deg, rgba(31, 35, 39, 0.9), rgba(15, 18, 21, 0.95))'
+              : 'linear-gradient(135deg, rgba(241, 243, 244, 0.9), rgba(255, 255, 255, 0.95))',
+            borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+          }}
+        >
           <div 
             ref={thumbRef}
-            className="lang-slider-thumb" 
+            className={`lang-slider-thumb ${language === 'fr' ? 'active' : ''}`}
             id="lang-slider-thumb"
           />
           <div className="lang-options">
             <span 
               ref={enRef}
-              className="lang-option active" 
+              className={`lang-option ${language === 'en' ? 'active' : 'inactive'}`}
               data-lang="en" 
               id="lang-en"
+              style={{
+                color: language === 'en' 
+                  ? (isDark ? '#ffffff' : '#0a0a0a')
+                  : '#0a7cff',
+              }}
             >
               EN
             </span>
             <span 
               ref={frRef}
-              className="lang-option" 
+              className={`lang-option ${language === 'fr' ? 'active' : 'inactive'}`}
               data-lang="fr" 
               id="lang-fr"
+              style={{
+                color: language === 'fr' 
+                  ? (isDark ? '#ffffff' : '#0a0a0a')
+                  : '#0a7cff',
+              }}
             >
               FR
             </span>
