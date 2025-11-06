@@ -110,63 +110,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
 
         {/* Settings Sections */}
         <View style={{ gap: 24 }}>
-          {/* Appearance */}
-          <View style={{ gap: 12 }}>
-            <Text
-              style={{
-                color: colors.textMuted,
-                fontSize: parseInt(typography.fontSize.small),
-                fontWeight: '600',
-                textTransform: 'uppercase',
-                letterSpacing: 1.2,
-                fontFamily: typography.fontFamily.body,
-              }}
-            >
-              Appearance
-            </Text>
-            <View
-              style={{
-                padding: 16,
-                backgroundColor: colors.surface,
-                borderRadius: parseInt(colors.borderRadius.medium),
-                borderWidth: 1,
-                borderColor: colors.border,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                {isDark ? (
-                  <MoonIcon size={20} color={colors.accent} />
-                ) : (
-                  <SunIcon size={20} color={colors.accentCyan} />
-                )}
-                <View>
-                  <Text
-                    style={{
-                      color: colors.textPrimary,
-                      fontSize: parseInt(typography.fontSize.default),
-                      fontWeight: '500',
-                      fontFamily: typography.fontFamily.body,
-                    }}
-                  >
-                    Dark Mode
-                  </Text>
-                  <Text
-                    style={{
-                      color: colors.textSecondary,
-                      fontSize: parseInt(typography.fontSize.small),
-                      fontFamily: typography.fontFamily.body,
-                    }}
-                  >
-                    {isDark ? 'Currently enabled' : 'Currently disabled'}
-                  </Text>
-                </View>
-              </View>
-              <ToggleSwitch value={isDark} onToggle={toggleTheme} />
-            </View>
-          </View>
+         
 
           {/* Notifications */}
           <View style={{ gap: 12 }}>

@@ -150,7 +150,24 @@ export const useLanguage = () => {
 };
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const [language, setLanguage] = useState<Language>('en');
+  const [language, setLanguageState] = useState<Language>(() => {
+    // Load language from localStorage on initialization
+    if (typeof localStorage !== 'undefined') {
+      const savedLang = localStorage.getItem('convpilot-language');
+      if (savedLang === 'en' || savedLang === 'fr') {
+        return savedLang;
+      }
+    }
+    return 'en';
+  });
+
+  const setLanguage = (lang: Language) => {
+    setLanguageState(lang);
+    // Save to localStorage
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('convpilot-language', lang);
+    }
+  };
 
   const t = (key: string): string => {
     return translations[language][key as keyof typeof translations['en']] || key;

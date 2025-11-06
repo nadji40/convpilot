@@ -53,11 +53,6 @@ export const LanguageToggle: React.FC = () => {
     
     if (newLang !== language) {
       setLanguage(newLang);
-      
-      // Store language preference
-      if (typeof localStorage !== 'undefined') {
-        localStorage.setItem('convpilot-language', newLang);
-      }
     }
   };
 
