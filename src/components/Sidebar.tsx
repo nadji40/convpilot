@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { darkColors, lightColors, typography } from '../theme';
-import { useTheme, useLanguage, useSidebar } from '../contexts/AppContext';
+import { useTheme, useSidebar } from '../contexts/AppContext';
 import {
   OverviewIcon,
   ChartIcon,
@@ -10,9 +10,6 @@ import {
   StarIcon,
   PerformanceIcon,
   TargetIcon,
-  MessageIcon,
-  SettingsIcon,
-  HelpIcon,
   MenuIcon,
   CloseIcon,
   MoonIcon,
@@ -84,7 +81,6 @@ interface SidebarProps {
 
 export function Sidebar({ children }: SidebarProps) {
   const { isDark, toggleTheme } = useTheme();
-  const { t, language, setLanguage } = useLanguage();
   const { isCollapsed, toggleSidebar } = useSidebar();
   const colors = isDark ? darkColors : lightColors;
   const location = useLocation();
@@ -171,7 +167,7 @@ export function Sidebar({ children }: SidebarProps) {
             marginBottom: 8,
             fontFamily: typography.fontFamily.body,
           }}>
-            {t('nav.navigation') || 'NAVIGATION'}
+            NAVIGATION
           </Text>
         )}
         <SidebarItem 
@@ -204,7 +200,7 @@ export function Sidebar({ children }: SidebarProps) {
         />
         <SidebarItem 
           icon={<StarIcon size={20} color={iconColor} />} 
-          label={t('nav.favorites')} 
+          label="Favorites" 
           collapsed={isCollapsed}
         />
         <SidebarItem 
@@ -214,102 +210,6 @@ export function Sidebar({ children }: SidebarProps) {
         />
       </View>
 
-      {/* Account Section */}
-      <View style={{ gap: 6 }}>
-        {!isCollapsed && (
-          <Text style={{
-            color: colors.textMuted,
-            fontSize: parseInt(typography.fontSize.xsmall),
-            fontWeight: '600',
-            textTransform: 'uppercase',
-            letterSpacing: 1.2,
-            marginBottom: 8,
-            fontFamily: typography.fontFamily.body,
-          }}>
-            ACCOUNT
-          </Text>
-        )}
-        <SidebarItem 
-          icon={<MessageIcon size={20} color={iconColor} />} 
-          label={t('account.messages')} 
-          collapsed={isCollapsed}
-        />
-        <SidebarItem 
-          icon={<SettingsIcon size={20} color={iconColor} />} 
-          label={t('account.settings')} 
-          collapsed={isCollapsed}
-        />
-        <SidebarItem 
-          icon={<HelpIcon size={20} color={iconColor} />} 
-          label={t('account.help')} 
-          collapsed={isCollapsed}
-        />
-      </View>
-
-      {/* Language & Currency Selectors */}
-      {!isCollapsed && (
-        <View style={{ gap: 12 }}>
-          {/* Language Selector */}
-          <TouchableOpacity
-            onPress={() => setLanguage(language === 'en' ? 'fr' : 'en')}
-            style={{
-              backgroundColor: colors.surfaceCard,
-              borderColor: colors.border,
-              borderWidth: 1,
-              borderRadius: parseInt(colors.borderRadius.medium),
-              padding: 14,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              transition: 'all 0.3s ease',
-            }}
-          >
-            <Text style={{ 
-              color: colors.textPrimary, 
-              fontSize: parseInt(typography.fontSize.default), 
-              fontWeight: '500', 
-              fontFamily: typography.fontFamily.body 
-            }}>
-              {language === 'en' ? 'EN' : 'FR'}
-            </Text>
-            <Text style={{ 
-              color: colors.textMuted, 
-              fontSize: parseInt(typography.fontSize.small),
-              fontFamily: typography.fontFamily.body 
-            }}>
-              {language === 'en' ? 'English' : 'Français'}
-            </Text>
-          </TouchableOpacity>
-
-          {/* Currency Selector */}
-          <View style={{
-            backgroundColor: colors.surfaceCard,
-            borderColor: colors.border,
-            borderWidth: 1,
-            borderRadius: parseInt(colors.borderRadius.medium),
-            padding: 14,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}>
-            <Text style={{ 
-              color: colors.textPrimary, 
-              fontSize: parseInt(typography.fontSize.default), 
-              fontWeight: '500', 
-              fontFamily: typography.fontFamily.body 
-            }}>
-              USD
-            </Text>
-            <Text style={{ 
-              color: colors.textMuted, 
-              fontSize: parseInt(typography.fontSize.small),
-              fontFamily: typography.fontFamily.body 
-            }}>
-              {t('currency.us_dollar')}
-            </Text>
-          </View>
-        </View>
-      )}
 
       {/* Dark Mode Toggle */}
       <View style={{

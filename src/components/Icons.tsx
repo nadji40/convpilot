@@ -138,7 +138,21 @@ export const SunIcon = ({ size = 20, color = colors.textSecondary }: IconProps) 
   </View>
 );
 
+export const UserIcon = ({ size = 20, color = colors.textSecondary }: IconProps) => (
+  <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" 
+            stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx="12" cy="7" r="4" stroke={color} strokeWidth="2" fill="none"/>
+    </svg>
+  </View>
+);
 
-
-
+export const ChevronDownIcon = ({ size = 20, color = colors.textSecondary }: IconProps) => (
+  <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <polyline points="6,9 12,15 18,9" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  </View>
+);
 

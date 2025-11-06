@@ -3,6 +3,7 @@ import { View, Text } from 'react-native';
 import { useNavigate } from 'react-router-dom';
 import { darkColors, lightColors, typography } from '../../theme';
 import { useTheme, useSidebar } from '../../contexts/AppContext';
+import { DashboardHeader } from '../../components/DashboardHeader';
 import { SearchBar } from '../../components/SearchBar';
 import { FilterPanel } from '../../components/FilterPanel';
 import { DataTable, Column } from '../../components/DataTable';
@@ -238,30 +239,13 @@ export const Universe: React.FC = () => {
       >
         <View style={{ gap: 24, paddingBottom: 40 }}>
           {/* Header */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <View style={{ gap: 8 }}>
-              <Text
-                style={{
-                  color: colors.textPrimary,
-                  fontSize: parseInt(typography.fontSize.h2),
-                  fontWeight: '700',
-                  fontFamily: typography.fontFamily.heading,
-                  animation: 'fadeInUp 0.6s ease-out',
-                }}
-              >
-                Convertible Bonds Universe
-              </Text>
-              <Text
-                style={{
-                  color: colors.textSecondary,
-                  fontSize: parseInt(typography.fontSize.default),
-                  fontFamily: typography.fontFamily.body,
-                }}
-              >
-                {filteredData.length} of {mockConvertibleBonds.length} bonds
-              </Text>
-            </View>
+          <DashboardHeader 
+            title="Convertible Bonds Universe"
+            description={`${filteredData.length} of ${mockConvertibleBonds.length} bonds`}
+          />
 
+          {/* Export Button Section */}
+          <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
             <button
               onClick={handleExport}
               style={{

@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { useParams, useNavigate } from 'react-router-dom';
 import { darkColors, lightColors, typography } from '../../theme';
 import { useTheme, useSidebar } from '../../contexts/AppContext';
+import { DashboardHeader } from '../../components/DashboardHeader';
 import { AnimatedCard } from '../../components/AnimatedCard';
 import { KPICard } from '../../components/KPICard';
 import { mockConvertibleBonds, generateHistoricalData } from '../../data/mockData';
@@ -128,7 +129,7 @@ export const Instrument: React.FC = () => {
         }}
       >
         <View style={{ gap: 32, paddingBottom: 40 }}>
-          {/* Header */}
+          {/* Header with Back Button */}
           <View style={{ gap: 16 }}>
             <TouchableOpacity
               onPress={() => navigate('/dashboard/universe')}
@@ -159,29 +160,10 @@ export const Instrument: React.FC = () => {
               </Text>
             </TouchableOpacity>
 
-            <View>
-              <Text
-                style={{
-                  color: colors.textPrimary,
-                  fontSize: parseInt(typography.fontSize.h2),
-                  fontWeight: '700',
-                  fontFamily: typography.fontFamily.heading,
-                  animation: 'fadeInUp 0.6s ease-out',
-                }}
-              >
-                {bond.issuer}
-              </Text>
-              <Text
-                style={{
-                  color: colors.textSecondary,
-                  fontSize: parseInt(typography.fontSize.large),
-                  fontFamily: typography.fontFamily.body,
-                  marginTop: 8,
-                }}
-              >
-                ISIN: {bond.isin} • {bond.sector} • {bond.country}
-              </Text>
-            </View>
+            <DashboardHeader 
+              title={bond.issuer}
+              description={`ISIN: ${bond.isin} • ${bond.sector} • ${bond.country}`}
+            />
           </View>
 
           {/* Main KPIs */}

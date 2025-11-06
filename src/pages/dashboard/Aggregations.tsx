@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text } from 'react-native';
 import { darkColors, lightColors, typography } from '../../theme';
 import { useTheme, useSidebar } from '../../contexts/AppContext';
+import { DashboardHeader } from '../../components/DashboardHeader';
 import { AnimatedCard } from '../../components/AnimatedCard';
 import { CrossFilterChart } from '../../components/CrossFilterChart';
 import { mockConvertibleBonds } from '../../data/mockData';
@@ -114,28 +115,10 @@ export const Aggregations: React.FC = () => {
       >
         <View style={{ gap: 32, paddingBottom: 40 }}>
           {/* Header */}
-          <View style={{ gap: 8 }}>
-            <Text
-              style={{
-                color: colors.textPrimary,
-                fontSize: parseInt(typography.fontSize.h2),
-                fontWeight: '700',
-                fontFamily: typography.fontFamily.heading,
-                animation: 'fadeInUp 0.6s ease-out',
-              }}
-            >
-              Cross-Filter Aggregations
-            </Text>
-            <Text
-              style={{
-                color: colors.textSecondary,
-                fontSize: parseInt(typography.fontSize.default),
-                fontFamily: typography.fontFamily.body,
-              }}
-            >
-              Analyze market breakdown across multiple dimensions
-            </Text>
-          </View>
+          <DashboardHeader 
+            title="Cross-Filter Aggregations"
+            description="Analyze market breakdown across multiple dimensions"
+          />
 
           {/* Dimension Selectors */}
           <AnimatedCard delay={0.2} enableHover={false}>

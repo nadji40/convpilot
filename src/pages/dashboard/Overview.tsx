@@ -5,6 +5,7 @@ import { useTheme, useSidebar } from '../../contexts/AppContext';
 import { KPICard } from '../../components/KPICard';
 import { AnimatedCard } from '../../components/AnimatedCard';
 import { WidgetContainer } from '../../components/WidgetContainer';
+import { DashboardHeader } from '../../components/DashboardHeader';
 import { 
   mockConvertibleBonds, 
   calculateMarketSummary,
@@ -78,31 +79,10 @@ export const Overview: React.FC = () => {
           contentContainerStyle={{ gap: 32, paddingBottom: 40 }}
         >
           {/* Header */}
-          <View style={{ gap: 8 }}>
-            <Text
-              style={{
-                color: colors.textPrimary,
-                fontSize: parseInt(typography.fontSize.h2),
-                fontWeight: '700',
-                fontFamily: typography.fontFamily.heading,
-                animation: 'fadeInUp 0.6s ease-out',
-              }}
-            >
-              Dashboard Overview
-            </Text>
-            <Text
-              style={{
-                color: colors.textSecondary,
-                fontSize: parseInt(typography.fontSize.default),
-                fontFamily: typography.fontFamily.body,
-                animation: 'fadeInUp 0.6s ease-out 0.1s',
-                opacity: 0,
-                animationFillMode: 'forwards',
-              }}
-            >
-              Real-time insights into the convertible bonds market
-            </Text>
-          </View>
+          <DashboardHeader 
+            title="Dashboard Overview"
+            description="Real-time insights into the convertible bonds market"
+          />
 
           {/* KPI Cards */}
           <WidgetContainer id="overview-kpis" storageKey="overviewWidgets">

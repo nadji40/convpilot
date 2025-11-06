@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text } from 'react-native';
 import { darkColors, lightColors, typography } from '../../theme';
 import { useTheme, useSidebar } from '../../contexts/AppContext';
+import { DashboardHeader } from '../../components/DashboardHeader';
 import { AnimatedCard } from '../../components/AnimatedCard';
 import { KPICard } from '../../components/KPICard';
 import { mockConvertibleBonds, ConvertibleBond } from '../../data/mockData';
@@ -196,28 +197,10 @@ export const Portfolio: React.FC = () => {
       >
         <View style={{ gap: 32, paddingBottom: 40 }}>
           {/* Header */}
-          <View style={{ gap: 8 }}>
-            <Text
-              style={{
-                color: colors.textPrimary,
-                fontSize: parseInt(typography.fontSize.h2),
-                fontWeight: '700',
-                fontFamily: typography.fontFamily.heading,
-                animation: 'fadeInUp 0.6s ease-out',
-              }}
-            >
-              Portfolio Analysis
-            </Text>
-            <Text
-              style={{
-                color: colors.textSecondary,
-                fontSize: parseInt(typography.fontSize.default),
-                fontFamily: typography.fontFamily.body,
-              }}
-            >
-              {portfolioBonds.length} bonds selected • Total market cap: {formatLargeNumber(portfolioMetrics.totalMarketCap)}
-            </Text>
-          </View>
+          <DashboardHeader 
+            title="Portfolio Analysis"
+            description={`${portfolioBonds.length} bonds selected • Total market cap: ${formatLargeNumber(portfolioMetrics.totalMarketCap)}`}
+          />
 
           {/* Portfolio KPIs */}
           <View
