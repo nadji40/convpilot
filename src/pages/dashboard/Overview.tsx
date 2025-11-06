@@ -95,36 +95,36 @@ export const Overview: React.FC = () => {
               }}
             >
               <KPICard
-                title="Total Convertible Bonds"
+                title={t('kpi.total_convertible_bonds')}
                 value={marketSummary.totalCBs}
                 format="number"
                 delay={getStaggerDelay(0)}
               />
               <KPICard
-                title="Total Market Cap"
+                title={t('kpi.total_market_cap')}
                 value={formatLargeNumber(marketSummary.totalMarketCap)}
                 subtitle="EUR"
                 delay={getStaggerDelay(1)}
               />
               <KPICard
-                title="Average Yield"
+                title={t('kpi.average_yield')}
                 value={marketSummary.avgYield.toFixed(2) + '%'}
                 trend={marketSummary.avg1DChange}
-                subtitle="YTM"
+                subtitle={t('kpi.ytm')}
                 delay={getStaggerDelay(2)}
               />
               <KPICard
-                title="Average 1D Change"
+                title={t('kpi.average_1d_change')}
                 value={formatPercentage(marketSummary.avg1DChange)}
                 trend={marketSummary.avg1DChange}
-                subtitle="vs yesterday"
+                subtitle={t('kpi.vs_yesterday')}
                 delay={getStaggerDelay(3)}
               />
             </View>
           </WidgetContainer>
 
           {/* Market Index Performance */}
-          <WidgetContainer id="overview-market-index" title="Market Index Performance" storageKey="overviewWidgets">
+          <WidgetContainer id="overview-market-index" title={t('widget.market_index_performance')} storageKey="overviewWidgets">
             <AnimatedCard delay={0.4} enableHover={false}>
               <View style={{ gap: 16 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -135,7 +135,7 @@ export const Overview: React.FC = () => {
                       fontFamily: typography.fontFamily.body,
                     }}
                   >
-                    Last 30 days performance trend
+                    {t('widget.last_30_days')}
                   </Text>
                   <View style={{ flexDirection: 'row', gap: 16 }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
@@ -148,7 +148,7 @@ export const Overview: React.FC = () => {
                         }}
                       />
                       <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.xsmall) }}>
-                        CB Index
+                        {t('legend.cb_index')}
                       </Text>
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
@@ -161,7 +161,7 @@ export const Overview: React.FC = () => {
                         }}
                       />
                       <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.xsmall) }}>
-                        Equity Index
+                        {t('legend.equity_index')}
                       </Text>
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
@@ -174,7 +174,7 @@ export const Overview: React.FC = () => {
                         }}
                       />
                       <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.xsmall) }}>
-                        Delta Neutral
+                        {t('legend.delta_neutral')}
                       </Text>
                     </View>
                   </View>
@@ -241,7 +241,7 @@ export const Overview: React.FC = () => {
             }}
           >
             {/* Sector Breakdown */}
-            <WidgetContainer id="overview-sector" title="Sector Breakdown" storageKey="overviewWidgets">
+            <WidgetContainer id="overview-sector" title={t('widget.sector_breakdown')} storageKey="overviewWidgets">
               <AnimatedCard delay={0.5} enableHover={false}>
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
@@ -272,7 +272,7 @@ export const Overview: React.FC = () => {
             </WidgetContainer>
 
             {/* Rating Breakdown */}
-            <WidgetContainer id="overview-rating" title="Credit Rating Breakdown" storageKey="overviewWidgets">
+            <WidgetContainer id="overview-rating" title={t('widget.credit_rating_breakdown')} storageKey="overviewWidgets">
               <AnimatedCard delay={0.6} enableHover={false}>
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
@@ -305,7 +305,7 @@ export const Overview: React.FC = () => {
             </WidgetContainer>
 
             {/* Maturity Breakdown */}
-            <WidgetContainer id="overview-maturity" title="Maturity Breakdown" storageKey="overviewWidgets">
+            <WidgetContainer id="overview-maturity" title={t('widget.maturity_breakdown')} storageKey="overviewWidgets">
               <AnimatedCard delay={0.7} enableHover={false}>
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
@@ -336,7 +336,7 @@ export const Overview: React.FC = () => {
             </WidgetContainer>
 
             {/* Profile Breakdown */}
-            <WidgetContainer id="overview-profile" title="Profile Breakdown" storageKey="overviewWidgets">
+            <WidgetContainer id="overview-profile" title={t('widget.profile_breakdown')} storageKey="overviewWidgets">
               <AnimatedCard delay={0.8} enableHover={false}>
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>

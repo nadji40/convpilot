@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { darkColors, lightColors, typography } from '../theme';
-import { useTheme, useSidebar } from '../contexts/AppContext';
+import { useTheme, useSidebar, useLanguage } from '../contexts/AppContext';
 import {
   OverviewIcon,
   ChartIcon,
@@ -82,6 +82,7 @@ interface SidebarProps {
 export function Sidebar({ children }: SidebarProps) {
   const { isDark, toggleTheme } = useTheme();
   const { isCollapsed, toggleSidebar } = useSidebar();
+  const { t } = useLanguage();
   const colors = isDark ? darkColors : lightColors;
   const location = useLocation();
   const navigate = useNavigate();
@@ -167,38 +168,38 @@ export function Sidebar({ children }: SidebarProps) {
             marginBottom: 8,
             fontFamily: typography.fontFamily.body,
           }}>
-            NAVIGATION
+            {t('nav.navigation')}
           </Text>
         )}
         <SidebarItem 
           icon={<OverviewIcon size={20} color={isActive('/dashboard') ? activeIconColor : iconColor} />} 
-          label="Overview" 
+          label={t('nav.overview')}
           active={isActive('/dashboard')}
           collapsed={isCollapsed}
           onClick={() => navigate('/dashboard')}
         />
         <SidebarItem 
           icon={<ChartIcon size={20} color={isActive('/dashboard/universe') ? activeIconColor : iconColor} />} 
-          label="CB Universe" 
+          label={t('nav.cb_universe')}
           active={isActive('/dashboard/universe')}
           collapsed={isCollapsed}
           onClick={() => navigate('/dashboard/universe')}
         />
         <SidebarItem 
           icon={<ReportIcon size={20} color={isActive('/dashboard/aggregations') ? activeIconColor : iconColor} />} 
-          label="Aggregations" 
+          label={t('nav.aggregations')}
           active={isActive('/dashboard/aggregations')}
           collapsed={isCollapsed}
           onClick={() => navigate('/dashboard/aggregations')}
         />
         <SidebarItem 
           icon={<PerformanceIcon size={20} color={isActive('/dashboard/portfolio') ? activeIconColor : iconColor} />} 
-          label="Portfolio" 
+          label={t('nav.portfolio')}
           active={isActive('/dashboard/portfolio')}
           collapsed={isCollapsed}
           onClick={() => navigate('/dashboard/portfolio')}
         />
-
+ 
       </View>
 
 
