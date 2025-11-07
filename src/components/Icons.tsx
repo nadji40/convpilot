@@ -156,3 +156,19 @@ export const ChevronDownIcon = ({ size = 20, color = colors.textSecondary }: Ico
   </View>
 );
 
+export const RobotIcon = ({ size = 20, color = colors.textSecondary }: IconProps) => (
+  <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      {/* Robot head */}
+      <rect x="5" y="9" width="14" height="11" rx="2" stroke={color} strokeWidth="2" fill="none"/>
+      {/* Robot antenna */}
+      <path d="M12 9V6M12 6L10 4M12 6L14 4" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      {/* Robot eyes */}
+      <circle cx="9" cy="13" r="1.5" fill={color}/>
+      <circle cx="15" cy="13" r="1.5" fill={color}/>
+      {/* Robot mouth */}
+      <path d="M9 17h6" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  </View>
+);
+

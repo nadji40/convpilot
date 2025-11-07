@@ -123,13 +123,22 @@ export const Instrument: React.FC = () => {
         style={{
           flex: 1,
           marginLeft: isCollapsed ? 80 : 280,
-          padding: 24,
           height: '100vh',
           overflow: 'auto' as any,
           backgroundColor: colors.background,
         }}
       >
-        <View style={{ gap: 32, paddingBottom: 40 }}>
+        {/* Fixed Header */}
+        <View
+          style={{
+            position: 'sticky' as any,
+            top: 0,
+            zIndex: 10,
+            backgroundColor: colors.background,
+            paddingHorizontal: 24,
+            paddingTop: 24,
+          }}
+        >
           {/* Header with Back Button */}
           <View style={{ gap: 16 }}>
             <TouchableOpacity
@@ -166,6 +175,9 @@ export const Instrument: React.FC = () => {
               description={`${t('dashboard.instrument_desc')} ${bond.isin} • ${bond.sector} • ${bond.country}`}
             />
           </View>
+        </View>
+
+        <View style={{ gap: 32, paddingBottom: 40, paddingHorizontal: 24 }}>
 
           {/* Main KPIs */}
           <View
@@ -176,22 +188,22 @@ export const Instrument: React.FC = () => {
             }}
           >
             <KPICard
-              title="Price"
+              title={t('kpi.price')}
               value={bond.price.toFixed(2)}
               delay={getStaggerDelay(0)}
             />
             <KPICard
-              title="Fair Value"
+              title={t('kpi.fair_value')}
               value={bond.fairValue.toFixed(2)}
               delay={getStaggerDelay(1)}
             />
             <KPICard
-              title="Delta"
+              title={t('kpi.delta')}
               value={bond.delta.toFixed(3)}
               delay={getStaggerDelay(2)}
             />
             <KPICard
-              title="Performance 1M"
+              title={t('kpi.performance_1m')}
               value={formatPercentage(bond.performance1M)}
               trend={bond.performance1M}
               delay={getStaggerDelay(3)}

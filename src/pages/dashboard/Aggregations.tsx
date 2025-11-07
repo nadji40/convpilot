@@ -108,18 +108,29 @@ export const Aggregations: React.FC = () => {
         style={{
           flex: 1,
           marginLeft: isCollapsed ? 80 : 280,
-          padding: 24,
           height: '100vh',
           overflow: 'auto' as any,
           backgroundColor: colors.background,
         }}
       >
-        <View style={{ gap: 32, paddingBottom: 40 }}>
-          {/* Header */}
+        {/* Fixed Header */}
+        <View
+          style={{
+            position: 'sticky' as any,
+            top: 0,
+            zIndex: 10,
+            backgroundColor: colors.background,
+            paddingHorizontal: 24,
+            paddingTop: 24,
+          }}
+        >
           <DashboardHeader 
             title={t('dashboard.aggregations')}
             description={t('dashboard.aggregations_desc')}
           />
+        </View>
+
+        <View style={{ gap: 32, paddingBottom: 40, paddingHorizontal: 24 }}>
 
           {/* Dimension Selectors */}
           <AnimatedCard delay={0.2} enableHover={false}>
@@ -134,7 +145,7 @@ export const Aggregations: React.FC = () => {
                       fontFamily: typography.fontFamily.body,
                     }}
                   >
-                    Primary Dimension
+                    {t('dimension.primary')}
                   </Text>
                   <select
                     value={primaryDimension}
@@ -168,7 +179,7 @@ export const Aggregations: React.FC = () => {
                       fontFamily: typography.fontFamily.body,
                     }}
                   >
-                    Secondary Dimension (Cross-Filter)
+                    {t('dimension.secondary_cross_filter')}
                   </Text>
                   <select
                     value={secondaryDimension}

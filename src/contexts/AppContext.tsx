@@ -108,6 +108,8 @@ const translations = {
     'kpi.weighted_delta': 'Weighted Delta',
     'kpi.weighted_ytm': 'Weighted YTM',
     'kpi.1m_performance': '1M Performance',
+    'kpi.avg_performance_1m': 'Avg Performance 1M',
+    'kpi.performance_1m': 'Performance 1M',
     
     // Charts & Widgets
     'widget.market_index_performance': 'Market Index Performance',
@@ -154,6 +156,7 @@ const translations = {
     // Dimension Labels
     'dimension.primary': 'Primary Dimension',
     'dimension.secondary': 'Secondary Dimension',
+    'dimension.secondary_cross_filter': 'Secondary Dimension (Cross-Filter)',
     'dimension.sector': 'Sector',
     'dimension.rating': 'Credit Rating',
     'dimension.size': 'Market Cap Size',
@@ -162,6 +165,10 @@ const translations = {
     
     // Other
     'currency.us_dollar': 'EUR',
+    'search.placeholder': 'Search by ISIN, issuer, or country...',
+    'portfolio.select_bonds': 'Select bonds to include in your portfolio analysis',
+    'chart.primary_dimension': 'Primary Dimension Chart',
+    'chart.secondary_dimension': 'Secondary Dimension Chart',
     'dark_mode': 'Dark Mode',
     'light_mode': 'Light Mode',
     'of': 'of',
