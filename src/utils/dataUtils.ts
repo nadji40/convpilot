@@ -124,13 +124,39 @@ export const formatLargeNumber = (value: number): string => {
 };
 
 // Format percentage
-export const formatPercentage = (value: number, decimals: number = 2): string => {
-  return `${value >= 0 ? '+' : ''}${value.toFixed(decimals)}%`;
+export const formatPercentage = (value: number | string | undefined | null, decimals: number = 2): string => {
+  // Handle undefined, null, or non-numeric values
+  if (value === undefined || value === null || value === '') {
+    return '0.00%';
+  }
+  
+  // Convert to number if it's a string
+  const numValue = typeof value === 'string' ? parseFloat(value) : value;
+  
+  // Check if the conversion resulted in a valid number
+  if (isNaN(numValue)) {
+    return '0.00%';
+  }
+  
+  return `${numValue >= 0 ? '+' : ''}${numValue.toFixed(decimals)}%`;
 };
 
 // Format number with decimals
-export const formatNumber = (value: number, decimals: number = 2): string => {
-  return value.toFixed(decimals);
+export const formatNumber = (value: number | string | undefined | null, decimals: number = 2): string => {
+  // Handle undefined, null, or non-numeric values
+  if (value === undefined || value === null || value === '') {
+    return '0.00';
+  }
+  
+  // Convert to number if it's a string
+  const numValue = typeof value === 'string' ? parseFloat(value) : value;
+  
+  // Check if the conversion resulted in a valid number
+  if (isNaN(numValue)) {
+    return '0.00';
+  }
+  
+  return numValue.toFixed(decimals);
 };
 
 // Export data to CSV
