@@ -14,6 +14,7 @@ import {
   CloseIcon,
   MoonIcon,
   SunIcon,
+  TrendingUpIcon,
 } from './Icons';
 
 interface SidebarItemProps {
@@ -198,6 +199,13 @@ export function Sidebar({ children }: SidebarProps) {
           active={isActive('/dashboard/portfolio')}
           collapsed={isCollapsed}
           onClick={() => navigate('/dashboard/portfolio')}
+        />
+        <SidebarItem 
+          icon={<TrendingUpIcon size={20} color={isActive('/dashboard/performance') ? activeIconColor : iconColor} />} 
+          label={t('nav.performance')}
+          active={isActive('/dashboard/performance')}
+          collapsed={isCollapsed}
+          onClick={() => navigate('/dashboard/performance')}
         />
  
       </View>
