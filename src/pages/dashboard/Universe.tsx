@@ -299,7 +299,7 @@ export const Universe: React.FC = () => {
 
           {/* Search Bar */}
           <SearchBar
-            placeholder="Search by ISIN, issuer, or country..."
+            placeholder={t('search.placeholder')}
             value={searchQuery}
             onChange={setSearchQuery}
             suggestions={mockConvertibleBonds.map((b) => b.issuer)}

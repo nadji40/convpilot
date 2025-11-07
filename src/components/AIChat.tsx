@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity, TextInput, ScrollView } from 'react-native';
 import { darkColors, lightColors, typography } from '../theme';
 import { useTheme } from '../contexts/AppContext';
+import { RobotIcon } from './Icons';
 
 interface Message {
   id: string;
@@ -13,31 +14,31 @@ interface Message {
 const mockMessages: Message[] = [
   {
     id: '1',
-    text: 'Bonjour ! Je suis ConvPilot AI, votre assistant intelligent pour les obligations convertibles. Comment puis-je vous aider aujourd\'hui ?',
+    text: 'Hello! I am ConvPilot AI, your intelligent assistant for convertible bonds. How can I help you today?',
     sender: 'ai',
     timestamp: new Date(Date.now() - 3600000),
   },
   {
     id: '2',
-    text: 'Peux-tu m\'expliquer les tendances actuelles du marché ?',
+    text: 'Can you explain the current market trends?',
     sender: 'user',
     timestamp: new Date(Date.now() - 3500000),
   },
   {
     id: '3',
-    text: 'Bien sûr ! Le marché des obligations convertibles montre une croissance de 8.5% ce trimestre. Les secteurs technologiques et énergétiques affichent les meilleures performances. Le delta moyen se situe à 54.2%, indiquant un positionnement équilibré entre caractéristiques obligataires et actions.',
+    text: 'Of course! The convertible bond market is showing 8.5% growth this quarter. Technology and energy sectors are showing the best performance. The average delta is at 54.2%, indicating a balanced positioning between bond and equity characteristics.',
     sender: 'ai',
     timestamp: new Date(Date.now() - 3480000),
   },
   {
     id: '4',
-    text: 'Quels sont les titres les plus performants ?',
+    text: 'What are the top-performing securities?',
     sender: 'user',
     timestamp: new Date(Date.now() - 3400000),
   },
   {
     id: '5',
-    text: 'Les 3 titres les plus performants cette semaine sont :\n\n1. TechCorp CB 2026 (+12.5%)\n2. GreenEnergy Conv 2027 (+10.8%)\n3. BioPharm Bond 2025 (+9.3%)\n\nCes titres bénéficient d\'une forte dynamique du marché actions sous-jacent et d\'une volatilité favorable.',
+    text: 'The top 3 performing securities this week are:\n\n1. TechCorp CB 2026 (+12.5%)\n2. GreenEnergy Conv 2027 (+10.8%)\n3. BioPharm Bond 2025 (+9.3%)\n\nThese securities benefit from strong underlying equity market dynamics and favorable volatility.',
     sender: 'ai',
     timestamp: new Date(Date.now() - 3350000),
   },
@@ -75,11 +76,11 @@ export const AIChat: React.FC = () => {
     // Simulate AI response
     setTimeout(() => {
       const aiResponses = [
-        'Je recherche ces informations pour vous...',
-        'D\'après mes analyses, cette tendance est très intéressante.',
-        'Je vous recommande de consulter le tableau de bord pour plus de détails.',
-        'Excellente question ! Laissez-moi vous expliquer...',
-        'Cette donnée est disponible dans la section Agrégations.',
+        'I am searching for this information for you...',
+        'According to my analysis, this trend is very interesting.',
+        'I recommend checking the dashboard for more details.',
+        'Excellent question! Let me explain...',
+        'This data is available in the Aggregations section.',
       ];
       
       const aiMessage: Message = {
@@ -94,7 +95,7 @@ export const AIChat: React.FC = () => {
   };
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
   };
 
   if (!isOpen) {
@@ -125,30 +126,8 @@ export const AIChat: React.FC = () => {
           e.currentTarget.style.boxShadow = `0 8px 24px ${colors.accent}40`;
         }}
       >
-        {/* AI Icon */}
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-          <path
-            d="M12 2L2 7L12 12L22 7L12 2Z"
-            stroke="white"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M2 17L12 22L22 17"
-            stroke="white"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M2 12L12 17L22 12"
-            stroke="white"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        {/* Robot Icon */}
+        <RobotIcon size={32} color="white" />
         
         {/* Notification Badge */}
         <View
@@ -211,7 +190,7 @@ export const AIChat: React.FC = () => {
         }}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          {/* AI Avatar */}
+          {/* Robot Avatar */}
           <View
             style={{
               width: 40,
@@ -222,29 +201,7 @@ export const AIChat: React.FC = () => {
               justifyContent: 'center',
             }}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M12 2L2 7L12 12L22 7L12 2Z"
-                stroke="white"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M2 17L12 22L22 17"
-                stroke="white"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M2 12L12 17L22 12"
-                stroke="white"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <RobotIcon size={24} color="white" />
           </View>
 
           <View>
@@ -274,7 +231,7 @@ export const AIChat: React.FC = () => {
                   opacity: 0.9,
                 }}
               >
-                En ligne
+                Online
               </Text>
             </View>
           </View>
@@ -385,7 +342,7 @@ export const AIChat: React.FC = () => {
           <TextInput
             value={inputText}
             onChangeText={setInputText}
-            placeholder="Écrivez votre message..."
+            placeholder="Write your message..."
             placeholderTextColor={colors.textSecondary}
             multiline
             onSubmitEditing={handleSendMessage}

@@ -156,38 +156,18 @@ export const ChevronDownIcon = ({ size = 20, color = colors.textSecondary }: Ico
   </View>
 );
 
-export const BellIcon = ({ size = 20, color = colors.textSecondary }: IconProps) => (
+export const RobotIcon = ({ size = 20, color = colors.textSecondary }: IconProps) => (
   <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" 
-            stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M13.73 21a2 2 0 01-3.46 0" 
-            stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  </View>
-);
-
-export const AnalystIcon = ({ size = 20, color = colors.textSecondary }: IconProps) => (
-  <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" 
-            stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      <circle cx="9" cy="7" r="4" stroke={color} strokeWidth="2" fill="none"/>
-      <path d="M23 21v-2a4 4 0 00-3-3.87" 
-            stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M16 3.13a4 4 0 010 7.75" 
-            stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  </View>
-);
-
-export const TrendingUpIcon = ({ size = 20, color = colors.textSecondary }: IconProps) => (
-  <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <polyline points="23,6 13.5,15.5 8.5,10.5 1,18" 
-                stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      <polyline points="17,6 23,6 23,12" 
-                stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      {/* Robot head */}
+      <rect x="5" y="9" width="14" height="11" rx="2" stroke={color} strokeWidth="2" fill="none"/>
+      {/* Robot antenna */}
+      <path d="M12 9V6M12 6L10 4M12 6L14 4" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      {/* Robot eyes */}
+      <circle cx="9" cy="13" r="1.5" fill={color}/>
+      <circle cx="15" cy="13" r="1.5" fill={color}/>
+      {/* Robot mouth */}
+      <path d="M9 17h6" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   </View>
 );

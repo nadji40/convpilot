@@ -190,18 +190,29 @@ export const Portfolio: React.FC = () => {
         style={{
           flex: 1,
           marginLeft: isCollapsed ? 80 : 280,
-          padding: 24,
           height: '100vh',
           overflow: 'auto' as any,
           backgroundColor: colors.background,
         }}
       >
-        <View style={{ gap: 32, paddingBottom: 40 }}>
-          {/* Header */}
+        {/* Fixed Header */}
+        <View
+          style={{
+            position: 'sticky' as any,
+            top: 0,
+            zIndex: 10,
+            backgroundColor: colors.background,
+            paddingHorizontal: 24,
+            paddingTop: 24,
+          }}
+        >
           <DashboardHeader 
             title={t('dashboard.portfolio')}
             description={`${portfolioBonds.length} ${t('dashboard.portfolio_desc')} ${formatLargeNumber(portfolioMetrics.totalMarketCap)}`}
           />
+        </View>
+
+        <View style={{ gap: 32, paddingBottom: 40, paddingHorizontal: 24 }}>
 
           {/* Portfolio KPIs */}
           <View
@@ -212,23 +223,23 @@ export const Portfolio: React.FC = () => {
             }}
           >
             <KPICard
-              title="Total Market Cap"
+              title={t('kpi.total_market_cap')}
               value={formatLargeNumber(portfolioMetrics.totalMarketCap)}
               subtitle="EUR"
               delay={getStaggerDelay(0)}
             />
             <KPICard
-              title="Weighted Delta"
+              title={t('kpi.weighted_delta')}
               value={portfolioMetrics.weightedDelta.toFixed(3)}
               delay={getStaggerDelay(1)}
             />
             <KPICard
-              title="Weighted YTM"
+              title={t('kpi.weighted_ytm')}
               value={`${portfolioMetrics.weightedYTM.toFixed(2)}%`}
               delay={getStaggerDelay(2)}
             />
             <KPICard
-              title="Avg Performance 1M"
+              title={t('kpi.avg_performance_1m')}
               value={formatPercentage(portfolioMetrics.totalPerf1M)}
               trend={portfolioMetrics.totalPerf1M}
               delay={getStaggerDelay(3)}
@@ -406,7 +417,7 @@ export const Portfolio: React.FC = () => {
                   fontFamily: typography.fontFamily.body,
                 }}
               >
-                Select bonds to include in your portfolio analysis
+                {t('portfolio.select_bonds')}
               </Text>
 
               <View style={{ gap: 8 }}>
