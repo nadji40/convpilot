@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { darkColors, lightColors, typography } from '../../theme';
 import { useTheme, useSidebar, useLanguage } from '../../contexts/AppContext';
 import { DashboardHeader } from '../../components/DashboardHeader';
-import { AIChat } from '../../components/AIChat';
 import { SearchBar } from '../../components/SearchBar';
 import { FilterPanel } from '../../components/FilterPanel';
 import { DataTable, Column } from '../../components/DataTable';
@@ -233,29 +232,19 @@ export const Universe: React.FC = () => {
         style={{
           flex: 1,
           marginLeft: isCollapsed ? 80 : 280,
+          padding: 24,
           height: '100vh',
           overflow: 'auto' as any,
           backgroundColor: colors.background,
         }}
       >
-        {/* Fixed Header */}
-        <View
-          style={{
-            position: 'sticky' as any,
-            top: 0,
-            zIndex: 10,
-            backgroundColor: colors.background,
-            paddingHorizontal: 24,
-            paddingTop: 24,
-          }}
-        >
+        <View style={{ gap: 24, paddingBottom: 40 }}>
+          {/* Header */}
           <DashboardHeader 
             title={t('dashboard.universe')}
             description={`${filteredData.length} ${t('of')} ${mockConvertibleBonds.length} ${t('dashboard.universe_desc')}`}
           />
-        </View>
 
-        <View style={{ gap: 24, paddingBottom: 40, paddingHorizontal: 24 }}>
           {/* Export Button Section */}
           <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
             <button
@@ -373,9 +362,6 @@ export const Universe: React.FC = () => {
           </View>
         </View>
       </View>
-      
-      {/* AI Chat Widget */}
-      <AIChat />
     </View>
   );
 };
