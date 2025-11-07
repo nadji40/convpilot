@@ -6,6 +6,7 @@ import { KPICard } from '../../components/KPICard';
 import { AnimatedCard } from '../../components/AnimatedCard';
 import { WidgetContainer } from '../../components/WidgetContainer';
 import { DashboardHeader } from '../../components/DashboardHeader';
+import { AIChat } from '../../components/AIChat';
 import { 
   mockConvertibleBonds, 
   calculateMarketSummary,
@@ -69,22 +70,32 @@ export const Overview: React.FC = () => {
         style={{
           flex: 1,
           marginLeft: isCollapsed ? 80 : 280,
-          padding: 24,
           height: '100vh',
           overflow: 'auto' as any,
           backgroundColor: colors.background,
         }}
       >
-        <ScrollView
-          style={{ flex: 1, height: '100%' }}
-          contentContainerStyle={{ gap: 32, paddingBottom: 40 }}
+        {/* Fixed Header */}
+        <View
+          style={{
+            position: 'sticky' as any,
+            top: 0,
+            zIndex: 10,
+            backgroundColor: colors.background,
+            paddingHorizontal: 24,
+            paddingTop: 24,
+          }}
         >
-          {/* Header */}
           <DashboardHeader 
             title={t('dashboard.overview')}
             description={t('dashboard.overview_desc')}
           />
+        </View>
 
+        <ScrollView
+          style={{ flex: 1, height: '100%' }}
+          contentContainerStyle={{ gap: 32, paddingBottom: 40, paddingHorizontal: 24 }}
+        >
           {/* KPI Cards */}
           <WidgetContainer id="overview-kpis" storageKey="overviewWidgets">
             <View
@@ -369,6 +380,9 @@ export const Overview: React.FC = () => {
           </View>
         </ScrollView>
       </View>
+      
+      {/* AI Chat Widget */}
+      <AIChat />
     </View>
   );
 };
