@@ -6,6 +6,7 @@ import { DashboardHeader } from '../../components/DashboardHeader';
 import { ChartCard } from '../../components/ChartCard';
 import { KPICard } from '../../components/KPICard';
 import { DataTable } from '../../components/DataTable';
+import { AIAgentBubble } from '../../components/AIAgentBubble';
 
 export const PerformanceAttribution: React.FC = () => {
   const { isDark } = useTheme();
@@ -409,6 +410,9 @@ export const PerformanceAttribution: React.FC = () => {
           />
         </View>
       </View>
+      
+      {/* AI Agent Bubble */}
+      <AIAgentBubble />
     </ScrollView>
   );
 };

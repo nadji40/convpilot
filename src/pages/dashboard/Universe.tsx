@@ -7,6 +7,7 @@ import { DashboardHeader } from '../../components/DashboardHeader';
 import { SearchBar } from '../../components/SearchBar';
 import { FilterPanel } from '../../components/FilterPanel';
 import { DataTable, Column } from '../../components/DataTable';
+import { AIAgentBubble } from '../../components/AIAgentBubble';
 import { mockConvertibleBonds, ConvertibleBond } from '../../data/mockData';
 import {
   filterBonds,
@@ -362,6 +363,9 @@ export const Universe: React.FC = () => {
           </View>
         </View>
       </View>
+      
+      {/* AI Agent Bubble */}
+      <AIAgentBubble />
     </View>
   );
 };

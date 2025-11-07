@@ -6,6 +6,7 @@ import { KPICard } from '../../components/KPICard';
 import { AnimatedCard } from '../../components/AnimatedCard';
 import { WidgetContainer } from '../../components/WidgetContainer';
 import { DashboardHeader } from '../../components/DashboardHeader';
+import { AIAgentBubble } from '../../components/AIAgentBubble';
 import { 
   mockConvertibleBonds, 
   calculateMarketSummary,
@@ -369,6 +370,9 @@ export const Overview: React.FC = () => {
           </View>
         </ScrollView>
       </View>
+      
+      {/* AI Agent Bubble */}
+      <AIAgentBubble />
     </View>
   );
 };

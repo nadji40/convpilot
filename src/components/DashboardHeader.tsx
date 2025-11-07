@@ -32,10 +32,11 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ title, descrip
         style={{
           position: 'sticky' as any,
           top: 0,
-          zIndex: 100,
-          backgroundColor: colors.background,
+          zIndex: 1000,
+          backgroundColor: `${colors.background}F0`,
           backdropFilter: 'blur(10px)',
           WebkitBackdropFilter: 'blur(10px)',
+          marginBottom: 0,
         }}
       >
         <View

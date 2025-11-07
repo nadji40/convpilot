@@ -6,6 +6,7 @@ import { useTheme, useSidebar, useLanguage } from '../../contexts/AppContext';
 import { DashboardHeader } from '../../components/DashboardHeader';
 import { AnimatedCard } from '../../components/AnimatedCard';
 import { KPICard } from '../../components/KPICard';
+import { AIAgentBubble } from '../../components/AIAgentBubble';
 import { mockConvertibleBonds, generateHistoricalData } from '../../data/mockData';
 import { formatCurrency, formatPercentage, formatNumber, formatDate } from '../../utils/dataUtils';
 import { getStaggerDelay } from '../../utils/animations';
@@ -518,6 +519,9 @@ export const Instrument: React.FC = () => {
           </AnimatedCard>
         </View>
       </View>
+      
+      {/* AI Agent Bubble */}
+      <AIAgentBubble />
     </View>
   );
 };

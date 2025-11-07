@@ -5,6 +5,7 @@ import { useTheme, useSidebar, useLanguage } from '../../contexts/AppContext';
 import { DashboardHeader } from '../../components/DashboardHeader';
 import { AnimatedCard } from '../../components/AnimatedCard';
 import { CrossFilterChart } from '../../components/CrossFilterChart';
+import { AIAgentBubble } from '../../components/AIAgentBubble';
 import { mockConvertibleBonds } from '../../data/mockData';
 import { getCrossFilterData, formatLargeNumber } from '../../utils/dataUtils';
 import {
@@ -436,6 +437,9 @@ export const Aggregations: React.FC = () => {
           </AnimatedCard>
         </View>
       </View>
+      
+      {/* AI Agent Bubble */}
+      <AIAgentBubble />
     </View>
   );
 };

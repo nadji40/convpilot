@@ -125,6 +125,10 @@ export const formatLargeNumber = (value: number): string => {
 
 // Format percentage
 export const formatPercentage = (value: number, decimals: number = 2): string => {
+  // Check if value is a valid number
+  if (value === null || value === undefined || typeof value !== 'number' || isNaN(value)) {
+    return '0.00%';
+  }
   return `${value >= 0 ? '+' : ''}${value.toFixed(decimals)}%`;
 };
 
