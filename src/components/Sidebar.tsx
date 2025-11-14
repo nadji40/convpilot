@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { darkColors, lightColors, typography } from '../theme';
 import { useTheme, useSidebar, useLanguage } from '../contexts/AppContext';
+import { useAuth } from '../contexts/AuthContext';
 import {
   OverviewIcon,
   ChartIcon,
@@ -15,6 +16,7 @@ import {
   MoonIcon,
   SunIcon,
   TrendingUpIcon,
+  LogoutIcon,
 } from './Icons';
 
 interface SidebarItemProps {
@@ -84,6 +86,7 @@ export function Sidebar({ children }: SidebarProps) {
   const { isDark, toggleTheme } = useTheme();
   const { isCollapsed, toggleSidebar } = useSidebar();
   const { t } = useLanguage();
+  const { logout } = useAuth();
   const colors = isDark ? darkColors : lightColors;
   const location = useLocation();
   const navigate = useNavigate();
@@ -95,6 +98,11 @@ export function Sidebar({ children }: SidebarProps) {
     if (path === '/dashboard' && location.pathname === '/dashboard') return true;
     if (path !== '/dashboard' && location.pathname.startsWith(path)) return true;
     return false;
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
   };
 
   return (
@@ -113,6 +121,9 @@ export function Sidebar({ children }: SidebarProps) {
       transition: 'all 0.4s ease',
       overflowY: 'auto' as any,
       overflowX: 'hidden' as any,
+      // Rounded right corners
+      borderTopRightRadius: parseInt(colors.borderRadius.large),
+      borderBottomRightRadius: parseInt(colors.borderRadius.large),
     }}>
       {/* Header with Logo and Toggle */}
       <View style={{
@@ -211,19 +222,75 @@ export function Sidebar({ children }: SidebarProps) {
       </View>
 
 
-      {/* Dark Mode Toggle */}
-      <View style={{
-        flexDirection: isCollapsed ? 'column' : 'row',
-        alignItems: 'center',
-        justifyContent: isCollapsed ? 'center' : 'space-between',
-        marginTop: 'auto',
-        padding: isCollapsed ? 8 : 14,
-        backgroundColor: colors.surfaceCard,
-        borderRadius: parseInt(colors.borderRadius.medium),
-        borderWidth: 1,
-        borderColor: colors.border,
-        gap: isCollapsed ? 8 : 0,
-      }}>
+      {/* Logout Button */}
+      <View style={{ marginTop: 'auto', gap: 12 }}>
+        {/* Version Number */}
+        <View style={{
+          alignItems: isCollapsed ? 'center' : 'flex-start',
+          paddingHorizontal: isCollapsed ? 0 : 4,
+        }}>
+          <Text style={{
+            color: colors.textMuted,
+            fontSize: parseInt(typography.fontSize.xsmall),
+            fontWeight: '600',
+            fontFamily: typography.fontFamily.body,
+            letterSpacing: 0.5,
+            opacity: 0.7,
+          }}>
+            v0.9
+          </Text>
+        </View>
+
+        <TouchableOpacity
+          onPress={handleLogout}
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 12,
+            padding: isCollapsed ? 12 : 14,
+            borderRadius: parseInt(colors.borderRadius.regular),
+            backgroundColor: colors.surfaceCard,
+            borderColor: colors.border,
+            borderWidth: 1,
+            justifyContent: isCollapsed ? 'center' : 'flex-start',
+            transition: 'all 0.3s ease',
+            cursor: 'pointer',
+          }}
+          onHoverIn={(e: any) => {
+            e.currentTarget.style.backgroundColor = isDark ? 'rgba(239, 68, 68, 0.1)' : 'rgba(239, 68, 68, 0.05)';
+            e.currentTarget.style.borderColor = colors.danger;
+          }}
+          onHoverOut={(e: any) => {
+            e.currentTarget.style.backgroundColor = colors.surfaceCard;
+            e.currentTarget.style.borderColor = colors.border;
+          }}
+        >
+          <LogoutIcon size={20} color={colors.danger} />
+          {!isCollapsed && (
+            <Text style={{
+              color: colors.danger,
+              fontSize: parseInt(typography.fontSize.default),
+              fontWeight: '500',
+              fontFamily: typography.fontFamily.body,
+              letterSpacing: -0.011,
+            }}>
+              {t('nav.logout') || 'Logout'}
+            </Text>
+          )}
+        </TouchableOpacity>
+
+        {/* Dark Mode Toggle */}
+        <View style={{
+          flexDirection: isCollapsed ? 'column' : 'row',
+          alignItems: 'center',
+          justifyContent: isCollapsed ? 'center' : 'space-between',
+          padding: isCollapsed ? 8 : 14,
+          backgroundColor: colors.surfaceCard,
+          borderRadius: parseInt(colors.borderRadius.medium),
+          borderWidth: 1,
+          borderColor: colors.border,
+          gap: isCollapsed ? 8 : 0,
+        }}>
         {!isCollapsed && (
           <Text style={{ 
             color: colors.textPrimary, 
@@ -263,6 +330,7 @@ export function Sidebar({ children }: SidebarProps) {
             )}
           </View>
         </TouchableOpacity>
+      </View>
       </View>
 
       {children}
