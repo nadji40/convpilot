@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, TextInput, Image } from 'react-native';
 import { darkColors, lightColors, typography } from '../theme';
 import { useTheme } from '../contexts/AppContext';
 
@@ -135,8 +135,12 @@ export const AIAgentBubble: React.FC = () => {
         }}
       >
         {!isOpen ? (
-          <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ fontSize: 28, color: '#ffffff', fontWeight: '700' }}>AI</Text>
+          <View style={{ alignItems: 'center', justifyContent: 'center', position: 'relative' as any }}>
+            <Image
+              source={{ uri: '/images/arrow.png' }}
+              style={{ width: 32, height: 32, tintColor: '#ffffff' }}
+              resizeMode="contain"
+            />
             <View
               style={{
                 position: 'absolute' as any,
@@ -200,7 +204,11 @@ export const AIAgentBubble: React.FC = () => {
                   justifyContent: 'center',
                 }}
               >
-                <Text style={{ fontSize: 18, color: '#ffffff', fontWeight: '700' }}>CP</Text>
+                <Image
+                  source={{ uri: '/images/arrow.png' }}
+                  style={{ width: 24, height: 24, tintColor: '#ffffff' }}
+                  resizeMode="contain"
+                />
               </View>
               <View>
                 <Text
