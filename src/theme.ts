@@ -126,8 +126,8 @@ export const shadow = {
 // Typography from landing page
 export const typography = {
   fontFamily: {
-    body: '"Times New Roman", sans-serif', // --font-family--body-font
-    heading: '"Times New Roman", Times, serif', // --font-family--heading-font
+    body: '"Noto Sans", sans-serif', // --font-family--body-font
+    heading: '"Noto Sans", sans-serif', // --font-family--heading-font
   },
   fontSize: {
     h1: '65px', // --_typography---heading--h1

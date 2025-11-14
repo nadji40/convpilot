@@ -32,7 +32,7 @@
 
 :root {
   --_colors---dark: #00050a;
-  --font-family--body-font: "Times New Roman", sans-serif;
+  --font-family--body-font: "Noto Sans", sans-serif;
   --_colors---white: white;
   --_typography---paragraphs--text-default: 16px;
   --_typography---line-height-paragraphs--text-default: 1.5em;
@@ -92,7 +92,7 @@
   --_typography---decorative-fonts--h1: 0px;
   --_typography---decorative-fonts--h2: 0px;
   --_typography---decorative-fonts--h3: 0px;
-  --font-family--heading-font: "Times New Roman", Times, serif;
+  --font-family--heading-font: "Noto Sans", sans-serif;
   --base-size--padding-large: 100px;
   --_typography---font-size--buttons--button-deafult: 0px;
   --_typography---line-height-heading--h1: 0em;
@@ -1238,7 +1238,8 @@ body {
   font-size: var(--_typography---paragraphs--text-default);
   line-height: var(--_typography---line-height-paragraphs--text-default);
   letter-spacing: var(--_typography---letter-spacings-paragraphs--text-deafult);
-  --font-family--body-font: "Times New Roman", sans-serif;
+  font-weight: 400;
+  --font-family--body-font: "Noto Sans", sans-serif;
   --base-size--container: 1326px;
   --border-radius--medium: 10px;
   --border-radius--small: 8px;
@@ -1249,7 +1250,7 @@ body {
   --border-radius--large: 24px;
   --border-radius--xsmall: 8px;
   --base-size--padding-small: 60px;
-  --font-family--heading-font: "Times New Roman", Times, serif;
+  --font-family--heading-font: "Noto Sans", sans-serif;
   --base-size--padding-large: 100px;
 }
 
@@ -4334,7 +4335,7 @@ label {
 .display-contents {
   grid-column-gap: 8px;
   grid-row-gap: 8px;
-  --font-family--body-font: "Times New Roman", sans-serif;
+  --font-family--body-font: "Noto Sans", sans-serif;
   --base-size--container: 1326px;
   --border-radius--medium: 10px;
   --border-radius--small: 8px;
@@ -4345,7 +4346,7 @@ label {
   --border-radius--large: 24px;
   --border-radius--xsmall: 8px;
   --base-size--padding-small: 60px;
-  --font-family--heading-font: "Times New Roman", Times, serif;
+  --font-family--heading-font: "Noto Sans", sans-serif;
   --base-size--padding-large: 100px;
   display: flex;
 }
@@ -4933,7 +4934,7 @@ label {
     --_typography---line-height-buttons--button: 1em;
     --_typography---letter-spacings-paragraphs--text-large: 0px;
     --_typography---letter-spacings-paragraphs--text-xsmall: 0px;
-    --font-family--body-font: "Times New Roman", sans-serif;
+    --font-family--body-font: "Noto Sans", sans-serif;
     --base-size--container: 1326px;
     --border-radius--medium: 12px;
     --border-radius--small: 10px;
@@ -4944,7 +4945,7 @@ label {
     --border-radius--large: 24px;
     --border-radius--xsmall: 8px;
     --base-size--padding-small: 60px;
-    --font-family--heading-font: "Times New Roman", Times, serif;
+    --font-family--heading-font: "Noto Sans", sans-serif;
     --base-size--padding-large: 100px;
   }
 
@@ -5265,7 +5266,7 @@ label {
   }
 
   .display-contents {
-    --font-family--body-font: "Times New Roman", sans-serif;
+    --font-family--body-font: "Noto Sans", sans-serif;
     --base-size--container: 1326px;
     --border-radius--medium: 12px;
     --border-radius--small: 10px;
@@ -5276,7 +5277,7 @@ label {
     --border-radius--large: 24px;
     --border-radius--xsmall: 8px;
     --base-size--padding-small: 60px;
-    --font-family--heading-font: "Times New Roman", Times, serif;
+    --font-family--heading-font: "Noto Sans", sans-serif;
     --base-size--padding-large: 100px;
   }
 
@@ -5316,7 +5317,7 @@ label {
 
 @media screen and (max-width: 767px) {
   body {
-    --font-family--body-font: "Times New Roman", sans-serif;
+    --font-family--body-font: "Noto Sans", sans-serif;
     --base-size--container: 1326px;
     --border-radius--medium: 10px;
     --border-radius--small: 8px;
@@ -5327,7 +5328,7 @@ label {
     --border-radius--large: 24px;
     --border-radius--xsmall: 8px;
     --base-size--padding-small: 60px;
-    --font-family--heading-font: "Times New Roman", Times, serif;
+    --font-family--heading-font: "Noto Sans", sans-serif;
     --base-size--padding-large: 100px;
     --_typography---paragraphs--text-default: 14px;
     --_typography---line-height-paragraphs--text-default: 1.5em;
@@ -5737,7 +5738,7 @@ label {
   }
 
   .display-contents {
-    --font-family--body-font: "Times New Roman", sans-serif;
+    --font-family--body-font: "Noto Sans", sans-serif;
     --base-size--container: 1326px;
     --border-radius--medium: 10px;
     --border-radius--small: 8px;
@@ -5748,7 +5749,7 @@ label {
     --border-radius--large: 24px;
     --border-radius--xsmall: 8px;
     --base-size--padding-small: 60px;
-    --font-family--heading-font: "Times New Roman", Times, serif;
+    --font-family--heading-font: "Noto Sans", sans-serif;
     --base-size--padding-large: 100px;
   }
 
@@ -5771,7 +5772,7 @@ label {
 
 @media screen and (max-width: 479px) {
   body {
-    --font-family--body-font: "Times New Roman", sans-serif;
+    --font-family--body-font: "Noto Sans", sans-serif;
     --base-size--container: 1326px;
     --border-radius--medium: 10px;
     --border-radius--small: 8px;
@@ -5782,7 +5783,7 @@ label {
     --border-radius--large: 24px;
     --border-radius--xsmall: 8px;
     --base-size--padding-small: 60px;
-    --font-family--heading-font: "Times New Roman", Times, serif;
+    --font-family--heading-font: "Noto Sans", sans-serif;
     --base-size--padding-large: 100px;
     --_typography---paragraphs--text-default: 14px;
     --_typography---line-height-paragraphs--text-default: 1.5em;
@@ -6310,7 +6311,7 @@ label {
   }
 
   .display-contents {
-    --font-family--body-font: "Times New Roman", sans-serif;
+    --font-family--body-font: "Noto Sans", sans-serif;
     --base-size--container: 1326px;
     --border-radius--medium: 10px;
     --border-radius--small: 8px;
@@ -6321,7 +6322,7 @@ label {
     --border-radius--large: 24px;
     --border-radius--xsmall: 8px;
     --base-size--padding-small: 60px;
-    --font-family--heading-font: "Times New Roman", Times, serif;
+    --font-family--heading-font: "Noto Sans", sans-serif;
     --base-size--padding-large: 100px;
     flex-flow: wrap;
   }
