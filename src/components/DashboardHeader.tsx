@@ -69,6 +69,21 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ title, descrip
           right: 0,
           zIndex: 1000,
           transition: 'left 0.4s ease',
+          // Glass effect background
+          backgroundColor: isDark ? 'rgba(13, 19, 26, 0.7)' : 'rgba(255, 255, 255, 0.7)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          // Rounded bottom border
+          borderBottomLeftRadius: parseInt(colors.borderRadius.large),
+          borderBottomRightRadius: parseInt(colors.borderRadius.large),
+          // Bottom border in primary color
+          borderBottomWidth: 2,
+          borderBottomColor: colors.accent,
+          borderBottomStyle: 'solid',
+          // Enhanced shadow for depth
+          boxShadow: isScrolled 
+            ? `0 4px 16px ${isDark ? 'rgba(10, 124, 255, 0.15)' : 'rgba(10, 124, 255, 0.1)'}`
+            : `0 2px 8px ${isDark ? 'rgba(10, 124, 255, 0.1)' : 'rgba(10, 124, 255, 0.05)'}`,
         }}
       >
         <View
