@@ -72,6 +72,7 @@ const translations = {
     'nav.market_report': 'Market Report',
     'nav.performance': 'Performance',
     'nav.performance_simulation': 'Performance Simulation',
+    'nav.logout': 'Logout',
     
     // Account
     'account.messages': 'Messages',
@@ -187,6 +188,7 @@ const translations = {
     'nav.market_report': 'Rapport de marché',
     'nav.performance': 'Performance',
     'nav.performance_simulation': 'Simulation de performance',
+    'nav.logout': 'Déconnexion',
     
     // Account
     'account.messages': 'Messages',

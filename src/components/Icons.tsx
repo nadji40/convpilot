@@ -206,7 +206,7 @@ export const TrendingUpIcon = ({ size = 20, color = colors.textSecondary }: Icon
 
 export const LogoutIcon = ({ size = 20, color = colors.textSecondary }: IconProps) => (
   <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={{ transform: 'scaleX(-1)' }}>
       <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" 
             stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
       <polyline points="16 17 21 12 16 7" 
