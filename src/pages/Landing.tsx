@@ -24,7 +24,7 @@ export const Landing: React.FC = () => {
       height: '100vh',
       background: '#01000a',
       color: '#fff',
-      fontFamily: 'Playfair Display, serif'
+      fontFamily: 'Noto Sans, sans-serif'
     }}>
       
     </div>

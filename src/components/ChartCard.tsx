@@ -21,7 +21,7 @@ export function ChartCard({ title, children, legend }: { title?: string; childre
       }}
     >
       {title ? (
-        <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '700', marginBottom: 12, letterSpacing: 0.3, fontFamily: 'Playfair Display' }}>{title}</Text>
+        <Text style={{ color: colors.textPrimary, fontSize: 16, fontWeight: '700', marginBottom: 12, letterSpacing: 0.3, fontFamily: 'Noto Sans' }}>{title}</Text>
       ) : null}
       <View style={{ 
         height: title ? 260 : 280, 
