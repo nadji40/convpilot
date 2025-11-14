@@ -85,29 +85,37 @@ export const PerformanceAttribution: React.FC = () => {
   const periodButtons = ['1D', '1W', '1M', '3M', 'YTD'] as const;
 
   return (
-    <ScrollView
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-        marginLeft: isCollapsed ? 80 : 280,
-        transition: 'margin-left 0.4s ease',
-      }}
-    >
+    <View style={{
+      backgroundColor: colors.background,
+      minHeight: '100vh',
+      flex: 1,
+    }}>
+      {/* Fixed Header */}
+      <DashboardHeader
+        title="Performance Attribution"
+        description="Daily P&L breakdown by source: Share, Credit, Carry, Rate, Valuation, FX, and Delta Neutral"
+      />
+      
       <View
         style={{
+          flex: 1,
+          marginLeft: isCollapsed ? 80 : 280,
           padding: 32,
-          maxWidth: 1600,
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          width: '100%',
+          paddingTop: 100, // Add padding for fixed header
+          height: '100vh',
+          overflow: 'auto' as any,
+          backgroundColor: colors.background,
         }}
       >
-        <DashboardHeader
-          title="Performance Attribution"
-          description="Daily P&L breakdown by source: Share, Credit, Carry, Rate, Valuation, FX, and Delta Neutral"
-        />
-
-        {/* Period Selection */}
+        <View
+          style={{
+            maxWidth: 1600,
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            width: '100%',
+          }}
+        >
+          {/* Period Selection */}
         <View
           style={{
             flexDirection: 'row',
@@ -388,10 +396,10 @@ export const PerformanceAttribution: React.FC = () => {
             enableSort
           />
         </View>
+        
+        {/* AI Agent Bubble */}
+        <AIAgentBubble />
       </View>
-      
-      {/* AI Agent Bubble */}
-      <AIAgentBubble />
-    </ScrollView>
+    </View>
   );
 };

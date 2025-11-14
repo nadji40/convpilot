@@ -124,13 +124,13 @@ export const Instrument: React.FC = () => {
     >
       {/* Fixed Header with Back Button */}
       <View
+        className="dashboard-header"
         style={{
           position: 'fixed' as any,
           top: 0,
           left: isCollapsed ? 80 : 280,
           right: 0,
           zIndex: 1000,
-          backgroundColor: colors.background,
           transition: 'left 0.4s ease',
         }}
       >

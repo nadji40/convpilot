@@ -68,7 +68,6 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ title, descrip
           left: isCollapsed ? 80 : 280,
           right: 0,
           zIndex: 1000,
-          marginBottom: 0,
           transition: 'left 0.4s ease',
         }}
       >
@@ -79,7 +78,6 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ title, descrip
             alignItems: 'center',
             paddingVertical: 12,
             paddingHorizontal: 16,
-            marginBottom: 16,
           }}
         >
           {/* Left side - Title and Description */}
