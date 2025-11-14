@@ -116,11 +116,11 @@ export const PerformanceAttribution: React.FC = () => {
           }}
         >
           {/* Period Selection */}
-        <View
-          style={{
-            flexDirection: 'row',
-            gap: 8,
-            marginBottom: 24,
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: 8,
+              marginBottom: 24,
             padding: 16,
             backgroundColor: colors.surface,
             borderRadius: parseInt(colors.borderRadius.large),
@@ -396,10 +396,10 @@ export const PerformanceAttribution: React.FC = () => {
             enableSort
           />
         </View>
-        
-        {/* AI Agent Bubble */}
-        <AIAgentBubble />
       </View>
+      
+      {/* AI Agent Bubble */}
+      <AIAgentBubble />
     </View>
   );
 };
