@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { darkColors, lightColors, typography } from '../theme';
 import { useTheme } from '../contexts/AppContext';
@@ -21,21 +21,40 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ title, descrip
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
 
   const userInitials = user?.name?.split(' ').map(n => n[0]).join('') || 'MT';
   const unreadCount = 2; // Mock unread count - would come from API
 
+  // Handle scroll detection
+  useEffect(() => {
+    const handleScroll = () => {
+      // Find the scrollable container (the main content area)
+      const scrollContainer = headerRef.current?.parentElement?.parentElement;
+      if (scrollContainer) {
+        const scrollY = scrollContainer.scrollTop || 0;
+        setIsScrolled(scrollY > 50);
+      }
+    };
+
+    const scrollContainer = headerRef.current?.parentElement?.parentElement;
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
+      return () => scrollContainer.removeEventListener('scroll', handleScroll);
+    }
+  }, []);
+
   return (
     <>
       <View
+        ref={headerRef as any}
+        className={`dashboard-header ${isScrolled ? 'scrolled' : ''}`}
         style={{
           position: 'sticky' as any,
           top: 0,
           zIndex: 1000,
-          backgroundColor: `${colors.background}F0`,
-          backdropFilter: 'blur(10px)',
-          WebkitBackdropFilter: 'blur(10px)',
           marginBottom: 0,
         }}
       >
@@ -46,11 +65,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ title, descrip
             alignItems: 'center',
             paddingVertical: 12,
             paddingHorizontal: 16,
-            borderBottomWidth: 1,
-            borderBottomColor: colors.border,
             marginBottom: 16,
-            background: `linear-gradient(135deg, ${colors.background} 0%, ${colors.accent}08 100%)`,
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
           }}
         >
           {/* Left side - Title and Description */}
