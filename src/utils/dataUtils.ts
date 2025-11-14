@@ -1,5 +1,5 @@
 // Utility functions for data manipulation
-import { ConvertibleBond } from '../data/mockData';
+import { ConvertibleBond } from '../data/dataLoader';
 
 // Calculate portfolio-level metrics
 export interface PortfolioMetrics {
@@ -156,8 +156,8 @@ export const getUpcomingEvents = (bonds: ConvertibleBond[]): UpcomingEvent[] => 
   
   bonds.forEach(bond => {
     // Check for call events
-    if (bond.isSoftCall === 'Y' && bond.callScheduleFirstDate && bond.callTrigger) {
-      const callDate = new Date(bond.callScheduleFirstDate);
+    if (bond.isSoftCall && bond.callFirstDate && bond.callTrigger) {
+      const callDate = new Date(bond.callFirstDate);
       const daysToEvent = Math.floor((callDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
       
       if (daysToEvent >= 0 && daysToEvent <= 180) { // Next 6 months
@@ -165,7 +165,7 @@ export const getUpcomingEvents = (bonds: ConvertibleBond[]): UpcomingEvent[] => 
           isin: bond.isin,
           issuer: bond.issuer,
           eventType: 'Call',
-          eventDate: bond.callScheduleFirstDate,
+          eventDate: bond.callFirstDate,
           daysToEvent,
           triggerLevel: bond.callTrigger,
           currentLevel: bond.parityPercent,
@@ -175,7 +175,7 @@ export const getUpcomingEvents = (bonds: ConvertibleBond[]): UpcomingEvent[] => 
     }
     
     // Check for put events
-    if (bond.isPutable === 'Y' && bond.putDate && bond.putPrice) {
+    if (bond.isPutable && bond.putDate && bond.putPrice) {
       const putDate = new Date(bond.putDate);
       const daysToEvent = Math.floor((putDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
       
@@ -398,6 +398,139 @@ export const exportToCSV = (bonds: ConvertibleBond[], filename: string = 'conver
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+};
+
+// Aggregate bonds by sector
+export const aggregateBySector = (bonds: ConvertibleBond[]): Array<{ name: string; value: number }> => {
+  const sectorMap = new Map<string, number>();
+  
+  bonds.forEach(bond => {
+    const sector = bond.sector;
+    sectorMap.set(sector, (sectorMap.get(sector) || 0) + bond.outstandingAmount);
+  });
+  
+  return Array.from(sectorMap.entries()).map(([name, value]) => ({ name, value }));
+};
+
+// Aggregate bonds by rating
+export const aggregateByRating = (bonds: ConvertibleBond[]): Array<{ name: string; value: number }> => {
+  const ratingMap = new Map<string, number>();
+  
+  bonds.forEach(bond => {
+    const ratingGroup = getRatingGroup(bond.rating);
+    ratingMap.set(ratingGroup, (ratingMap.get(ratingGroup) || 0) + 1);
+  });
+  
+  return Array.from(ratingMap.entries()).map(([name, value]) => ({ name, value }));
+};
+
+// Aggregate bonds by maturity
+export const aggregateByMaturity = (bonds: ConvertibleBond[]): Array<{ name: string; value: number }> => {
+  const maturityMap = new Map<string, number>();
+  
+  bonds.forEach(bond => {
+    const bucket = getMaturityBucket(bond.maturityDate);
+    maturityMap.set(bucket, (maturityMap.get(bucket) || 0) + bond.outstandingAmount);
+  });
+  
+  return Array.from(maturityMap.entries()).map(([name, value]) => ({ name, value }));
+};
+
+// Aggregate bonds by profile
+export const aggregateByProfile = (bonds: ConvertibleBond[]): Array<{ name: string; value: number }> => {
+  const profileMap = new Map<string, number>();
+  
+  bonds.forEach(bond => {
+    const profile = bond.profile;
+    profileMap.set(profile, (profileMap.get(profile) || 0) + bond.outstandingAmount);
+  });
+  
+  return Array.from(profileMap.entries()).map(([name, value]) => ({ name, value }));
+};
+
+// Calculate market summary
+export interface MarketSummary {
+  totalCBs: number;
+  totalMarketCap: number;
+  avgYield: number;
+  avgDelta: number;
+  avgSpread: number;
+}
+
+export const calculateMarketSummary = (bonds: ConvertibleBond[]): MarketSummary => {
+  const totalCBs = bonds.length;
+  const totalMarketCap = bonds.reduce((sum, b) => sum + b.outstandingAmount, 0);
+  const avgYield = bonds.reduce((sum, b) => sum + b.ytm, 0) / totalCBs;
+  const avgDelta = bonds.reduce((sum, b) => sum + b.delta, 0) / totalCBs;
+  const avgSpread = bonds.reduce((sum, b) => sum + b.creditSpread, 0) / totalCBs;
+  
+  return {
+    totalCBs,
+    totalMarketCap,
+    avgYield,
+    avgDelta,
+    avgSpread,
+  };
+};
+
+// Generate market index data (mock for now, could be calculated from historical data)
+export const generateMarketIndexData = (): Array<{ date: string; cb: number; equity: number; deltaNeutral: number }> => {
+  const data = [];
+  const today = new Date();
+  
+  for (let i = 29; i >= 0; i--) {
+    const date = new Date(today);
+    date.setDate(date.getDate() - i);
+    
+    // Mock index values (in production, calculate from actual data)
+    const cbValue = 100 + (29 - i) * 0.15 + Math.sin(i / 3) * 2;
+    const equityValue = 100 + (29 - i) * 0.25 + Math.sin(i / 2) * 3;
+    const deltaNeutralValue = 100 + (29 - i) * 0.08 + Math.sin(i / 4) * 1;
+    
+    data.push({
+      date: date.toISOString().split('T')[0],
+      cb: Number(cbValue.toFixed(2)),
+      equity: Number(equityValue.toFixed(2)),
+      deltaNeutral: Number(deltaNeutralValue.toFixed(2)),
+    });
+  }
+  
+  return data;
+};
+
+// Generate historical data for a specific bond
+export const generateHistoricalData = (bond: ConvertibleBond): Array<{
+  date: string;
+  cbPrice: number;
+  underlyingPrice: number;
+  delta: number;
+  volatility: number;
+}> => {
+  const data = [];
+  const today = new Date();
+  const currentPrice = bond.price;
+  const currentULPrice = bond.stockPrice;
+  
+  for (let i = 29; i >= 0; i--) {
+    const date = new Date(today);
+    date.setDate(date.getDate() - i);
+    
+    // Calculate price based on performance
+    const daysElapsed = 29 - i;
+    const perfFactor = (bond.performance1M / 30) * daysElapsed;
+    const cbPrice = currentPrice * (1 - perfFactor / 100) * (1 + (Math.random() - 0.5) * 0.02);
+    const ulPrice = currentULPrice * (1 - perfFactor / 100) * (1 + (Math.random() - 0.5) * 0.03);
+    
+    data.push({
+      date: date.toISOString().split('T')[0],
+      cbPrice: Number(cbPrice.toFixed(2)),
+      underlyingPrice: Number(ulPrice.toFixed(2)),
+      delta: bond.delta * (1 + (Math.random() - 0.5) * 0.1),
+      volatility: bond.volatility * (1 + (Math.random() - 0.5) * 0.05),
+    });
+  }
+  
+  return data;
 };
 
 // Get unique values for filters

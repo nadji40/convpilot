@@ -8,15 +8,15 @@ import { WidgetContainer } from '../../components/WidgetContainer';
 import { DashboardHeader } from '../../components/DashboardHeader';
 import { AIAgentBubble } from '../../components/AIAgentBubble';
 import { 
-  mockConvertibleBonds, 
+  mockConvertibleBonds
+} from '../../data/mockData';
+import { 
   calculateMarketSummary,
   aggregateBySector,
   aggregateByRating,
   aggregateByMaturity,
   aggregateByProfile,
   generateMarketIndexData,
-} from '../../data/mockData';
-import { 
   formatLargeNumber, 
   formatPercentage,
   calculatePortfolioMetrics,

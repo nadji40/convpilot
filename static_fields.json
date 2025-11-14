@@ -1,0 +1,1782 @@
+{
+  "convertible_bonds": [
+    {
+      "name": "Accor 2027",
+      "bloomberg_code": "BM8244261 Corp",
+      "issuer": {
+        "country": "FRANCE",
+        "sector": "Consumer, Cyclical",
+        "industry": "Lodging"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 1,
+        "nominal": 48.12,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2020-12-07",
+        "maturity_date": "2027-12-07",
+        "premium_percent": 65,
+        "coupon_percent": 0.70,
+        "amount_issued": 499999955,
+        "next_coupon_date": "2023-12-07",
+        "conversion_price": 48.12,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2025-12-28",
+        "second_call_date": "2027-12-07",
+        "call_trigger_percent": 140,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "FULL",
+        "payout_direction": "UP",
+        "threshold": 0,
+        "frequency": "ANNUAL",
+        "projections": [
+          {"date": "2026-06-02", "amount": 1.5, "type": "Projected"},
+          {"date": "2027-06-01", "amount": 1.66, "type": "Projected"},
+          {"date": "2028-05-30", "amount": 1.82, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "EDENRED 2028",
+      "bloomberg_code": "ZR4449552 Corp",
+      "issuer": {
+        "country": "FRANCE",
+        "sector": "Consumer, Non-cyclical",
+        "industry": "Commercial Services"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 1,
+        "nominal": 61.13,
+        "issue_price_percent": 108,
+        "redemption_price_percent": 100,
+        "issue_date": "2019-09-06",
+        "maturity_date": "2024-09-06",
+        "premium_percent": 40,
+        "coupon_percent": 0.00,
+        "amount_issued": 500000000,
+        "conversion_price": 61.13,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2022-09-06",
+        "second_call_date": "2024-09-06",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "PARTIAL",
+        "payout_direction": "UP",
+        "threshold": 0.75,
+        "frequency": "ANNUAL",
+        "projections": [
+          {"date": "2026-06-05", "amount": 1.3, "type": "Projected"},
+          {"date": "2027-06-07", "amount": 1.35, "type": "Projected"},
+          {"date": "2028-06-07", "amount": 1.4, "type": "Projected"},
+          {"date": "2029-06-07", "amount": 1.4, "type": "Projected"},
+          {"date": "2030-06-06", "amount": 1.4, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "CELLNEX TELECOM 2031",
+      "bloomberg_code": "BM3171360 Corp",
+      "issuer": {
+        "country": "SPAIN",
+        "sector": "Industrial",
+        "industry": "Engineering&Construction"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 1030.18,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2020-11-20",
+        "maturity_date": "2031-11-20",
+        "premium_percent": 70,
+        "coupon_percent": 0.80,
+        "amount_issued": 1500000000,
+        "next_coupon_date": "2023-11-20",
+        "conversion_price": 97.07,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2028-12-11",
+        "second_call_date": "2031-11-20",
+        "call_trigger_percent": 150,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "FULL",
+        "payout_direction": "UP",
+        "threshold": 0,
+        "frequency": "semi-annual",
+        "projections": [
+          {"date": "2026-06-10", "amount": 0.02028, "type": "Projected"},
+          {"date": "2026-11-17", "amount": 0.0499, "type": "Projected"},
+          {"date": "2027-06-09", "amount": 0.02129, "type": "Projected"},
+          {"date": "2027-11-23", "amount": 0.05239, "type": "Projected"},
+          {"date": "2028-06-14", "amount": 0.02236, "type": "Projected"},
+          {"date": "2028-11-21", "amount": 0.05344, "type": "Projected"},
+          {"date": "2029-06-13", "amount": 0.02281, "type": "Projected"},
+          {"date": "2029-11-20", "amount": 0.05451, "type": "Projected"},
+          {"date": "2030-06-12", "amount": 0.02326, "type": "Projected"},
+          {"date": "2030-11-19", "amount": 0.0556, "type": "Projected"},
+          {"date": "2031-06-11", "amount": 0.02373, "type": "Projected"},
+          {"date": "2031-11-18", "amount": 0.05671, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "DIASORIN 2028",
+      "bloomberg_code": "BP3037226 Corp",
+      "issuer": {
+        "country": "ITALY",
+        "sector": "Consumer, Non-cyclical",
+        "industry": "Healthcare-Products"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 474.08,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2021-05-05",
+        "maturity_date": "2028-05-05",
+        "premium_percent": 48,
+        "coupon_percent": 0.00,
+        "amount_issued": 500000000,
+        "conversion_price": 210.93,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2026-05-26",
+        "second_call_date": "2028-05-05",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "PARTIAL",
+        "payout_direction": "UP",
+        "threshold_schedule": [
+          {"date": "2021-12-31", "threshold": 1.05},
+          {"date": "2022-12-31", "threshold": 1.1},
+          {"date": "2023-12-31", "threshold": 1.15},
+          {"date": "2024-12-31", "threshold": 1.2},
+          {"date": "2025-12-31", "threshold": 1.25},
+          {"date": "2026-12-31", "threshold": 1.3},
+          {"date": "2027-12-31", "threshold": 1.35}
+        ],
+        "frequency": "ANNUAL",
+        "projections": [
+          {"date": "2026-05-18", "amount": 1.25, "type": "Projected"},
+          {"date": "2027-05-17", "amount": 1.3, "type": "Projected"},
+          {"date": "2028-05-22", "amount": 1.35, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "DUERR AG 2026",
+      "bloomberg_code": "ZO6404115 Corp",
+      "issuer": {
+        "country": "GERMANY",
+        "sector": "Industrial",
+        "industry": "Machinery-Diversified"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 2922.27,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2020-10-01",
+        "maturity_date": "2026-01-15",
+        "premium_percent": 40,
+        "coupon_percent": 0.80,
+        "amount_issued": 150000000,
+        "next_coupon_date": "2024-01-15",
+        "conversion_price": 34.22,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2024-02-05",
+        "second_call_date": "2026-01-15",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "FULL",
+        "payout_direction": "UP",
+        "threshold": 0,
+        "frequency": "ANNUAL",
+        "projections": [
+          {"date": "2026-05-11", "amount": 0.95, "type": "Projected"},
+          {"date": "2027-05-17", "amount": 1.05, "type": "Projected"},
+          {"date": "2028-05-15", "amount": 1.1, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "ELIS SA 2029",
+      "bloomberg_code": "BZ0744731 Corp",
+      "issuer": {
+        "country": "FRANCE",
+        "sector": "Consumer, Non-cyclical",
+        "industry": "Commercial Services"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 5774.01,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2022-09-22",
+        "maturity_date": "2029-09-22",
+        "premium_percent": 43,
+        "coupon_percent": 2.30,
+        "amount_issued": 380000000,
+        "next_coupon_date": "2023-09-22",
+        "conversion_price": 17.32,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": true,
+        "put_date": "2027-09-22",
+        "put_price_percent": 100
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2026-10-13",
+        "second_call_date": "2029-09-12",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "FULL",
+        "payout_direction": "UP",
+        "threshold": 0,
+        "frequency": "ANNUAL",
+        "projections": [
+          {"date": "2026-06-02", "amount": 0.48, "type": "Projected"},
+          {"date": "2027-06-01", "amount": 0.51, "type": "Projected"},
+          {"date": "2028-05-30", "amount": 0.54, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "FNAC DARTY SA 2027",
+      "bloomberg_code": "BO6307249 Corp",
+      "issuer": {
+        "country": "FRANCE",
+        "sector": "Consumer, Cyclical",
+        "industry": "Retail"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 1,
+        "nominal": 81.03,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2021-03-23",
+        "maturity_date": "2027-03-23",
+        "premium_percent": 50,
+        "coupon_percent": 0.30,
+        "amount_issued": 199999948,
+        "next_coupon_date": "2024-03-23",
+        "conversion_price": 81.03,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2025-04-13",
+        "second_call_date": "2027-03-14",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "FULL",
+        "payout_direction": "UP",
+        "threshold": 0,
+        "frequency": "NA"
+      }
+    },
+    {
+      "name": "GLOBAL FASHION G 2028",
+      "bloomberg_code": "BO3949308 Corp",
+      "issuer": {
+        "country": "LUXEMBOURG",
+        "sector": "Communications",
+        "industry": "Internet"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 5569.48,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2021-03-15",
+        "maturity_date": "2028-03-15",
+        "premium_percent": 43,
+        "coupon_percent": 1.30,
+        "amount_issued": 375000000,
+        "next_coupon_date": "2023-09-15",
+        "conversion_price": 17.95,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": true,
+        "put_date": "2026-03-15",
+        "put_price_percent": 100
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2025-05-14",
+        "second_call_date": "2028-03-15",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "FULL",
+        "payout_direction": "UP",
+        "threshold": 0,
+        "frequency": "NA"
+      }
+    },
+    {
+      "name": "IBERDROLA FIN SA 2027",
+      "bloomberg_code": "ZN6999991 Corp",
+      "issuer": {
+        "country": "SPAIN",
+        "sector": "Utilities",
+        "industry": "Electric"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 7730.36,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2022-12-07",
+        "maturity_date": "2027-12-07",
+        "premium_percent": 20,
+        "coupon_percent": 0.80,
+        "amount_issued": 450000000,
+        "next_coupon_date": "2023-12-07",
+        "conversion_price": 12.94,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": false,
+        "second_call_date": "2027-08-07",
+        "call_trigger_percent": 150,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "PARTIAL",
+        "payout_direction": "UP",
+        "threshold_schedule": [
+          {"date": "2023-04-30", "threshold": 0.18},
+          {"date": "2023-11-30", "threshold": 0.274},
+          {"date": "2024-04-30", "threshold": 0.18},
+          {"date": "2024-11-30", "threshold": 0.274},
+          {"date": "2025-04-30", "threshold": 0.18},
+          {"date": "2025-11-30", "threshold": 0.274},
+          {"date": "2026-04-30", "threshold": 0.18},
+          {"date": "2026-11-30", "threshold": 0.274},
+          {"date": "2027-04-30", "threshold": 0.18},
+          {"date": "2027-07-31", "threshold": 0.274}
+        ],
+        "frequency": "semi-annual",
+        "projections": [
+          {"date": "2026-01-13", "amount": 0.204, "type": "Projected"},
+          {"date": "2026-07-08", "amount": 0.362, "type": "Projected"},
+          {"date": "2027-01-12", "amount": 0.217, "type": "Projected"},
+          {"date": "2027-07-07", "amount": 0.385, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "JUST EAT TAKEA 2028",
+      "bloomberg_code": "BN8560011 Corp",
+      "issuer": {
+        "country": "NETHERLANDS",
+        "sector": "Communications",
+        "industry": "Internet"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 690.01,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2021-02-09",
+        "maturity_date": "2028-02-09",
+        "premium_percent": 55,
+        "coupon_percent": 0.60,
+        "amount_issued": 500000000,
+        "next_coupon_date": "2023-08-09",
+        "conversion_price": 144.93,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2024-05-15",
+        "second_call_date": "2026-04-30",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "FULL",
+        "payout_direction": "UP",
+        "threshold": 0,
+        "frequency": "NA"
+      }
+    },
+    {
+      "name": "LAGFIN 2028",
+      "bloomberg_code": "zk8577312 Corp",
+      "issuer": {
+        "country": "ITALY",
+        "sector": "Financial",
+        "industry": "Investment Companies"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 6164.16,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2023-06-08",
+        "maturity_date": "2028-06-08",
+        "premium_percent": 30,
+        "coupon_percent": 3.50,
+        "amount_issued": 536400000,
+        "next_coupon_date": "2023-12-08",
+        "conversion_price": 16.22,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2026-06-23",
+        "second_call_date": "2028-04-26",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "PARTIAL",
+        "payout_direction": "UP",
+        "threshold": 0,
+        "frequency": "ANNUAL",
+        "projections": [
+          {"date": "2026-04-20", "amount": 0.07, "type": "Projected"},
+          {"date": "2027-04-19", "amount": 0.07, "type": "Projected"},
+          {"date": "2028-04-24", "amount": 0.075, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "LEG IMMOBILIEN 2028",
+      "bloomberg_code": "BK2241960 Corp",
+      "issuer": {
+        "country": "GERMANY",
+        "sector": "Financial",
+        "industry": "Real Estate"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 644.12,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2020-06-30",
+        "maturity_date": "2028-06-30",
+        "premium_percent": 35,
+        "coupon_percent": 0.40,
+        "amount_issued": 550000000,
+        "next_coupon_date": "2023-07-15",
+        "conversion_price": 155.25,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2025-08-05",
+        "second_call_date": "2028-06-30",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "PARTIAL",
+        "payout_direction": "UP",
+        "threshold_schedule": [
+          {"date": "2020-09-07", "threshold": 3.6},
+          {"date": "2021-06-14", "threshold": 3.5957},
+          {"date": "2022-06-07", "threshold": 3.5863},
+          {"date": "2028-06-30", "threshold": 3.562}
+        ],
+        "frequency": "ANNUAL",
+        "projections": [
+          {"date": "2026-05-28", "amount": 1.8, "type": "Projected"},
+          {"date": "2027-05-27", "amount": 1.9, "type": "Projected"},
+          {"date": "2028-05-25", "amount": 2.0, "type": "Projected"},
+          {"date": "2029-05-24", "amount": 2.1, "type": "Projected"},
+          {"date": "2030-05-23", "amount": 2.2, "type": "Projected"},
+          {"date": "2031-05-22", "amount": 2.3, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "MTU AERO ENGINES 2027",
+      "bloomberg_code": "ZR5462034 Corp",
+      "issuer": {
+        "country": "GERMANY",
+        "sector": "Industrial",
+        "industry": "Aerospace/Defense"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 264.25,
+        "nominal": 100000,
+        "issue_price_percent": 103,
+        "redemption_price_percent": 100,
+        "issue_date": "2019-09-18",
+        "maturity_date": "2027-03-18",
+        "premium_percent": 55,
+        "coupon_percent": 0.10,
+        "amount_issued": 500000000,
+        "next_coupon_date": "2024-03-18",
+        "conversion_price": 378.43,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2025-04-08",
+        "second_call_date": "2027-03-18",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "PARTIAL",
+        "payout_direction": "UP",
+        "threshold_schedule": [
+          {"date": "2023-05-12", "threshold": 2.85},
+          {"date": "2027-03-18", "threshold": 2.8456}
+        ],
+        "frequency": "ANNUAL",
+        "projections": [
+          {"date": "2026-05-08", "amount": 1.5, "type": "Projected"},
+          {"date": "2027-05-07", "amount": 1.5, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "NEOEN SAS 2027",
+      "bloomberg_code": "BY9214762 Corp",
+      "issuer": {
+        "country": "FRANCE",
+        "sector": "Energy",
+        "industry": "Energy-Alternate Sources"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 1941.75,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2022-09-14",
+        "maturity_date": "2027-09-14",
+        "premium_percent": 35,
+        "coupon_percent": 2.90,
+        "amount_issued": 300000000,
+        "next_coupon_date": "2023-09-14",
+        "conversion_price": 51.5,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2025-10-05",
+        "second_call_date": "2027-09-14",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "FULL",
+        "payout_direction": "UP",
+        "threshold": 0,
+        "frequency": "ANNUAL",
+        "projections": [
+          {"date": "2026-05-19", "amount": 0.2, "type": "Projected"},
+          {"date": "2027-05-19", "amount": 0.24, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "NEXI 2027",
+      "bloomberg_code": "BH9546384 Corp",
+      "issuer": {
+        "country": "ITALY",
+        "sector": "Consumer, Non-cyclical",
+        "industry": "Commercial Services"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 5136.11,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2020-04-24",
+        "maturity_date": "2027-04-24",
+        "premium_percent": 50,
+        "coupon_percent": 1.80,
+        "amount_issued": 500000000,
+        "next_coupon_date": "2023-10-24",
+        "conversion_price": 19.47,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2025-05-16",
+        "second_call_date": "2027-04-24",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "FULL",
+        "payout_direction": "UP",
+        "threshold": 0,
+        "frequency": "NA"
+      }
+    },
+    {
+      "name": "NEXI 2028",
+      "bloomberg_code": "BO1287214 Corp",
+      "issuer": {
+        "country": "ITALY",
+        "sector": "Consumer, Non-cyclical",
+        "industry": "Commercial Services"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 4072.9,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2021-02-24",
+        "maturity_date": "2028-02-24",
+        "premium_percent": 53,
+        "coupon_percent": 0.00,
+        "amount_issued": 1000000000,
+        "conversion_price": 24.55,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2026-03-17",
+        "second_call_date": "2028-02-15",
+        "call_trigger_percent": 150,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "FULL",
+        "payout_direction": "UP",
+        "threshold": 0,
+        "frequency": "NA"
+      }
+    },
+    {
+      "name": "NEXITY 2028",
+      "bloomberg_code": "BP0668130 Corp",
+      "issuer": {
+        "country": "FRANCE",
+        "sector": "Financial",
+        "industry": "Real Estate"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 1,
+        "nominal": 59.81,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2021-04-19",
+        "maturity_date": "2028-04-19",
+        "premium_percent": 35,
+        "coupon_percent": 0.90,
+        "amount_issued": 239999946,
+        "next_coupon_date": "2023-10-19",
+        "conversion_price": 59.81,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2025-05-12",
+        "second_call_date": "2028-04-19",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "FULL",
+        "payout_direction": "UP",
+        "threshold_schedule": [
+          {"date": "2026-12-31", "threshold": 1},
+          {"date": "2027-12-31", "threshold": 1},
+          {"date": "2028-12-31", "threshold": 0}
+        ],
+        "frequency": "ANNUAL",
+        "projections": [
+          {"date": "2026-05-22", "amount": 1, "type": "Projected"},
+          {"date": "2027-05-24", "amount": 1, "type": "Projected"},
+          {"date": "2028-05-24", "amount": 1, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "NORDEX SE 2030",
+      "bloomberg_code": "ZK0637007 Corp",
+      "issuer": {
+        "country": "GERMANY",
+        "sector": "Energy",
+        "industry": "Energy-Alternate Sources"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 6357.28,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2023-04-14",
+        "maturity_date": "2030-04-14",
+        "premium_percent": 30,
+        "coupon_percent": 4.30,
+        "amount_issued": 333000000,
+        "next_coupon_date": "2023-10-14",
+        "conversion_price": 15.73,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": true,
+        "put_date": "2028-04-14",
+        "put_price_percent": 100
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2028-05-05",
+        "second_call_date": "2030-03-30",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "FULL",
+        "payout_direction": "UP",
+        "threshold": 0,
+        "frequency": "NA"
+      }
+    },
+    {
+      "name": "PIRELLI & C SPA 2025",
+      "bloomberg_code": "BN0747038 Corp",
+      "issuer": {
+        "country": "ITALY",
+        "sector": "Consumer, Cyclical",
+        "industry": "Auto Parts&Equipment"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 16038.49,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2020-12-22",
+        "maturity_date": "2025-12-22",
+        "premium_percent": 45,
+        "coupon_percent": 0.00,
+        "amount_issued": 500000000,
+        "conversion_price": 6.24,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2024-01-06",
+        "second_call_date": "2025-12-22",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "PARTIAL",
+        "payout_direction": "UP",
+        "threshold_schedule": [
+          {"date": "2020-12-31", "threshold": 0.06},
+          {"date": "2021-12-31", "threshold": 0.11},
+          {"date": "2022-12-31", "threshold": 0.1235},
+          {"date": "2023-12-31", "threshold": 0.136},
+          {"date": "2024-12-31", "threshold": 0.1495},
+          {"date": "2025-12-31", "threshold": 0}
+        ],
+        "frequency": "ANNUAL",
+        "projections": [
+          {"date": "2025-05-19", "amount": 0.22, "type": "Projected"},
+          {"date": "2026-05-18", "amount": 0.24, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "PRYSMIAN SPA 2026",
+      "bloomberg_code": "BN7428004 Corp",
+      "issuer": {
+        "country": "ITALY",
+        "sector": "Industrial",
+        "industry": "Electrical Compo&Equip"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 2485.37,
+        "nominal": 100000,
+        "issue_price_percent": 103,
+        "redemption_price_percent": 100,
+        "issue_date": "2021-02-02",
+        "maturity_date": "2026-02-02",
+        "premium_percent": 48,
+        "coupon_percent": 0.00,
+        "amount_issued": 750000000,
+        "conversion_price": 40.24,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2024-02-12",
+        "second_call_date": "2026-01-25",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "PARTIAL",
+        "payout_direction": "UP",
+        "threshold": 0.5,
+        "frequency": "ANNUAL",
+        "projections": [
+          {"date": "2026-04-20", "amount": 0.85, "type": "Projected"},
+          {"date": "2027-04-19", "amount": 0.93, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "RAG STIFTUNG 2026",
+      "bloomberg_code": "BJ9815504 Corp",
+      "issuer": {
+        "country": "GERMANY",
+        "sector": "Energy",
+        "industry": "Coal"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 3465,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2020-06-17",
+        "maturity_date": "2026-06-17",
+        "premium_percent": 20,
+        "coupon_percent": 0.00,
+        "amount_issued": 500000000,
+        "conversion_price": 28.86,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2024-07-08",
+        "second_call_date": "2026-05-23",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "FULL",
+        "payout_direction": "UP",
+        "threshold": 0,
+        "frequency": "ANNUAL",
+        "projections": [
+          {"date": "2025-05-29", "amount": 1.17, "type": "Projected"},
+          {"date": "2026-05-28", "amount": 1.17, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "RAG STIFTUNG 2029",
+      "bloomberg_code": "ZN2755256 Corp",
+      "issuer": {
+        "country": "GERMANY",
+        "sector": "Energy",
+        "industry": "Coal"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 4484.31,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2022-11-16",
+        "maturity_date": "2029-11-16",
+        "premium_percent": 20,
+        "coupon_percent": 1.90,
+        "amount_issued": 500000000,
+        "next_coupon_date": "2023-11-16",
+        "conversion_price": 22.3,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": true,
+        "put_date": "2027-11-16",
+        "put_price_percent": 100
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2027-12-07",
+        "second_call_date": "2029-10-12",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "FULL",
+        "payout_direction": "UP",
+        "threshold": 0,
+        "frequency": "ANNUAL",
+        "projections": [
+          {"date": "2025-05-29", "amount": 1.17, "type": "Projected"},
+          {"date": "2026-05-28", "amount": 1.17, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "REDCARE PHARMA 2028",
+      "bloomberg_code": "BN5328750 Corp",
+      "issuer": {
+        "country": "NETHERLANDS",
+        "sector": "Consumer, Cyclical",
+        "industry": "Retail"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 427.66,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2021-01-21",
+        "maturity_date": "2028-01-21",
+        "premium_percent": 50,
+        "coupon_percent": 0.00,
+        "amount_issued": 225000000,
+        "conversion_price": 233.83,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": true,
+        "put_date": "2026-01-21",
+        "put_price_percent": 100
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2025-03-10",
+        "second_call_date": "2027-11-28",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "FULL",
+        "payout_direction": "UP",
+        "threshold": 0,
+        "frequency": "NA"
+      }
+    },
+    {
+      "name": "RHEINMETALL 2028",
+      "bloomberg_code": "ZM7690377 Corp",
+      "issuer": {
+        "country": "GERMANY",
+        "sector": "Industrial",
+        "industry": "Aerospace/Defense"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 322.68,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2023-02-07",
+        "maturity_date": "2028-02-07",
+        "premium_percent": 45,
+        "coupon_percent": 1.90,
+        "amount_issued": 500000000,
+        "next_coupon_date": "2023-08-07",
+        "conversion_price": 309.9,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2026-02-28",
+        "second_call_date": "2028-01-24",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "PARTIAL",
+        "payout_direction": "UP",
+        "threshold_schedule": [
+          {"date": "2023-12-31", "threshold": 5.191},
+          {"date": "2028-12-31", "threshold": 6.5886}
+        ],
+        "frequency": "ANNUAL",
+        "projections": [
+          {"date": "2026-05-08", "amount": 9, "type": "Projected"},
+          {"date": "2027-05-10", "amount": 10.8, "type": "Projected"},
+          {"date": "2028-05-10", "amount": 11.2, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "RHEINMETALL 2030",
+      "bloomberg_code": "ZM7690369 Corp",
+      "issuer": {
+        "country": "GERMANY",
+        "sector": "Industrial",
+        "industry": "Aerospace/Defense"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 322.68,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2023-02-07",
+        "maturity_date": "2030-02-07",
+        "premium_percent": 45,
+        "coupon_percent": 2.30,
+        "amount_issued": 500000000,
+        "next_coupon_date": "2023-08-07",
+        "conversion_price": 309.9,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2028-02-28",
+        "second_call_date": "2030-01-24",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "PARTIAL",
+        "payout_direction": "UP",
+        "threshold_schedule": [
+          {"date": "2023-12-31", "threshold": 5.191},
+          {"date": "2028-12-31", "threshold": 6.5886}
+        ],
+        "frequency": "ANNUAL",
+        "projections": [
+          {"date": "2026-05-08", "amount": 9, "type": "Projected"},
+          {"date": "2027-05-10", "amount": 10.8, "type": "Projected"},
+          {"date": "2028-05-10", "amount": 11.2, "type": "Projected"},
+          {"date": "2029-05-10", "amount": 11.7, "type": "Projected"},
+          {"date": "2030-05-09", "amount": 12, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "SAFRAN SA 2027",
+      "bloomberg_code": "BJ4442296 Corp",
+      "issuer": {
+        "country": "FRANCE",
+        "sector": "Industrial",
+        "industry": "Aerospace/Defense"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 1,
+        "nominal": 108.23,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2020-05-15",
+        "maturity_date": "2027-05-15",
+        "premium_percent": 40,
+        "coupon_percent": 0.90,
+        "amount_issued": 999999852,
+        "next_coupon_date": "2024-05-15",
+        "conversion_price": 108.23,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2024-06-05",
+        "second_call_date": "2027-05-15",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "FULL",
+        "payout_direction": "UP",
+        "threshold": 0,
+        "frequency": "ANNUAL",
+        "projections": [
+          {"date": "2026-06-02", "amount": 3, "type": "Projected"},
+          {"date": "2027-06-01", "amount": 3.3, "type": "Projected"},
+          {"date": "2028-05-30", "amount": 3.5, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "SAFRAN SA 2028",
+      "bloomberg_code": "BP9799654 Corp",
+      "issuer": {
+        "country": "FRANCE",
+        "sector": "Industrial",
+        "industry": "Aerospace/Defense"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 1,
+        "nominal": 180.89,
+        "issue_price_percent": 104,
+        "redemption_price_percent": 100,
+        "issue_date": "2021-06-14",
+        "maturity_date": "2028-04-01",
+        "premium_percent": 45,
+        "coupon_percent": 0.00,
+        "amount_issued": 729999865,
+        "conversion_price": 180.89,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2025-04-01",
+        "second_call_date": "2028-04-01",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "PARTIAL",
+        "payout_direction": "UP",
+        "threshold": 1,
+        "frequency": "ANNUAL",
+        "projections": [
+          {"date": "2026-06-02", "amount": 3, "type": "Projected"},
+          {"date": "2027-06-01", "amount": 3.3, "type": "Projected"},
+          {"date": "2028-05-30", "amount": 3.5, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "SAGERPAR 2026",
+      "bloomberg_code": "BO7354802 Corp",
+      "issuer": {
+        "country": "BELGIUM",
+        "sector": "Financial",
+        "industry": "Investment Companies"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 851.12,
+        "nominal": 100000,
+        "issue_price_percent": 101,
+        "redemption_price_percent": 100,
+        "issue_date": "2021-04-01",
+        "maturity_date": "2026-04-01",
+        "premium_percent": 35,
+        "coupon_percent": 0.00,
+        "amount_issued": 500000000,
+        "conversion_price": 117.49,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2024-04-16",
+        "second_call_date": "2026-04-01",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "FULL",
+        "payout_direction": "UP",
+        "threshold": 0,
+        "frequency": "ANNUAL",
+        "projections": [
+          {"date": "2026-05-04", "amount": 2.75, "type": "Projected"},
+          {"date": "2027-05-03", "amount": 2.75, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "SCHNEIDER ELEC 2026",
+      "bloomberg_code": "BM6028963 Corp",
+      "issuer": {
+        "country": "FRANCE",
+        "sector": "Industrial",
+        "industry": "Electrical Compo&Equip"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 1,
+        "nominal": 176.44,
+        "issue_price_percent": 108,
+        "redemption_price_percent": 100,
+        "issue_date": "2020-11-24",
+        "maturity_date": "2026-06-15",
+        "premium_percent": 50,
+        "coupon_percent": 0.00,
+        "amount_issued": 650000020,
+        "next_coupon_date": "2023-11-24",
+        "conversion_price": 176.44,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2024-01-15",
+        "second_call_date": "2026-06-04",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "PARTIAL",
+        "payout_direction": "UP",
+        "threshold": 3,
+        "frequency": "ANNUAL",
+        "projections": [
+          {"date": "2026-05-12", "amount": 4.05, "type": "Projected"},
+          {"date": "2027-05-11", "amount": 4.4, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "SGL CARBON SE 2027",
+      "bloomberg_code": "BZ0459447 Corp",
+      "issuer": {
+        "country": "GERMANY",
+        "sector": "Basic Materials",
+        "industry": "Chemicals"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 12005.09,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2022-09-21",
+        "maturity_date": "2027-09-21",
+        "premium_percent": 25,
+        "coupon_percent": 5.80,
+        "amount_issued": 101900000,
+        "next_coupon_date": "2023-09-21",
+        "conversion_price": 8.33,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2025-11-04",
+        "second_call_date": "2027-08-23",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "FULL",
+        "payout_direction": "UP",
+        "threshold": 0,
+        "frequency": "NA"
+      }
+    },
+    {
+      "name": "SGL CARBON SE 2028",
+      "bloomberg_code": "zj0585951 Corp",
+      "issuer": {
+        "country": "GERMANY",
+        "sector": "Basic Materials",
+        "industry": "Chemicals"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 10303.86,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2023-06-28",
+        "maturity_date": "2028-06-28",
+        "premium_percent": 25,
+        "coupon_percent": 5.80,
+        "amount_issued": 118700000,
+        "next_coupon_date": "2023-12-28",
+        "conversion_price": 9.71,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2026-07-27",
+        "second_call_date": "2028-06-28",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "FULL",
+        "payout_direction": "UP",
+        "threshold": 0,
+        "frequency": "NA"
+      }
+    },
+    {
+      "name": "SPIE SA 2028",
+      "bloomberg_code": "ZM3574849 Corp",
+      "issuer": {
+        "country": "FRANCE",
+        "sector": "Industrial",
+        "industry": "Engineering&Construction"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 3033.06,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2023-01-17",
+        "maturity_date": "2028-01-17",
+        "premium_percent": 38,
+        "coupon_percent": 2.00,
+        "amount_issued": 400000000,
+        "next_coupon_date": "2023-07-17",
+        "conversion_price": 32.97,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2026-08-07",
+        "second_call_date": "2028-01-06",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "PARTIAL",
+        "payout_direction": "UP",
+        "threshold": 0.6,
+        "frequency": "semi-annual",
+        "projections": [
+          {"date": "2026-05-25", "amount": 0.74, "type": "Projected"},
+          {"date": "2026-09-23", "amount": 0.28, "type": "Projected"},
+          {"date": "2027-05-24", "amount": 0.78, "type": "Projected"},
+          {"date": "2027-09-22", "amount": 0.3, "type": "Projected"},
+          {"date": "2028-05-22", "amount": 0.82, "type": "Projected"},
+          {"date": "2028-09-20", "amount": 0.31, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "TAG IMMO AG 2026",
+      "bloomberg_code": "ZO1068352 Corp",
+      "issuer": {
+        "country": "GERMANY",
+        "sector": "Financial",
+        "industry": "Real Estate"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 2940.04,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2020-08-27",
+        "maturity_date": "2026-08-27",
+        "premium_percent": 35,
+        "coupon_percent": 0.60,
+        "amount_issued": 470000000,
+        "next_coupon_date": "2023-08-27",
+        "conversion_price": 34.01,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2024-08-27",
+        "second_call_date": "2026-08-27",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "PARTIAL",
+        "payout_direction": "UP",
+        "threshold_schedule": [
+          {"date": "2021-05-12", "threshold": 0.82},
+          {"date": "2022-05-12", "threshold": 0.82},
+          {"date": "2023-05-12", "threshold": 0.82},
+          {"date": "2024-05-12", "threshold": 0.82},
+          {"date": "2025-05-12", "threshold": 0.82},
+          {"date": "2026-08-27", "threshold": 0.8179}
+        ],
+        "frequency": "ANNUAL",
+        "projections": [
+          {"date": "2026-05-13", "amount": 0.3, "type": "Projected"},
+          {"date": "2027-05-12", "amount": 0.45, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "TIRLAN CO-OP SOC 2027",
+      "bloomberg_code": "BT6537539 Corp",
+      "issuer": {
+        "country": "IRELAND",
+        "sector": "Consumer, Non-cyclical",
+        "industry": "Food"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 6046.86,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2022-01-27",
+        "maturity_date": "2027-01-27",
+        "premium_percent": 35,
+        "coupon_percent": 1.90,
+        "amount_issued": 250000000,
+        "next_coupon_date": "2023-07-27",
+        "conversion_price": 16.54,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2025-02-17",
+        "second_call_date": "2027-01-27",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "PARTIAL",
+        "payout_direction": "UP",
+        "threshold_schedule": [
+          {"date": "2022-12-31", "threshold": 0.2907},
+          {"date": "2023-12-31", "threshold": 0.3053},
+          {"date": "2024-12-31", "threshold": 0.3205},
+          {"date": "2025-12-31", "threshold": 0.3366},
+          {"date": "2026-12-31", "threshold": 0.3534}
+        ],
+        "frequency": "semi-annual",
+        "projections": [
+          {"date": "2026-03-24", "amount": 0.2568, "type": "Projected"},
+          {"date": "2026-08-20", "amount": 0.1893, "type": "Projected"},
+          {"date": "2027-03-24", "amount": 0.2824, "type": "Projected"},
+          {"date": "2027-08-19", "amount": 0.2082, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "TUI AG 2028",
+      "bloomberg_code": "BP0256233 Corp",
+      "issuer": {
+        "country": "GERMANY",
+        "sector": "Consumer, Cyclical",
+        "industry": "Lodging"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 18645.93,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2021-04-16",
+        "maturity_date": "2028-04-16",
+        "premium_percent": 25,
+        "coupon_percent": 5.00,
+        "amount_issued": 589600000,
+        "next_coupon_date": "2023-10-16",
+        "conversion_price": 5.36,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": true,
+        "put_date": "2026-04-16",
+        "put_price_percent": 100
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2026-05-07",
+        "second_call_date": "2028-04-16",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "FULL",
+        "payout_direction": "UP",
+        "threshold": 0,
+        "frequency": "ANNUAL",
+        "projections": [
+          {"date": "2026-02-11", "amount": 0.19, "type": "Projected"},
+          {"date": "2027-02-10", "amount": 0.23, "type": "Projected"},
+          {"date": "2028-02-09", "amount": 0.27, "type": "Projected"}
+        ]
+      }
+    },
+    {
+      "name": "UBISOFT ENTERTAI 2028",
+      "bloomberg_code": "ZN2350330 Corp",
+      "issuer": {
+        "country": "FRANCE",
+        "sector": "Technology",
+        "industry": "Software"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 2534.45,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2022-11-15",
+        "maturity_date": "2028-11-15",
+        "premium_percent": 48,
+        "coupon_percent": 2.40,
+        "amount_issued": 470000000,
+        "next_coupon_date": "2023-11-15",
+        "conversion_price": 39.46,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": true,
+        "put_date": "2026-11-15",
+        "put_price_percent": 101.56
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2026-12-06",
+        "second_call_date": "2028-11-15",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "FULL",
+        "payout_direction": "UP",
+        "threshold": 0,
+        "frequency": "NA"
+      }
+    },
+    {
+      "name": "VOESTALPINE AG 2028",
+      "bloomberg_code": "ZK2870366 Corp",
+      "issuer": {
+        "country": "AUSTRIA",
+        "sector": "Basic Materials",
+        "industry": "Iron/Steel"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": 2445.5,
+        "nominal": 100000,
+        "issue_price_percent": 100,
+        "redemption_price_percent": 100,
+        "issue_date": "2023-04-28",
+        "maturity_date": "2028-04-28",
+        "premium_percent": 30,
+        "coupon_percent": 2.80,
+        "amount_issued": 250000000,
+        "next_coupon_date": "2023-10-28",
+        "conversion_price": 40.89,
+        "subordinated_debt": false,
+        "currency": "EUR"
+      },
+      "put_option": {
+        "is_putable": false
+      },
+      "soft_call": {
+        "has_soft_call": true,
+        "first_call_date": "2026-05-19",
+        "second_call_date": "2028-03-23",
+        "call_trigger_percent": 130,
+        "call_price_percent": 100
+      },
+      "dividends": {
+        "has_protection": true,
+        "protection_type": "PARTIAL",
+        "payout_direction": "UP",
+        "threshold_schedule": [
+          {"date": "2023-07-13", "threshold": 1.2},
+          {"date": "2028-04-28", "threshold": 1.1881}
+        ],
+        "frequency": "ANNUAL",
+        "projections": [
+          {"date": "2026-07-09", "amount": 1.15, "type": "Projected"},
+          {"date": "2027-07-08", "amount": 1.4, "type": "Projected"},
+          {"date": "2028-07-13", "amount": 1.4, "type": "Projected"}
+        ]
+      }
+    }
+  ],
+  "metadata": {
+    "total_bonds": 42,
+    "data_structure_version": "1.0",
+    "description": "European Convertible Bonds Dataset",
+    "fields_description": {
+      "name": "Bond identifier with maturity year",
+      "bloomberg_code": "Bloomberg ticker or ISIN code",
+      "issuer": {
+        "country": "Country of incorporation",
+        "sector": "Business sector classification",
+        "industry": "Specific industry classification"
+      },
+      "bond_characteristics": {
+        "conversion_ratio": "Number of shares per bond",
+        "nominal": "Nominal value of the bond",
+        "issue_price_percent": "Issue price as percentage of nominal",
+        "redemption_price_percent": "Redemption price as percentage of nominal",
+        "issue_date": "Date bond was issued (YYYY-MM-DD)",
+        "maturity_date": "Date bond matures (YYYY-MM-DD)",
+        "premium_percent": "Conversion premium percentage",
+        "coupon_percent": "Annual coupon rate percentage",
+        "amount_issued": "Total amount issued in currency units",
+        "next_coupon_date": "Next coupon payment date",
+        "conversion_price": "Price at which bond converts to shares",
+        "subordinated_debt": "Whether debt is subordinated (boolean)",
+        "currency": "Currency of the bond"
+      },
+      "put_option": {
+        "is_putable": "Whether bond has put option (boolean)",
+        "put_date": "Date put option can be exercised",
+        "put_price_percent": "Put price as percentage"
+      },
+      "soft_call": {
+        "has_soft_call": "Whether bond has soft call provision (boolean)",
+        "first_call_date": "First possible call date",
+        "second_call_date": "Second call date",
+        "call_trigger_percent": "Stock price trigger for call (percentage)",
+        "call_price_percent": "Call price as percentage"
+      },
+      "dividends": {
+        "has_protection": "Whether dividend protection exists (boolean)",
+        "protection_type": "Type of protection (FULL/PARTIAL)",
+        "payout_direction": "Direction of adjustment (UP/DOWN)",
+        "threshold": "Dividend threshold value",
+        "threshold_schedule": "Array of date-threshold pairs if variable",
+        "frequency": "Dividend payment frequency",
+        "projections": "Array of projected dividend payments"
+      }
+    }
+  }
+}

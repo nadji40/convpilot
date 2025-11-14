@@ -6,7 +6,8 @@ import { DashboardHeader } from '../../components/DashboardHeader';
 import { AnimatedCard } from '../../components/AnimatedCard';
 import { KPICard } from '../../components/KPICard';
 import { AIAgentBubble } from '../../components/AIAgentBubble';
-import { mockConvertibleBonds, ConvertibleBond } from '../../data/mockData';
+import { mockConvertibleBonds } from '../../data/mockData';
+import { ConvertibleBond } from '../../data/dataLoader';
 import { formatLargeNumber, formatPercentage } from '../../utils/dataUtils';
 import { getStaggerDelay } from '../../utils/animations';
 import {

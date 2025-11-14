@@ -8,7 +8,8 @@ import { SearchBar } from '../../components/SearchBar';
 import { FilterPanel } from '../../components/FilterPanel';
 import { DataTable, Column } from '../../components/DataTable';
 import { AIAgentBubble } from '../../components/AIAgentBubble';
-import { mockConvertibleBonds, ConvertibleBond } from '../../data/mockData';
+import { mockConvertibleBonds } from '../../data/mockData';
+import { ConvertibleBond } from '../../data/dataLoader';
 import {
   filterBonds,
   sortBonds,
