@@ -121,13 +121,13 @@ export const PerformanceAttribution: React.FC = () => {
               flexDirection: 'row',
               gap: 8,
               marginBottom: 24,
-            padding: 16,
-            backgroundColor: colors.surface,
-            borderRadius: parseInt(colors.borderRadius.large),
-            borderWidth: 1,
-            borderColor: colors.border,
-          }}
-        >
+              padding: 16,
+              backgroundColor: colors.surface,
+              borderRadius: parseInt(colors.borderRadius.large),
+              borderWidth: 1,
+              borderColor: colors.border,
+            }}
+          >
           <Text
             style={{
               fontSize: parseInt(typography.fontSize.default),
