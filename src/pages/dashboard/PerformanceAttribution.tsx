@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { darkColors, lightColors, typography } from '../../theme';
 import { useTheme, useSidebar } from '../../contexts/AppContext';
@@ -7,49 +7,82 @@ import { ChartCard } from '../../components/ChartCard';
 import { KPICard } from '../../components/KPICard';
 import { DataTable } from '../../components/DataTable';
 import { AIAgentBubble } from '../../components/AIAgentBubble';
+import { AnimatedCard } from '../../components/AnimatedCard';
+import { mockConvertibleBonds } from '../../data/mockData';
+import { 
+  calculatePortfolioAttribution, 
+  formatPercentage,
+  formatLargeNumber,
+} from '../../utils/dataUtils';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+  LineChart,
+  Line,
+} from 'recharts';
 
 export const PerformanceAttribution: React.FC = () => {
   const { isDark } = useTheme();
   const { isCollapsed } = useSidebar();
   const colors = isDark ? darkColors : lightColors;
-  const [selectedPeriod, setSelectedPeriod] = useState<'1M' | '3M' | '6M' | '1Y' | 'YTD'>('1M');
+  const [selectedPeriod, setSelectedPeriod] = useState<'1D' | '1W' | '1M' | '3M' | 'YTD'>('1D');
 
-  // Mock data for performance attribution
-  const marketPerformance = {
-    overallReturn: 5.8,
-    trend: 'up' as const,
-    benchmark: 4.2,
-    alpha: 1.6,
-    volatility: 12.3,
-    sharpeRatio: 1.45,
-  };
+  // Apply theme class to body for scrollbar styling
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.body.className = isDark ? '' : 'light-theme';
+    }
+  }, [isDark]);
 
-  const portfolioPerformance = {
-    totalReturn: 6.5,
-    trend: 'up' as const,
-    assetAllocation: 85.2,
-    activeBets: 12,
-    trackingError: 2.1,
-    informationRatio: 0.76,
-  };
+  // Calculate real attribution data from bonds
+  const portfolioAttribution = calculatePortfolioAttribution(mockConvertibleBonds);
 
-  const cbPerformance = [
-    { isin: 'FR0014005WB7', name: 'TotalEnergies 0.875% 2028', return: 8.2, contribution: 1.2, weight: 12.5, trend: 'up' as const },
-    { isin: 'DE000A2E4MK4', name: 'Volkswagen 0.5% 2027', return: 6.8, contribution: 0.9, weight: 10.8, trend: 'up' as const },
-    { isin: 'XS2314779427', name: 'Schneider 0% 2026', return: 5.4, contribution: 0.7, weight: 9.2, trend: 'up' as const },
-    { isin: 'US0378331005', name: 'Apple 0.25% 2029', return: 4.1, contribution: 0.5, weight: 8.7, trend: 'up' as const },
-    { isin: 'FR0010040865', name: 'Sanofi 0.125% 2027', return: -2.3, contribution: -0.3, weight: 7.5, trend: 'down' as const },
+  // Individual CB Performance with real data
+  const cbPerformance = mockConvertibleBonds
+    .filter(bond => bond.performance1D !== null)
+    .map(bond => ({
+      isin: bond.isin,
+      issuer: bond.issuer,
+      return: bond.performance1D || 0,
+      contribution: bond.shareContrib || 0,
+      weight: (bond.outstandingAmount / mockConvertibleBonds.reduce((sum, b) => sum + b.outstandingAmount, 0)) * 100,
+      delta: bond.delta,
+      trend: (bond.performance1D || 0) >= 0 ? 'up' as const : 'down' as const,
+    }))
+    .sort((a, b) => Math.abs(b.contribution) - Math.abs(a.contribution))
+    .slice(0, 10);
+
+  // Waterfall chart data for attribution
+  const waterfallData = [
+    { name: 'Share', value: portfolioAttribution.shareContrib, fill: colors.chartColors.blue },
+    { name: 'Credit Spread', value: portfolioAttribution.creditSpreadContrib, fill: colors.chartColors.green },
+    { name: 'Carry', value: portfolioAttribution.carryContrib, fill: colors.chartColors.purple },
+    { name: 'Rate', value: portfolioAttribution.rateContrib, fill: colors.chartColors.orange },
+    { name: 'Valuation', value: portfolioAttribution.valuation, fill: colors.chartColors.pink },
+    { name: 'FX', value: portfolioAttribution.fxContrib, fill: colors.chartColors.cyan },
+    { name: 'Delta Neutral', value: portfolioAttribution.deltaNeutral, fill: colors.chartColors.yellow },
   ];
 
-  const attributionFactors = [
-    { factor: 'Sector Allocation', contribution: 1.2, percentage: 37.5 },
-    { factor: 'Security Selection', contribution: 0.9, percentage: 28.1 },
-    { factor: 'Currency Effect', contribution: 0.3, percentage: 9.4 },
-    { factor: 'Interaction Effect', contribution: 0.2, percentage: 6.3 },
-    { factor: 'Other', contribution: 0.6, percentage: 18.7 },
-  ];
+  // Calculate cumulative values for waterfall effect
+  let cumulative = 0;
+  const waterfallWithCumulative = waterfallData.map((item, index) => {
+    const start = cumulative;
+    cumulative += item.value;
+    return {
+      ...item,
+      start,
+      end: cumulative,
+      isPositive: item.value >= 0,
+    };
+  });
 
-  const periodButtons = ['1M', '3M', '6M', '1Y', 'YTD'] as const;
+  const periodButtons = ['1D', '1W', '1M', '3M', 'YTD'] as const;
 
   return (
     <ScrollView
@@ -71,7 +104,7 @@ export const PerformanceAttribution: React.FC = () => {
       >
         <DashboardHeader
           title="Performance Attribution"
-          description="Comprehensive analysis of portfolio and market performance drivers"
+          description="Daily P&L breakdown by source: Share, Credit, Carry, Rate, Valuation, FX, and Delta Neutral"
         />
 
         {/* Period Selection */}
@@ -127,222 +160,164 @@ export const PerformanceAttribution: React.FC = () => {
           ))}
         </View>
 
-        {/* Market Performance Section */}
-        <View style={{ marginBottom: 32 }}>
-          <Text
-            style={{
-              fontSize: parseInt(typography.fontSize.h4),
-              fontWeight: '700',
-              color: colors.textPrimary,
-              fontFamily: typography.fontFamily.heading,
-              marginBottom: 16,
-            }}
-          >
-            Market Performance Analysis
-          </Text>
-
-          <View
-            style={{
-              flexDirection: 'row',
-              gap: 16,
-              flexWrap: 'wrap',
-              marginBottom: 24,
-            }}
-          >
-            <View style={{ flex: 1, minWidth: 200 }}>
-              <KPICard
-                title="Overall Market Return"
-                value={`${marketPerformance.overallReturn}%`}
-                trend={marketPerformance.trend}
-                change={marketPerformance.overallReturn}
-                subtitle={`Benchmark: ${marketPerformance.benchmark}%`}
-              />
-            </View>
-            <View style={{ flex: 1, minWidth: 200 }}>
-              <KPICard
-                title="Alpha"
-                value={`${marketPerformance.alpha}%`}
-                trend="up"
-                change={marketPerformance.alpha}
-                subtitle="Excess return vs benchmark"
-              />
-            </View>
-            <View style={{ flex: 1, minWidth: 200 }}>
-              <KPICard
-                title="Volatility"
-                value={`${marketPerformance.volatility}%`}
-                trend="neutral"
-                subtitle="Annualized standard deviation"
-              />
-            </View>
-            <View style={{ flex: 1, minWidth: 200 }}>
-              <KPICard
-                title="Sharpe Ratio"
-                value={marketPerformance.sharpeRatio.toFixed(2)}
-                trend="up"
-                change={marketPerformance.sharpeRatio}
-                subtitle="Risk-adjusted return"
-              />
-            </View>
-          </View>
-
-          <ChartCard
-            title="Market Performance Trend"
-            subtitle={`Analysis for ${selectedPeriod} period`}
-            chartType="line"
-            height={300}
+        {/* Portfolio Performance KPIs */}
+        <View
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: 16,
+            marginBottom: 32,
+          }}
+        >
+          <KPICard
+            title="Total Performance"
+            value={formatPercentage(portfolioAttribution.totalPerformance, 3)}
+            trend={portfolioAttribution.totalPerformance >= 0 ? 'up' : 'down'}
+            change={portfolioAttribution.totalPerformance}
+            subtitle="Portfolio P&L"
+          />
+          <KPICard
+            title="Share Contribution"
+            value={formatPercentage(portfolioAttribution.shareContrib, 3)}
+            trend={portfolioAttribution.shareContrib >= 0 ? 'up' : 'down'}
+            change={portfolioAttribution.shareContrib}
+            subtitle="Equity moves"
+          />
+          <KPICard
+            title="Credit Spread"
+            value={formatPercentage(portfolioAttribution.creditSpreadContrib, 3)}
+            trend={portfolioAttribution.creditSpreadContrib >= 0 ? 'up' : 'down'}
+            change={portfolioAttribution.creditSpreadContrib}
+            subtitle="Spread tightening/widening"
+          />
+          <KPICard
+            title="Carry"
+            value={formatPercentage(portfolioAttribution.carryContrib, 3)}
+            trend={portfolioAttribution.carryContrib >= 0 ? 'up' : 'down'}
+            change={portfolioAttribution.carryContrib}
+            subtitle="Accrued interest"
           />
         </View>
 
-        {/* Portfolio Performance Section */}
+        {/* Waterfall Chart - Attribution Breakdown */}
         <View style={{ marginBottom: 32 }}>
-          <Text
-            style={{
-              fontSize: parseInt(typography.fontSize.h4),
-              fontWeight: '700',
-              color: colors.textPrimary,
-              fontFamily: typography.fontFamily.heading,
-              marginBottom: 16,
-            }}
-          >
-            Portfolio Performance
-          </Text>
-
-          <View
-            style={{
-              flexDirection: 'row',
-              gap: 16,
-              flexWrap: 'wrap',
-              marginBottom: 24,
-            }}
-          >
-            <View style={{ flex: 1, minWidth: 200 }}>
-              <KPICard
-                title="Total Portfolio Return"
-                value={`${portfolioPerformance.totalReturn}%`}
-                trend={portfolioPerformance.trend}
-                change={portfolioPerformance.totalReturn}
-                subtitle={`Outperformance: +${(portfolioPerformance.totalReturn - marketPerformance.benchmark).toFixed(1)}%`}
-              />
-            </View>
-            <View style={{ flex: 1, minWidth: 200 }}>
-              <KPICard
-                title="Asset Allocation"
-                value={`${portfolioPerformance.assetAllocation}%`}
-                trend="neutral"
-                subtitle="Invested capital"
-              />
-            </View>
-            <View style={{ flex: 1, minWidth: 200 }}>
-              <KPICard
-                title="Tracking Error"
-                value={`${portfolioPerformance.trackingError}%`}
-                trend="neutral"
-                subtitle="Deviation from benchmark"
-              />
-            </View>
-            <View style={{ flex: 1, minWidth: 200 }}>
-              <KPICard
-                title="Information Ratio"
-                value={portfolioPerformance.informationRatio.toFixed(2)}
-                trend="up"
-                change={portfolioPerformance.informationRatio}
-                subtitle="Active return per unit risk"
-              />
-            </View>
-          </View>
-
-          {/* Attribution Factors */}
-          <View
-            style={{
-              backgroundColor: colors.surface,
-              borderRadius: parseInt(colors.borderRadius.large),
-              borderWidth: 1,
-              borderColor: colors.border,
-              padding: 24,
-              marginBottom: 24,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: parseInt(typography.fontSize.large),
-                fontWeight: '700',
-                color: colors.textPrimary,
-                fontFamily: typography.fontFamily.heading,
-                marginBottom: 16,
-              }}
-            >
-              Performance Attribution Factors
-            </Text>
-
-            {attributionFactors.map((factor, index) => (
-              <View
-                key={index}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  marginBottom: 16,
-                  paddingBottom: index < attributionFactors.length - 1 ? 16 : 0,
-                  borderBottomWidth: index < attributionFactors.length - 1 ? 1 : 0,
-                  borderBottomColor: colors.border,
-                }}
-              >
-                <View style={{ flex: 1 }}>
-                  <Text
-                    style={{
-                      fontSize: parseInt(typography.fontSize.default),
-                      fontWeight: '600',
-                      color: colors.textPrimary,
-                      fontFamily: typography.fontFamily.body,
-                      marginBottom: 4,
-                    }}
-                  >
-                    {factor.factor}
-                  </Text>
-                  <View
-                    style={{
-                      height: 8,
-                      backgroundColor: colors.surfaceCard,
-                      borderRadius: 4,
-                      overflow: 'hidden',
-                      width: '100%',
-                      maxWidth: 400,
-                    }}
-                  >
-                    <View
-                      style={{
-                        height: '100%',
-                        width: `${factor.percentage}%`,
-                        backgroundColor: colors.accent,
-                        borderRadius: 4,
-                      }}
-                    />
-                  </View>
-                </View>
-                <View style={{ marginLeft: 16, alignItems: 'flex-end' }}>
+          <AnimatedCard delay={0.2} enableHover={false}>
+            <View style={{ gap: 16 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <View>
                   <Text
                     style={{
                       fontSize: parseInt(typography.fontSize.large),
                       fontWeight: '700',
-                      color: colors.accent,
+                      color: colors.textPrimary,
                       fontFamily: typography.fontFamily.heading,
+                      marginBottom: 4,
                     }}
                   >
-                    +{factor.contribution}%
+                    Performance Attribution Waterfall
                   </Text>
                   <Text
                     style={{
+                      color: colors.textSecondary,
                       fontSize: parseInt(typography.fontSize.small),
-                      color: colors.textMuted,
                       fontFamily: typography.fontFamily.body,
                     }}
                   >
-                    {factor.percentage.toFixed(1)}%
+                    Breakdown of {selectedPeriod} P&L by contribution source
+                  </Text>
+                </View>
+                <View style={{ 
+                  backgroundColor: portfolioAttribution.totalPerformance >= 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                  padding: 12,
+                  borderRadius: 8,
+                }}>
+                  <Text style={{ 
+                    color: portfolioAttribution.totalPerformance >= 0 ? colors.success : colors.danger,
+                    fontSize: parseInt(typography.fontSize.large),
+                    fontWeight: '700',
+                    fontFamily: typography.fontFamily.heading,
+                  }}>
+                    Total: {formatPercentage(portfolioAttribution.totalPerformance, 3)}
                   </Text>
                 </View>
               </View>
-            ))}
-          </View>
+
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={waterfallData} margin={{ left: 20, right: 20, top: 20, bottom: 60 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={colors.muted} opacity={0.3} />
+                  <XAxis 
+                    dataKey="name" 
+                    stroke={colors.muted}
+                    tick={{ fill: colors.textSecondary, fontSize: 11 }}
+                    angle={-45}
+                    textAnchor="end"
+                    height={100}
+                  />
+                  <YAxis 
+                    stroke={colors.muted} 
+                    tick={{ fill: colors.textSecondary, fontSize: 12 }}
+                    tickFormatter={(value) => `${value.toFixed(3)}%`}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: colors.surfaceCard,
+                      border: `1px solid ${colors.border}`,
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+                    }}
+                    labelStyle={{ color: colors.textPrimary, fontWeight: '600' }}
+                    itemStyle={{ color: colors.textSecondary }}
+                    formatter={(value: any) => [`${value.toFixed(4)}%`, 'Contribution']}
+                  />
+                  <Bar 
+                    dataKey="value" 
+                    radius={[4, 4, 0, 0]}
+                  >
+                    {waterfallData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.fill} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+
+              {/* Summary Table */}
+              <View style={{ 
+                backgroundColor: colors.surfaceCard,
+                borderRadius: 8,
+                padding: 16,
+                borderWidth: 1,
+                borderColor: colors.border,
+              }}>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 24 }}>
+                  {waterfallData.map((item, index) => (
+                    <View key={index} style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                      <View style={{ 
+                        width: 12, 
+                        height: 12, 
+                        borderRadius: 3,
+                        backgroundColor: item.fill,
+                      }} />
+                      <Text style={{ 
+                        color: colors.textSecondary, 
+                        fontSize: parseInt(typography.fontSize.small),
+                        fontFamily: typography.fontFamily.body,
+                      }}>
+                        {item.name}:
+                      </Text>
+                      <Text style={{ 
+                        color: item.value >= 0 ? colors.success : colors.danger,
+                        fontSize: parseInt(typography.fontSize.small),
+                        fontWeight: '600',
+                        fontFamily: typography.fontFamily.body,
+                      }}>
+                        {formatPercentage(item.value, 4)}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            </View>
+          </AnimatedCard>
         </View>
 
         {/* Individual CB Performance Section */}
@@ -356,17 +331,18 @@ export const PerformanceAttribution: React.FC = () => {
               marginBottom: 16,
             }}
           >
-            Individual Convertible Bond Performance
+            Top Contributors and Detractors
           </Text>
 
           <DataTable
             columns={[
               { key: 'isin', label: 'ISIN', width: '15%' },
-              { key: 'name', label: 'Name', width: '30%' },
-              { key: 'return', label: 'Return', width: '15%', align: 'right' },
+              { key: 'issuer', label: 'Issuer', width: '25%' },
+              { key: 'return', label: 'Return', width: '12%', align: 'right' },
               { key: 'contribution', label: 'Contribution', width: '15%', align: 'right' },
-              { key: 'weight', label: 'Weight', width: '15%', align: 'right' },
-              { key: 'trend', label: 'Trend', width: '10%', align: 'center' },
+              { key: 'weight', label: 'Weight', width: '12%', align: 'right' },
+              { key: 'delta', label: 'Delta', width: '12%', align: 'right' },
+              { key: 'trend', label: 'Trend', width: '9%', align: 'center' },
             ]}
             data={cbPerformance.map(cb => ({
               ...cb,
@@ -378,7 +354,7 @@ export const PerformanceAttribution: React.FC = () => {
                     fontFamily: typography.fontFamily.body,
                   }}
                 >
-                  {cb.return >= 0 ? '+' : ''}{cb.return}%
+                  {formatPercentage(cb.return, 3)}
                 </Text>
               ),
               contribution: (
@@ -389,22 +365,25 @@ export const PerformanceAttribution: React.FC = () => {
                     fontFamily: typography.fontFamily.body,
                   }}
                 >
-                  {cb.contribution >= 0 ? '+' : ''}{cb.contribution}%
+                  {formatPercentage(cb.contribution, 3)}
                 </Text>
               ),
-              weight: `${cb.weight}%`,
+              weight: `${cb.weight.toFixed(2)}%`,
+              delta: `${(cb.delta * 100).toFixed(1)}%`,
               trend: (
                 <View
                   style={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: 4,
+                    width: 10,
+                    height: 10,
+                    borderRadius: 5,
                     backgroundColor: cb.trend === 'up' ? colors.success : colors.error,
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
                   }}
                 />
               ),
             }))}
-            pageSize={5}
+            pageSize={10}
             enableSearch
             enableSort
           />

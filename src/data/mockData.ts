@@ -1,56 +1,189 @@
 // Mock data for Convertible Bonds Dashboard
 // Based on the detailed list of fields from the project requirements
 
-export interface ConvertibleBond {
-  // Static fields
+// Static reference data (CB Bond terms and features)
+export interface CBStaticData {
+  portfolioRef: string;
+  bloombergCode: string; // ticker or ISIN
+  cbName: string;
+  country: string;
+  sector: string;
+  industryGroup: string;
+  conversionRatio: number;
+  nominal: number;
+  issuePrice: number;
+  redemptionPrice: number;
+  issueDate: string;
+  maturityDate: Date;
+  premium: number;
+  coupon: number;
+  amtIssued: number;
+  nextCoupon: string;
+  convPrice: number;
+  subDebtStatus: string; // Y or N
+  currency: string;
+  // Put features
+  isPutable: string; // Y or N
+  putDate?: string;
+  putPrice?: number;
+  // Call features
+  isSoftCall: string; // Y or N
+  callScheduleFirstDate?: string;
+  callScheduleSecondDate?: string;
+  callTrigger?: number;
+  callPrice?: number;
+  // Dividend protection
+  dvdProtection: string; // Y or N
+  protectionType?: string; // FULL or partial
+  payoutDirection?: string; // UP or DOWN
+  dvdThreshold?: number;
+  dvdFrequency?: string;
+  dvdProjection?: string;
+}
+
+// Time-series pricing and risk data
+export interface CBTimeSeriesData {
+  portfolioRef: string;
+  bloombergCode: string;
+  date: string;
+  cbMarketPrice: number;
+  cbMarketPricePercent: number;
+  cbOutstanding: number;
+  stockPrice: number;
+  theoValue: number;
+  cbProfile: string; // Mixte, Equity-like, Bond-like
+  bondfloor: number;
+  bondfloorPercent: number;
+  distanceToBondfloor: number;
+  creditSpread: number;
+  impliedSpread: number;
+  currentYield: number;
+  ytm: number;
+  rho: number | null;
+  duration: number | null;
+  creditSensitivity: number | null;
+  hisVol: number;
+  impVol: number;
+  delta: number;
+  equitySensitivity: number;
+  gamma: number;
+  cnvPlus20: number;
+  cnvMinus20: number;
+  vega: number;
+  theta: number;
+  parity: number;
+  parityPercent: number;
+  prime: number;
+  adjustedPrime: number;
+  pna: number | null;
+  adjustedPna: number;
+  cr: number | null;
+  ulOutstanding: number;
+  // Performance attribution
+  cbPerf: number | null;
+  shareContrib: number | null;
+  creditSpreadContrib: number | null;
+  carryContrib: number | null;
+  rateContrib: number | null;
+  valuation: number | null;
+  fxContrib: number | null;
+  deltaNeutral: number | null;
+}
+
+// Combined interface for dashboard usage (static + latest time-series data)
+export interface ConvertibleBond extends Partial<CBStaticData> {
+  // Core identifiers
   isin: string;
   issuer: string;
+  bloombergCode: string;
   sector: string;
   country: string;
   currency: string;
+  
+  // Static fields
   coupon: number;
   maturity: string;
   maturityDate: Date;
   rating: string;
   size: string; // Small Cap, Mid Cap, Large Cap
   profile: string; // Bond, Mixed, Equity, HY, Distressed
+  conversionRatio: number;
   
-  // Dynamic fields
-  price: number;
+  // Dynamic pricing fields
+  price: number; // CB Market Price %
+  cbMarketPrice: number;
+  stockPrice: number;
+  theoValue: number;
+  fairValue: number;
+  
+  // Risk metrics (Greeks)
   delta: number;
   gamma: number;
   vega: number;
-  volatility: number;
-  ytm: number; // Yield to Maturity
+  theta: number;
+  rho: number | null;
+  
+  // Volatility
+  volatility: number; // Historical Vol
+  impliedVol: number;
+  
+  // Credit metrics
+  ytm: number;
   currentYield: number;
   spread: number;
   creditSpread: number;
-  fairValue: number;
+  impliedSpread: number;
+  duration: number | null;
+  creditSensitivity: number | null;
+  
+  // Downside protection
+  bondfloor: number;
   bondfloorPercent: number;
   distanceToBondfloor: number;
-  duration: number;
-  creditSensitivity: number;
+  
+  // Equity sensitivity
   equitySensitivity: number;
-  impliedVol: number;
   parity: number;
+  parityPercent: number;
   prime: number;
-  theta: number;
-  rho: number;
+  adjustedPrime: number;
+  adjustedPna: number;
+  
+  // Convexity scenarios
+  cnvPlus20: number;
+  cnvMinus20: number;
   
   // Performance metrics
-  performance1D: number;
+  performance1D: number | null;
   performance1W: number;
   performance1M: number;
   performance3M: number;
   performanceYTD: number;
   
-  // Additional info
+  // Performance attribution
+  shareContrib: number | null;
+  creditSpreadContrib: number | null;
+  carryContrib: number | null;
+  rateContrib: number | null;
+  valuation: number | null;
+  fxContrib: number | null;
+  deltaNeutral: number | null;
+  
+  // Portfolio info
+  outstandingAmount: number;
+  ulOutstanding: number;
   type: string; // Vanilla, Mandatory, Exchangeable
-  conversionRatio: number;
   underlyingTicker: string;
   underlyingPrice: number;
   issueDate: string;
-  outstandingAmount: number;
+  
+  // Call/Put features
+  isPutable?: string;
+  putDate?: string;
+  putPrice?: number;
+  isSoftCall?: string;
+  callTrigger?: number;
+  callPrice?: number;
 }
 
 export interface HistoricalDataPoint {
@@ -69,55 +202,108 @@ export interface MarketSummary {
   avg1MChange: number;
 }
 
-// Generate 15 realistic convertible bonds
+// Generate 15 realistic convertible bonds based on real data structure
 export const mockConvertibleBonds: ConvertibleBond[] = [
   {
     isin: 'FR0013495298',
     issuer: 'ACCOR SA',
-    sector: 'Transport & Leisure',
+    bloombergCode: 'BM8244261 Corp',
+    sector: 'Consumer, Cyclical',
     country: 'France',
     currency: 'EUR',
     coupon: 0.7,
-    maturity: '2027-12-15',
-    maturityDate: new Date('2027-12-15'),
+    maturity: '2027-12-07',
+    maturityDate: new Date('2027-12-07'),
     rating: 'BB+',
     size: 'Large Cap',
-    profile: 'Mixed',
-    price: 102.5,
-    delta: 0.45,
-    gamma: 0.012,
-    vega: 0.28,
-    volatility: 32.5,
-    ytm: 2.8,
-    currentYield: 0.68,
-    spread: 180,
-    creditSpread: 220,
-    fairValue: 103.2,
-    bondfloorPercent: 88.5,
-    distanceToBondfloor: 14.0,
-    duration: 4.2,
-    creditSensitivity: 3.8,
-    equitySensitivity: 0.42,
-    impliedVol: 35.2,
-    parity: 95.8,
-    prime: 6.7,
-    theta: -0.015,
-    rho: 0.18,
-    performance1D: 1.2,
+    profile: 'Mixte',
+    conversionRatio: 1.00,
+    
+    // Dynamic pricing
+    price: 105.5, // CB Market Price %
+    cbMarketPrice: 50.64,
+    stockPrice: 30.0,
+    theoValue: 47.59,
+    fairValue: 47.59,
+    
+    // Greeks
+    delta: 0.5387,
+    gamma: 0.4187,
+    vega: 0.5479,
+    theta: 0.0002456,
+    rho: null,
+    
+    // Volatility
+    volatility: 30, // Historical Vol
+    impliedVol: 40.81,
+    
+    // Credit metrics
+    ytm: -0.0467,
+    currentYield: 0.6651,
+    spread: 173.11,
+    creditSpread: 291.68,
+    impliedSpread: 173.11,
+    duration: null,
+    creditSensitivity: null,
+    
+    // Downside protection
+    bondfloor: 42.34,
+    bondfloorPercent: 87.98,
+    distanceToBondfloor: 16.40,
+    
+    // Equity sensitivity
+    equitySensitivity: 0.3211,
+    parity: 30.0,
+    parityPercent: 62.34,
+    prime: 68.80,
+    adjustedPrime: 68.80,
+    adjustedPna: 9.81,
+    
+    // Convexity
+    cnvPlus20: 6.86,
+    cnvMinus20: -5.86,
+    
+    // Performance
+    performance1D: 0.516, // 0.516%
     performance1W: 2.5,
     performance1M: 5.8,
     performance3M: 8.2,
     performanceYTD: 12.5,
+    
+    // Attribution
+    shareContrib: 0.444,
+    creditSpreadContrib: 0.075,
+    carryContrib: -0.017,
+    rateContrib: 0.021,
+    valuation: -0.0063,
+    fxContrib: 0,
+    deltaNeutral: 0.072,
+    
+    // Portfolio info
+    outstandingAmount: 526184490.96,
+    ulOutstanding: 311720670,
     type: 'Vanilla',
-    conversionRatio: 8.5,
     underlyingTicker: 'AC.PA',
-    underlyingPrice: 42.3,
-    issueDate: '2020-12-15',
-    outstandingAmount: 650000000,
+    underlyingPrice: 30.0,
+    issueDate: '2020-12-07',
+    
+    // Call/Put features
+    isPutable: 'N',
+    isSoftCall: 'Y',
+    callScheduleFirstDate: '2025-12-28',
+    callScheduleSecondDate: '2027-12-07',
+    callTrigger: 140.00,
+    callPrice: 100,
+    dvdProtection: 'Y',
+    protectionType: 'FULL',
+    payoutDirection: 'UP',
+    dvdThreshold: 0,
+    dvdFrequency: 'ANNUAL',
   },
   {
     isin: 'FR0014003U71',
     issuer: 'AIR FRANCE-KLM',
+    bloombergCode: 'AF Corp',
     sector: 'Transport & Leisure',
     country: 'France',
     currency: 'EUR',
@@ -127,41 +313,85 @@ export const mockConvertibleBonds: ConvertibleBond[] = [
     rating: 'B',
     size: 'Large Cap',
     profile: 'HY',
+    conversionRatio: 12.8,
+    
+    // Dynamic pricing
     price: 98.2,
+    cbMarketPrice: 47.25,
+    stockPrice: 8.5,
+    theoValue: 97.8,
+    fairValue: 97.8,
+    
+    // Greeks
     delta: 0.62,
     gamma: 0.018,
     vega: 0.35,
+    theta: -0.022,
+    rho: 0.08,
+    
+    // Volatility
     volatility: 45.8,
+    impliedVol: 48.5,
+    
+    // Credit metrics
     ytm: 4.5,
     currentYield: 3.05,
     spread: 320,
     creditSpread: 380,
-    fairValue: 97.8,
-    bondfloorPercent: 82.0,
-    distanceToBondfloor: 16.2,
+    impliedSpread: 320,
     duration: 1.8,
     creditSensitivity: 1.6,
+    
+    // Downside protection
+    bondfloor: 39.5,
+    bondfloorPercent: 82.0,
+    distanceToBondfloor: 16.2,
+    
+    // Equity sensitivity
     equitySensitivity: 0.58,
-    impliedVol: 48.5,
     parity: 88.5,
+    parityPercent: 45.2,
     prime: 9.7,
-    theta: -0.022,
-    rho: 0.08,
+    adjustedPrime: 9.7,
+    adjustedPna: 7.5,
+    
+    // Convexity
+    cnvPlus20: 8.2,
+    cnvMinus20: -6.8,
+    
+    // Performance
     performance1D: -0.8,
     performance1W: 1.2,
     performance1M: 3.5,
     performance3M: 6.8,
     performanceYTD: 8.5,
+    
+    // Attribution
+    shareContrib: -0.65,
+    creditSpreadContrib: 0.12,
+    carryContrib: 0.08,
+    rateContrib: -0.02,
+    valuation: 0.015,
+    fxContrib: 0,
+    deltaNeutral: -0.345,
+    
+    // Portfolio info
+    outstandingAmount: 500000000,
+    ulOutstanding: 380000000,
     type: 'Vanilla',
-    conversionRatio: 12.8,
     underlyingTicker: 'AF.PA',
     underlyingPrice: 8.5,
     issueDate: '2022-05-15',
-    outstandingAmount: 500000000,
+    
+    // Call/Put features
+    isPutable: 'N',
+    isSoftCall: 'Y',
+    callTrigger: 130.0,
   },
   {
     isin: 'DE000A3E5MK5',
     issuer: 'ADIDAS AG',
+    bloombergCode: 'ADS Corp',
     sector: 'Retail',
     country: 'Germany',
     currency: 'EUR',
@@ -171,41 +401,62 @@ export const mockConvertibleBonds: ConvertibleBond[] = [
     rating: 'A-',
     size: 'Large Cap',
     profile: 'Bond',
+    conversionRatio: 5.2,
     price: 104.8,
+    cbMarketPrice: 52.4,
+    stockPrice: 195.5,
+    theoValue: 105.5,
+    fairValue: 105.5,
     delta: 0.25,
     gamma: 0.008,
     vega: 0.15,
+    theta: -0.010,
+    rho: 0.15,
     volatility: 28.3,
+    impliedVol: 30.5,
     ytm: 1.8,
     currentYield: 0.48,
     spread: 85,
     creditSpread: 110,
-    fairValue: 105.5,
-    bondfloorPercent: 95.2,
-    distanceToBondfloor: 9.6,
+    impliedSpread: 85,
     duration: 3.5,
     creditSensitivity: 3.2,
+    bondfloor: 50.0,
+    bondfloorPercent: 95.2,
+    distanceToBondfloor: 9.6,
     equitySensitivity: 0.23,
-    impliedVol: 30.5,
     parity: 98.5,
+    parityPercent: 52.3,
     prime: 6.3,
-    theta: -0.010,
-    rho: 0.15,
+    adjustedPrime: 6.3,
+    adjustedPna: 4.5,
+    cnvPlus20: 4.2,
+    cnvMinus20: -3.8,
     performance1D: 0.5,
     performance1W: 1.8,
     performance1M: 4.2,
     performance3M: 7.5,
     performanceYTD: 11.2,
+    shareContrib: 0.38,
+    creditSpreadContrib: 0.05,
+    carryContrib: 0.01,
+    rateContrib: 0.03,
+    valuation: 0.02,
+    fxContrib: 0,
+    deltaNeutral: 0.01,
+    outstandingAmount: 750000000,
+    ulOutstanding: 520000000,
     type: 'Vanilla',
-    conversionRatio: 5.2,
     underlyingTicker: 'ADS.DE',
     underlyingPrice: 195.5,
     issueDate: '2021-03-20',
-    outstandingAmount: 750000000,
+    isPutable: 'N',
+    isSoftCall: 'N',
   },
   {
     isin: 'ES0000102246',
     issuer: 'AMADEUS IT GROUP',
+    bloombergCode: 'AMS Corp',
     sector: 'Technology',
     country: 'Spain',
     currency: 'EUR',
@@ -215,37 +466,58 @@ export const mockConvertibleBonds: ConvertibleBond[] = [
     rating: 'BBB',
     size: 'Large Cap',
     profile: 'Equity',
+    conversionRatio: 18.5,
     price: 112.5,
+    cbMarketPrice: 56.25,
+    stockPrice: 68.5,
+    theoValue: 111.8,
+    fairValue: 111.8,
     delta: 0.78,
     gamma: 0.025,
     vega: 0.42,
+    theta: -0.028,
+    rho: 0.06,
     volatility: 38.5,
+    impliedVol: 41.2,
     ytm: 0.5,
     currentYield: 0.22,
     spread: 45,
     creditSpread: 65,
-    fairValue: 111.8,
-    bondfloorPercent: 78.5,
-    distanceToBondfloor: 34.0,
+    impliedSpread: 45,
     duration: 1.5,
     creditSensitivity: 1.3,
+    bondfloor: 39.3,
+    bondfloorPercent: 78.5,
+    distanceToBondfloor: 34.0,
     equitySensitivity: 0.72,
-    impliedVol: 41.2,
     parity: 108.5,
+    parityPercent: 96.4,
     prime: 4.0,
-    theta: -0.028,
-    rho: 0.06,
+    adjustedPrime: 4.0,
+    adjustedPna: 3.5,
+    cnvPlus20: 12.5,
+    cnvMinus20: -10.2,
     performance1D: 2.5,
     performance1W: 5.2,
     performance1M: 10.5,
     performance3M: 18.2,
     performanceYTD: 22.8,
+    shareContrib: 2.1,
+    creditSpreadContrib: 0.15,
+    carryContrib: -0.02,
+    rateContrib: 0.05,
+    valuation: 0.15,
+    fxContrib: 0,
+    deltaNeutral: 0.07,
+    outstandingAmount: 450000000,
+    ulOutstanding: 340000000,
     type: 'Vanilla',
-    conversionRatio: 18.5,
     underlyingTicker: 'AMS.MC',
     underlyingPrice: 68.5,
     issueDate: '2020-11-30',
-    outstandingAmount: 450000000,
+    isPutable: 'N',
+    isSoftCall: 'Y',
+    callTrigger: 130.0,
   },
   {
     isin: 'FR0013518685',
@@ -731,7 +1003,42 @@ export const mockConvertibleBonds: ConvertibleBond[] = [
     issueDate: '2020-02-01',
     outstandingAmount: 750000000,
   },
-];
+].map((bond: any, index) => {
+  // Auto-populate missing required fields with sensible defaults
+  if (!bond.bloombergCode) {
+    const ticker = bond.underlyingTicker.split('.')[0];
+    return {
+      ...bond,
+      bloombergCode: `${ticker} Corp`,
+      cbMarketPrice: bond.price * 0.5,
+      stockPrice: bond.underlyingPrice,
+      theoValue: bond.fairValue,
+      bondfloor: (bond.bondfloorPercent / 100) * bond.price,
+      parityPercent: (bond.parity / bond.price) * 100,
+      adjustedPrime: bond.prime,
+      adjustedPna: bond.prime * 0.7,
+      cnvPlus20: bond.delta * 20 * 0.8,
+      cnvMinus20: -bond.delta * 20 * 0.7,
+      impliedSpread: bond.spread,
+      ulOutstanding: bond.outstandingAmount * 0.75,
+      shareContrib: (bond.performance1D || 0) * bond.delta,
+      creditSpreadContrib: (bond.performance1D || 0) * 0.1,
+      carryContrib: (bond.performance1D || 0) * 0.02,
+      rateContrib: (bond.performance1D || 0) * 0.05,
+      valuation: (bond.performance1D || 0) * 0.03,
+      fxContrib: 0,
+      deltaNeutral: (bond.performance1D || 0) * 0.05,
+      isPutable: index % 3 === 0 ? 'Y' : 'N',
+      putDate: index % 3 === 0 ? new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] : undefined,
+      putPrice: index % 3 === 0 ? 100 : undefined,
+      isSoftCall: index % 2 === 0 ? 'Y' : 'N',
+      callScheduleFirstDate: index % 2 === 0 ? new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] : undefined,
+      callTrigger: index % 2 === 0 ? 130 + (index * 5) : undefined,
+      callPrice: index % 2 === 0 ? 100 : undefined,
+    };
+  }
+  return bond;
+});
 
 // Generate historical data for each bond (30 days)
 export const generateHistoricalData = (bond: ConvertibleBond): HistoricalDataPoint[] => {
@@ -777,7 +1084,7 @@ export const calculateMarketSummary = (bonds: ConvertibleBond[]): MarketSummary 
     totalCBs: bonds.length,
     totalMarketCap: bonds.reduce((sum, bond) => sum + bond.outstandingAmount, 0),
     avgYield: bonds.reduce((sum, bond) => sum + bond.ytm, 0) / bonds.length,
-    avg1DChange: bonds.reduce((sum, bond) => sum + bond.performance1D, 0) / bonds.length,
+    avg1DChange: bonds.reduce((sum, bond) => sum + (bond.performance1D || 0), 0) / bonds.length,
     avg1MChange: bonds.reduce((sum, bond) => sum + bond.performance1M, 0) / bonds.length,
   };
 };

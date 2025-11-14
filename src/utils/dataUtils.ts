@@ -1,6 +1,200 @@
 // Utility functions for data manipulation
 import { ConvertibleBond } from '../data/mockData';
 
+// Calculate portfolio-level metrics
+export interface PortfolioMetrics {
+  totalNotional: number;
+  totalULExposure: number;
+  portfolioDelta: number;
+  portfolioGamma: number;
+  portfolioVega: number;
+  avgImpliedVol: number;
+  avgHistoricalVol: number;
+  avgBondfloor: number;
+  avgDistanceToBondfloor: number;
+  avgCreditSpread: number;
+  totalDeltaAdjustedExposure: number;
+}
+
+export const calculatePortfolioMetrics = (bonds: ConvertibleBond[]): PortfolioMetrics => {
+  const totalNotional = bonds.reduce((sum, bond) => sum + bond.outstandingAmount, 0);
+  const totalULExposure = bonds.reduce((sum, bond) => sum + bond.ulOutstanding, 0);
+  
+  // Portfolio Greeks (weighted by notional)
+  const portfolioDelta = bonds.reduce((sum, bond) => 
+    sum + (bond.delta * bond.outstandingAmount), 0) / totalNotional;
+  const portfolioGamma = bonds.reduce((sum, bond) => 
+    sum + (bond.gamma * bond.outstandingAmount), 0) / totalNotional;
+  const portfolioVega = bonds.reduce((sum, bond) => 
+    sum + (bond.vega * bond.outstandingAmount), 0) / totalNotional;
+  
+  // Average volatility metrics
+  const avgImpliedVol = bonds.reduce((sum, bond) => sum + bond.impliedVol, 0) / bonds.length;
+  const avgHistoricalVol = bonds.reduce((sum, bond) => sum + bond.volatility, 0) / bonds.length;
+  
+  // Downside protection metrics
+  const avgBondfloor = bonds.reduce((sum, bond) => sum + bond.bondfloorPercent, 0) / bonds.length;
+  const avgDistanceToBondfloor = bonds.reduce((sum, bond) => 
+    sum + bond.distanceToBondfloor, 0) / bonds.length;
+  
+  // Credit metrics
+  const avgCreditSpread = bonds.reduce((sum, bond) => sum + bond.creditSpread, 0) / bonds.length;
+  
+  // Delta-adjusted exposure
+  const totalDeltaAdjustedExposure = bonds.reduce((sum, bond) => 
+    sum + (bond.delta * bond.ulOutstanding * bond.stockPrice), 0);
+  
+  return {
+    totalNotional,
+    totalULExposure,
+    portfolioDelta,
+    portfolioGamma,
+    portfolioVega,
+    avgImpliedVol,
+    avgHistoricalVol,
+    avgBondfloor,
+    avgDistanceToBondfloor,
+    avgCreditSpread,
+    totalDeltaAdjustedExposure,
+  };
+};
+
+// Calculate performance attribution metrics
+export interface PortfolioAttribution {
+  totalPerformance: number;
+  shareContrib: number;
+  creditSpreadContrib: number;
+  carryContrib: number;
+  rateContrib: number;
+  valuation: number;
+  fxContrib: number;
+  deltaNeutral: number;
+}
+
+export const calculatePortfolioAttribution = (bonds: ConvertibleBond[]): PortfolioAttribution => {
+  const validBonds = bonds.filter(b => b.performance1D !== null && b.performance1D !== undefined);
+  const totalNotional = validBonds.reduce((sum, bond) => sum + bond.outstandingAmount, 0);
+  
+  // Weighted average of each attribution component
+  const totalPerformance = validBonds.reduce((sum, bond) => 
+    sum + ((bond.performance1D || 0) * bond.outstandingAmount), 0) / totalNotional;
+  
+  const shareContrib = validBonds.reduce((sum, bond) => 
+    sum + ((bond.shareContrib || 0) * bond.outstandingAmount), 0) / totalNotional;
+  
+  const creditSpreadContrib = validBonds.reduce((sum, bond) => 
+    sum + ((bond.creditSpreadContrib || 0) * bond.outstandingAmount), 0) / totalNotional;
+  
+  const carryContrib = validBonds.reduce((sum, bond) => 
+    sum + ((bond.carryContrib || 0) * bond.outstandingAmount), 0) / totalNotional;
+  
+  const rateContrib = validBonds.reduce((sum, bond) => 
+    sum + ((bond.rateContrib || 0) * bond.outstandingAmount), 0) / totalNotional;
+  
+  const valuation = validBonds.reduce((sum, bond) => 
+    sum + ((bond.valuation || 0) * bond.outstandingAmount), 0) / totalNotional;
+  
+  const fxContrib = validBonds.reduce((sum, bond) => 
+    sum + ((bond.fxContrib || 0) * bond.outstandingAmount), 0) / totalNotional;
+  
+  const deltaNeutral = validBonds.reduce((sum, bond) => 
+    sum + ((bond.deltaNeutral || 0) * bond.outstandingAmount), 0) / totalNotional;
+  
+  return {
+    totalPerformance,
+    shareContrib,
+    creditSpreadContrib,
+    carryContrib,
+    rateContrib,
+    valuation,
+    fxContrib,
+    deltaNeutral,
+  };
+};
+
+// Calculate cheap/rich analysis
+export interface CheapRichMetric {
+  isin: string;
+  issuer: string;
+  marketPrice: number;
+  theoValue: number;
+  mispricing: number;
+  mispricingPercent: number;
+}
+
+export const getCheapRichAnalysis = (bonds: ConvertibleBond[]): CheapRichMetric[] => {
+  return bonds.map(bond => {
+    const mispricing = bond.price - bond.theoValue;
+    const mispricingPercent = (mispricing / bond.theoValue) * 100;
+    
+    return {
+      isin: bond.isin,
+      issuer: bond.issuer,
+      marketPrice: bond.price,
+      theoValue: bond.theoValue,
+      mispricing,
+      mispricingPercent,
+    };
+  }).sort((a, b) => Math.abs(b.mispricingPercent) - Math.abs(a.mispricingPercent));
+};
+
+// Get bonds with upcoming call/put events
+export interface UpcomingEvent {
+  isin: string;
+  issuer: string;
+  eventType: 'Call' | 'Put';
+  eventDate: string;
+  daysToEvent: number;
+  triggerLevel?: number;
+  currentLevel: number;
+  isTriggered?: boolean;
+}
+
+export const getUpcomingEvents = (bonds: ConvertibleBond[]): UpcomingEvent[] => {
+  const events: UpcomingEvent[] = [];
+  const today = new Date();
+  
+  bonds.forEach(bond => {
+    // Check for call events
+    if (bond.isSoftCall === 'Y' && bond.callScheduleFirstDate && bond.callTrigger) {
+      const callDate = new Date(bond.callScheduleFirstDate);
+      const daysToEvent = Math.floor((callDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      
+      if (daysToEvent >= 0 && daysToEvent <= 180) { // Next 6 months
+        events.push({
+          isin: bond.isin,
+          issuer: bond.issuer,
+          eventType: 'Call',
+          eventDate: bond.callScheduleFirstDate,
+          daysToEvent,
+          triggerLevel: bond.callTrigger,
+          currentLevel: bond.parityPercent,
+          isTriggered: bond.parityPercent >= bond.callTrigger,
+        });
+      }
+    }
+    
+    // Check for put events
+    if (bond.isPutable === 'Y' && bond.putDate && bond.putPrice) {
+      const putDate = new Date(bond.putDate);
+      const daysToEvent = Math.floor((putDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      
+      if (daysToEvent >= 0 && daysToEvent <= 180) { // Next 6 months
+        events.push({
+          isin: bond.isin,
+          issuer: bond.issuer,
+          eventType: 'Put',
+          eventDate: bond.putDate,
+          daysToEvent,
+          currentLevel: bond.price,
+        });
+      }
+    }
+  });
+  
+  return events.sort((a, b) => a.daysToEvent - b.daysToEvent);
+};
+
 // Filter bonds by multiple criteria
 export const filterBonds = (
   bonds: ConvertibleBond[],

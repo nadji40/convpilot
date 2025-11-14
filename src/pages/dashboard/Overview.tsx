@@ -16,7 +16,12 @@ import {
   aggregateByProfile,
   generateMarketIndexData,
 } from '../../data/mockData';
-import { formatLargeNumber, formatPercentage } from '../../utils/dataUtils';
+import { 
+  formatLargeNumber, 
+  formatPercentage,
+  calculatePortfolioMetrics,
+  calculatePortfolioAttribution,
+} from '../../utils/dataUtils';
 import { getStaggerDelay } from '../../utils/animations';
 import {
   LineChart,
@@ -29,6 +34,9 @@ import {
   PieChart,
   Pie,
   Cell,
+  BarChart,
+  Bar,
+  CartesianGrid,
 } from 'recharts';
 
 export const Overview: React.FC = () => {
@@ -38,11 +46,24 @@ export const Overview: React.FC = () => {
   const colors = isDark ? darkColors : lightColors;
 
   const marketSummary = calculateMarketSummary(mockConvertibleBonds);
+  const portfolioMetrics = calculatePortfolioMetrics(mockConvertibleBonds);
+  const portfolioAttribution = calculatePortfolioAttribution(mockConvertibleBonds);
   const sectorData = aggregateBySector(mockConvertibleBonds);
   const ratingData = aggregateByRating(mockConvertibleBonds);
   const maturityData = aggregateByMaturity(mockConvertibleBonds);
   const profileData = aggregateByProfile(mockConvertibleBonds);
   const marketIndexData = generateMarketIndexData();
+
+  // Performance attribution data for waterfall chart
+  const attributionData = [
+    { name: 'Share', value: portfolioAttribution.shareContrib, fill: colors.chartColors.blue },
+    { name: 'Credit Spread', value: portfolioAttribution.creditSpreadContrib, fill: colors.chartColors.green },
+    { name: 'Carry', value: portfolioAttribution.carryContrib, fill: colors.chartColors.purple },
+    { name: 'Rate', value: portfolioAttribution.rateContrib, fill: colors.chartColors.orange },
+    { name: 'Valuation', value: portfolioAttribution.valuation, fill: colors.chartColors.pink },
+    { name: 'FX', value: portfolioAttribution.fxContrib, fill: colors.chartColors.cyan },
+    { name: 'Delta Neutral', value: portfolioAttribution.deltaNeutral, fill: colors.chartColors.yellow },
+  ];
 
   // Apply theme class to body for scrollbar styling
   useEffect(() => {
@@ -86,7 +107,7 @@ export const Overview: React.FC = () => {
             description={t('dashboard.overview_desc')}
           />
 
-          {/* KPI Cards */}
+          {/* KPI Cards - Enhanced with Portfolio Metrics */}
           <WidgetContainer id="overview-kpis" storageKey="overviewWidgets">
             <View
               style={{
@@ -96,32 +117,125 @@ export const Overview: React.FC = () => {
               }}
             >
               <KPICard
-                title={t('kpi.total_convertible_bonds')}
-                value={marketSummary.totalCBs}
-                format="number"
+                title="Portfolio Value"
+                value={formatLargeNumber(portfolioMetrics.totalNotional)}
+                subtitle="EUR"
                 delay={getStaggerDelay(0)}
               />
               <KPICard
-                title={t('kpi.total_market_cap')}
-                value={formatLargeNumber(marketSummary.totalMarketCap)}
-                subtitle="EUR"
+                title="Daily P&L"
+                value={formatPercentage(portfolioAttribution.totalPerformance, 3)}
+                trend={portfolioAttribution.totalPerformance}
+                subtitle="vs Yesterday"
                 delay={getStaggerDelay(1)}
               />
               <KPICard
-                title={t('kpi.average_yield')}
-                value={marketSummary.avgYield.toFixed(2) + '%'}
-                trend={marketSummary.avg1DChange}
-                subtitle={t('kpi.ytm')}
+                title="Portfolio Delta"
+                value={(portfolioMetrics.portfolioDelta * 100).toFixed(2) + '%'}
+                subtitle="Equity Exposure"
                 delay={getStaggerDelay(2)}
               />
               <KPICard
-                title={t('kpi.average_1d_change')}
-                value={formatPercentage(marketSummary.avg1DChange)}
-                trend={marketSummary.avg1DChange}
-                subtitle={t('kpi.vs_yesterday')}
+                title="Avg Bondfloor"
+                value={portfolioMetrics.avgBondfloor.toFixed(1) + '%'}
+                subtitle="Downside Protection"
                 delay={getStaggerDelay(3)}
               />
+              <KPICard
+                title="Avg Implied Vol"
+                value={portfolioMetrics.avgImpliedVol.toFixed(1) + '%'}
+                subtitle={`Hist: ${portfolioMetrics.avgHistoricalVol.toFixed(1)}%`}
+                delay={getStaggerDelay(4)}
+              />
+              <KPICard
+                title="Distance to Floor"
+                value={portfolioMetrics.avgDistanceToBondfloor.toFixed(1) + '%'}
+                subtitle="Equity Cushion"
+                delay={getStaggerDelay(5)}
+              />
+              <KPICard
+                title="Portfolio Gamma"
+                value={portfolioMetrics.portfolioGamma.toFixed(4)}
+                subtitle="Convexity"
+                delay={getStaggerDelay(6)}
+              />
+              <KPICard
+                title="Avg Credit Spread"
+                value={portfolioMetrics.avgCreditSpread.toFixed(0) + ' bps'}
+                subtitle="Credit Risk"
+                delay={getStaggerDelay(7)}
+              />
             </View>
+          </WidgetContainer>
+
+          {/* Performance Attribution - Waterfall Chart */}
+          <WidgetContainer id="overview-attribution" title="Daily Performance Attribution" storageKey="overviewWidgets">
+            <AnimatedCard delay={0.3} enableHover={false}>
+              <View style={{ gap: 16 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Text
+                    style={{
+                      color: colors.textSecondary,
+                      fontSize: parseInt(typography.fontSize.small),
+                      fontFamily: typography.fontFamily.body,
+                    }}
+                  >
+                    Breakdown of Daily P&L Sources
+                  </Text>
+                  <View style={{ 
+                    backgroundColor: portfolioAttribution.totalPerformance >= 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                    padding: 8,
+                    borderRadius: 6,
+                  }}>
+                    <Text style={{ 
+                      color: portfolioAttribution.totalPerformance >= 0 ? colors.success : colors.danger,
+                      fontSize: parseInt(typography.fontSize.medium),
+                      fontWeight: '700',
+                    }}>
+                      Total: {formatPercentage(portfolioAttribution.totalPerformance, 3)}
+                    </Text>
+                  </View>
+                </View>
+
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={attributionData} margin={{ left: 20, right: 20, top: 20, bottom: 40 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={colors.muted} opacity={0.3} />
+                    <XAxis 
+                      dataKey="name" 
+                      stroke={colors.muted}
+                      tick={{ fill: colors.textSecondary, fontSize: 11 }}
+                      angle={-45}
+                      textAnchor="end"
+                      height={80}
+                    />
+                    <YAxis 
+                      stroke={colors.muted} 
+                      tick={{ fill: colors.textSecondary, fontSize: 12 }}
+                      tickFormatter={(value) => `${value.toFixed(2)}%`}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: colors.surfaceCard,
+                        border: `1px solid ${colors.border}`,
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+                      }}
+                      labelStyle={{ color: colors.textPrimary, fontWeight: '600' }}
+                      itemStyle={{ color: colors.textSecondary }}
+                      formatter={(value: any) => [`${value.toFixed(3)}%`, 'Contribution']}
+                    />
+                    <Bar 
+                      dataKey="value" 
+                      radius={[4, 4, 0, 0]}
+                    >
+                      {attributionData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.fill} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </View>
+            </AnimatedCard>
           </WidgetContainer>
 
           {/* Market Index Performance */}
