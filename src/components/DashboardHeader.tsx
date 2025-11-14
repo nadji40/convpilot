@@ -225,7 +225,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ title, descrip
 
             {/* Help Icon */}
             <TouchableOpacity
-              onPress={() => window.open('/contact', '_blank')}
+              onPress={() => window.open('/', '_blank')}
               style={{
                 padding: 8,
                 borderRadius: parseInt(colors.borderRadius.medium),
