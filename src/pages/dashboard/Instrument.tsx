@@ -122,27 +122,19 @@ export const Instrument: React.FC = () => {
         flex: 1,
       }}
     >
+      {/* Fixed Header with Back Button */}
       <View
         style={{
-          flex: 1,
-          marginLeft: isCollapsed ? 80 : 280,
-          height: '100vh',
-          overflow: 'auto' as any,
+          position: 'fixed' as any,
+          top: 0,
+          left: isCollapsed ? 80 : 280,
+          right: 0,
+          zIndex: 1000,
           backgroundColor: colors.background,
+          transition: 'left 0.4s ease',
         }}
       >
-        {/* Fixed Header */}
-        <View
-          style={{
-            position: 'sticky' as any,
-            top: 0,
-            zIndex: 10,
-            backgroundColor: colors.background,
-            paddingHorizontal: 24,
-            paddingTop: 24,
-          }}
-        >
-          {/* Header with Back Button */}
+        <View style={{ paddingHorizontal: 24, paddingTop: 24 }}>
           <View style={{ gap: 16 }}>
             <TouchableOpacity
               onPress={() => navigate('/dashboard/universe')}
@@ -179,8 +171,18 @@ export const Instrument: React.FC = () => {
             />
           </View>
         </View>
-
-        <View style={{ gap: 32, paddingBottom: 40, paddingHorizontal: 24 }}>
+      </View>
+      
+      <View
+        style={{
+          flex: 1,
+          marginLeft: isCollapsed ? 80 : 280,
+          height: '100vh',
+          overflow: 'auto' as any,
+          backgroundColor: colors.background,
+        }}
+      >
+        <View style={{ gap: 32, paddingBottom: 40, paddingHorizontal: 24, paddingTop: 140 }}>
 
           {/* Main KPIs */}
           <View

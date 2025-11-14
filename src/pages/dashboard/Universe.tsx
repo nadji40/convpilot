@@ -230,23 +230,24 @@ export const Universe: React.FC = () => {
         flex: 1,
       }}
     >
+      {/* Fixed Header */}
+      <DashboardHeader 
+        title={t('dashboard.universe')}
+        description={`${filteredData.length} ${t('of')} ${mockConvertibleBonds.length} ${t('dashboard.universe_desc')}`}
+      />
+      
       <View
         style={{
           flex: 1,
           marginLeft: isCollapsed ? 80 : 280,
           padding: 24,
+          paddingTop: 100, // Add padding for fixed header
           height: '100vh',
           overflow: 'auto' as any,
           backgroundColor: colors.background,
         }}
       >
         <View style={{ gap: 24, paddingBottom: 40 }}>
-          {/* Header */}
-          <DashboardHeader 
-            title={t('dashboard.universe')}
-            description={`${filteredData.length} ${t('of')} ${mockConvertibleBonds.length} ${t('dashboard.universe_desc')}`}
-          />
-
           {/* Export Button Section */}
           <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
             <button

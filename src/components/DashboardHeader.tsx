@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { darkColors, lightColors, typography } from '../theme';
-import { useTheme } from '../contexts/AppContext';
+import { useTheme, useSidebar } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
 import { SettingsIcon, HelpIcon, BellIcon, AnalystIcon } from './Icons';
 import { LanguageToggle } from './LanguageToggle';
@@ -16,6 +16,7 @@ interface DashboardHeaderProps {
 
 export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ title, description }) => {
   const { isDark } = useTheme();
+  const { isCollapsed } = useSidebar();
   const { user } = useAuth();
   const colors = isDark ? darkColors : lightColors;
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -28,18 +29,28 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ title, descrip
   const userInitials = user?.name?.split(' ').map(n => n[0]).join('') || 'MT';
   const unreadCount = 2; // Mock unread count - would come from API
 
-  // Handle scroll detection
+  // Handle scroll detection - now looking at the main scrollable container
   useEffect(() => {
-    const handleScroll = () => {
-      // Find the scrollable container (the main content area)
-      const scrollContainer = headerRef.current?.parentElement?.parentElement;
-      if (scrollContainer) {
-        const scrollY = scrollContainer.scrollTop || 0;
-        setIsScrolled(scrollY > 50);
-      }
+    const handleScroll = (e: Event) => {
+      const target = e.target as HTMLElement;
+      const scrollY = target.scrollTop || 0;
+      setIsScrolled(scrollY > 50);
     };
 
-    const scrollContainer = headerRef.current?.parentElement?.parentElement;
+    // Find the scrollable container - it's the parent View with overflow: auto
+    const findScrollContainer = () => {
+      let element = headerRef.current?.parentElement;
+      while (element) {
+        const style = window.getComputedStyle(element);
+        if (style.overflow === 'auto' || style.overflowY === 'auto') {
+          return element;
+        }
+        element = element.parentElement;
+      }
+      return null;
+    };
+
+    const scrollContainer = findScrollContainer();
     if (scrollContainer) {
       scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
       return () => scrollContainer.removeEventListener('scroll', handleScroll);
@@ -52,10 +63,13 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ title, descrip
         ref={headerRef as any}
         className={`dashboard-header ${isScrolled ? 'scrolled' : ''}`}
         style={{
-          position: 'sticky' as any,
+          position: 'fixed' as any,
           top: 0,
+          left: isCollapsed ? 80 : 280,
+          right: 0,
           zIndex: 1000,
           marginBottom: 0,
+          transition: 'left 0.4s ease',
         }}
       >
         <View

@@ -105,6 +105,12 @@ export const Aggregations: React.FC = () => {
         flex: 1,
       }}
     >
+      {/* Fixed Header */}
+      <DashboardHeader 
+        title={t('dashboard.aggregations')}
+        description={t('dashboard.aggregations_desc')}
+      />
+      
       <View
         style={{
           flex: 1,
@@ -114,24 +120,7 @@ export const Aggregations: React.FC = () => {
           backgroundColor: colors.background,
         }}
       >
-        {/* Fixed Header */}
-        <View
-          style={{
-            position: 'sticky' as any,
-            top: 0,
-            zIndex: 10,
-            backgroundColor: colors.background,
-            paddingHorizontal: 24,
-            paddingTop: 24,
-          }}
-        >
-          <DashboardHeader 
-            title={t('dashboard.aggregations')}
-            description={t('dashboard.aggregations_desc')}
-          />
-        </View>
-
-        <View style={{ gap: 32, paddingBottom: 40, paddingHorizontal: 24 }}>
+        <View style={{ gap: 32, paddingBottom: 40, paddingHorizontal: 24, paddingTop: 100 }}>
 
           {/* Dimension Selectors */}
           <AnimatedCard delay={0.2} enableHover={false}>

@@ -188,6 +188,12 @@ export const Portfolio: React.FC = () => {
         flex: 1,
       }}
     >
+      {/* Fixed Header */}
+      <DashboardHeader 
+        title={t('dashboard.portfolio')}
+        description={`${portfolioBonds.length} ${t('dashboard.portfolio_desc')} ${formatLargeNumber(portfolioMetrics.totalMarketCap)}`}
+      />
+      
       <View
         style={{
           flex: 1,
@@ -197,24 +203,7 @@ export const Portfolio: React.FC = () => {
           backgroundColor: colors.background,
         }}
       >
-        {/* Fixed Header */}
-        <View
-          style={{
-            position: 'sticky' as any,
-            top: 0,
-            zIndex: 10,
-            backgroundColor: colors.background,
-            paddingHorizontal: 24,
-            paddingTop: 24,
-          }}
-        >
-          <DashboardHeader 
-            title={t('dashboard.portfolio')}
-            description={`${portfolioBonds.length} ${t('dashboard.portfolio_desc')} ${formatLargeNumber(portfolioMetrics.totalMarketCap)}`}
-          />
-        </View>
-
-        <View style={{ gap: 32, paddingBottom: 40, paddingHorizontal: 24 }}>
+        <View style={{ gap: 32, paddingBottom: 40, paddingHorizontal: 24, paddingTop: 100 }}>
 
           {/* Portfolio KPIs */}
           <View

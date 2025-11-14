@@ -87,11 +87,18 @@ export const Overview: React.FC = () => {
       minHeight: '100vh',
       flex: 1,
     }}>
+      {/* Fixed Header */}
+      <DashboardHeader 
+        title={t('dashboard.overview')}
+        description={t('dashboard.overview_desc')}
+      />
+      
       <View
         style={{
           flex: 1,
           marginLeft: isCollapsed ? 80 : 280,
           padding: 24,
+          paddingTop: 100, // Add padding for fixed header
           height: '100vh',
           overflow: 'auto' as any,
           backgroundColor: colors.background,
@@ -101,12 +108,6 @@ export const Overview: React.FC = () => {
           style={{ flex: 1, height: '100%' }}
           contentContainerStyle={{ gap: 32, paddingBottom: 40 }}
         >
-          {/* Header */}
-          <DashboardHeader 
-            title={t('dashboard.overview')}
-            description={t('dashboard.overview_desc')}
-          />
-
           {/* KPI Cards - Enhanced with Portfolio Metrics */}
           <WidgetContainer id="overview-kpis" storageKey="overviewWidgets">
             <View
