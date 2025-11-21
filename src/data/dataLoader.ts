@@ -250,10 +250,12 @@ function loadHistoricalData(): Map<string, HistoricalDataPoint[]> {
 /**
  * Determine rating based on sector and country (simplified heuristic)
  * Returns rating in format compatible with standardizeRating function
+ * Note: Sectors like "Consumer, Non-cyclical" are single sectors (comma is part of name)
  */
 function determineRating(sector: string, country: string): string {
   // Simplified rating logic - returns ratings that will be standardized
   const investmentGradeCountries = ['FRANCE', 'GERMANY', 'NETHERLANDS', 'BELGIUM', 'AUSTRIA'];
+  // Important: "Consumer, Non-cyclical" is a single sector name (contains comma)
   const investmentGradeSectors = ['Utilities', 'Consumer, Non-cyclical', 'Financial'];
   
   if (investmentGradeCountries.includes(country.toUpperCase()) && 

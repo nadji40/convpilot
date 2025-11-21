@@ -374,7 +374,19 @@ export const formatNumber = (value: number, decimals: number = 2): string => {
 };
 
 // Export data to CSV
+// Note: Sectors like "Consumer,Non-cyclical" are single sectors - properly escaped in CSV
 export const exportToCSV = (bonds: ConvertibleBond[], filename: string = 'convertible-bonds.csv') => {
+  // Helper function to escape CSV values that contain commas, quotes, or newlines
+  const escapeCSV = (value: any): string => {
+    if (value === null || value === undefined) return '';
+    const str = String(value);
+    // If the value contains comma, quote, or newline, wrap it in quotes and escape existing quotes
+    if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+    return str;
+  };
+  
   // Define headers
   const headers = [
     'ISIN',
@@ -399,18 +411,18 @@ export const exportToCSV = (bonds: ConvertibleBond[], filename: string = 'conver
     'Perf 1M',
   ];
   
-  // Build CSV content
+  // Build CSV content with proper escaping
   const rows = bonds.map(bond => [
-    bond.isin,
-    bond.issuer,
-    bond.sector,
-    bond.country,
-    bond.currency,
+    escapeCSV(bond.isin),
+    escapeCSV(bond.issuer),
+    escapeCSV(bond.sector),  // Properly escape sectors like "Consumer,Non-cyclical"
+    escapeCSV(bond.country),
+    escapeCSV(bond.currency),
     bond.coupon,
-    bond.maturity,
-    bond.rating,
-    bond.size,
-    bond.profile,
+    escapeCSV(bond.maturity),
+    escapeCSV(bond.rating),
+    escapeCSV(bond.size),
+    escapeCSV(bond.profile),
     bond.price,
     bond.delta,
     bond.gamma,
@@ -443,11 +455,12 @@ export const exportToCSV = (bonds: ConvertibleBond[], filename: string = 'conver
 };
 
 // Aggregate bonds by sector
+// Note: Sectors like "Consumer,Non-cyclical" and "Consumer,Cyclical" are treated as single sectors
 export const aggregateBySector = (bonds: ConvertibleBond[]): Array<{ name: string; value: number }> => {
   const sectorMap = new Map<string, number>();
   
   bonds.forEach(bond => {
-    const sector = bond.sector;
+    const sector = bond.sector; // Keep sector as-is (do not split on comma)
     sectorMap.set(sector, (sectorMap.get(sector) || 0) + bond.outstandingAmount);
   });
   
