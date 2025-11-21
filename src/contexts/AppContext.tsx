@@ -63,7 +63,7 @@ const translations = {
     // Navigation
     'nav.overview': 'Overview',
     'nav.navigation': 'NAVIGATION',
-    'nav.cb_universe': 'CB Universe',
+    'nav.cb_universe': 'CB Profile',
     'nav.aggregations': 'Aggregations',
     'nav.portfolio': 'Portfolio',
     'nav.favorites': 'Favorites',
@@ -202,7 +202,7 @@ const translations = {
     // Navigation
     'nav.overview': 'Vue d\'ensemble',
     'nav.navigation': 'NAVIGATION',
-    'nav.cb_universe': 'Univers CB',
+    'nav.cb_universe': 'Profil d\'OC',
     'nav.aggregations': 'Agrégations',
     'nav.portfolio': 'Portefeuille',
     'nav.favorites': 'Favoris',

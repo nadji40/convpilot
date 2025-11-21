@@ -1,50 +1,20 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text } from 'react-native';
-import { useNavigate } from 'react-router-dom';
 import { darkColors, lightColors, typography } from '../../theme';
 import { useTheme, useSidebar, useLanguage } from '../../contexts/AppContext';
 import { DashboardHeader } from '../../components/DashboardHeader';
-import { SearchBar } from '../../components/SearchBar';
-import { FilterPanel } from '../../components/FilterPanel';
-import { DataTable, Column } from '../../components/DataTable';
 import { AIAgentBubble } from '../../components/AIAgentBubble';
 import { mockConvertibleBonds } from '../../data/mockData';
 import { ConvertibleBond } from '../../data/dataLoader';
-import {
-  filterBonds,
-  sortBonds,
-  paginateData,
-  formatPercentage,
-  exportToCSV,
-  getUniqueSectors,
-  getUniqueCountries,
-  getUniqueCurrencies,
-  getUniqueRatingGroups,
-  getEnhancedBondMetrics,
-  BondWithEnhancedMetrics,
-} from '../../utils/dataUtils';
+import { formatPercentage, formatCurrency } from '../../utils/dataUtils';
 
 export const Universe: React.FC = () => {
   const { isDark } = useTheme();
   const { isCollapsed } = useSidebar();
-  const { t } = useLanguage();
+  const { language } = useLanguage();
   const colors = isDark ? darkColors : lightColors;
-  const navigate = useNavigate();
 
-  // Search and filter state
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedSectors, setSelectedSectors] = useState<string[]>([]);
-  const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
-  const [selectedRatings, setSelectedRatings] = useState<string[]>([]);
-  const [selectedCurrencies, setSelectedCurrencies] = useState<string[]>([]);
-
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(25);
-
-  // Sort state
-  const [sortKey, setSortKey] = useState<string>('issuer');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [selectedBond, setSelectedBond] = useState<ConvertibleBond | null>(null);
 
   // Apply theme class to body
   useEffect(() => {
@@ -53,251 +23,54 @@ export const Universe: React.FC = () => {
     }
   }, [isDark]);
 
-  // Get unique values for filters
-  const sectors = getUniqueSectors(mockConvertibleBonds);
-  const countries = getUniqueCountries(mockConvertibleBonds);
-  const currencies = getUniqueCurrencies(mockConvertibleBonds);
-  const ratingGroups = getUniqueRatingGroups();
+  // Sort bonds alphabetically by issuer for dropdown
+  const sortedBonds = [...mockConvertibleBonds].sort((a, b) => 
+    a.issuer.localeCompare(b.issuer)
+  );
 
-  // Get enhanced bond metrics with volatility analysis
-  const enhancedBonds = useMemo(() => {
-    return getEnhancedBondMetrics(mockConvertibleBonds);
-  }, []);
-
-  // Filter and sort data
-  const filteredData = useMemo(() => {
-    let result = filterBonds(enhancedBonds, {
-      search: searchQuery,
-      sector: selectedSectors,
-      country: selectedCountries,
-      rating: selectedRatings,
-      currency: selectedCurrencies,
-    });
-
-    result = sortBonds(result, sortKey as keyof ConvertibleBond, sortDirection);
-
-    return result;
-  }, [enhancedBonds, searchQuery, selectedSectors, selectedCountries, selectedRatings, selectedCurrencies, sortKey, sortDirection]);
-
-  // Paginate data
-  const paginatedData = useMemo(() => {
-    return paginateData(filteredData, currentPage, pageSize);
-  }, [filteredData, currentPage, pageSize]);
-
-  // Reset page when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery, selectedSectors, selectedCountries, selectedRatings, selectedCurrencies]);
-
-  // Handle row click
-  const handleRowClick = (bond: BondWithEnhancedMetrics) => {
-    navigate(`/dashboard/instrument/${bond.isin}`);
+  const handleBondSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const isin = event.target.value;
+    const bond = mockConvertibleBonds.find(b => b.isin === isin);
+    setSelectedBond(bond || null);
   };
 
-  // Handle sort
-  const handleSort = (key: string, direction: 'asc' | 'desc') => {
-    setSortKey(key);
-    setSortDirection(direction);
-  };
+  const InfoRow = ({ label, value, highlight = false }: { label: string; value: string | number; highlight?: boolean }) => (
+    <View style={{ 
+      flexDirection: 'row', 
+      justifyContent: 'space-between',
+      padding: '12px 0',
+      borderBottom: `1px solid ${colors.border}`,
+    }}>
+      <Text style={{ 
+        color: colors.textSecondary, 
+        fontSize: parseInt(typography.fontSize.default),
+        fontFamily: typography.fontFamily.body,
+      }}>
+        {label}
+      </Text>
+      <Text style={{ 
+        color: highlight ? colors.accent : colors.textPrimary,
+        fontSize: parseInt(typography.fontSize.default),
+        fontWeight: highlight ? '700' : '600',
+        fontFamily: typography.fontFamily.body,
+      }}>
+        {value}
+      </Text>
+    </View>
+  );
 
-  // Handle export
-  const handleExport = () => {
-    exportToCSV(filteredData, `convertible-bonds-${new Date().toISOString().split('T')[0]}.csv`);
-  };
-
-  // Table columns with enhanced volatility metrics
-  const columns: Column<BondWithEnhancedMetrics>[] = [
-    {
-      key: 'isin',
-      title: 'ISIN',
-      width: '8%',
-      render: (value) => (
-        <Text style={{ color: colors.accent, fontWeight: '600', fontSize: parseInt(typography.fontSize.small) }}>
-          {value}
-        </Text>
-      ),
-    },
-    {
-      key: 'issuer',
-      title: 'Issuer',
-      width: '12%',
-      render: (value) => (
-        <Text style={{ color: colors.textPrimary, fontWeight: '600', fontSize: parseInt(typography.fontSize.small) }}>
-          {value}
-        </Text>
-      ),
-    },
-    {
-      key: 'sector',
-      title: 'Sector',
-      width: '10%',
-      render: (value) => (
-        <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small) }}>{value}</Text>
-      ),
-    },
-    {
-      key: 'price',
-      title: 'Price',
-      width: '6%',
-      align: 'right',
-      render: (value) => (
-        <Text style={{ color: colors.textPrimary, fontWeight: '600', fontSize: parseInt(typography.fontSize.small) }}>
-          {value.toFixed(2)}
-        </Text>
-      ),
-    },
-    {
-      key: 'delta',
-      title: 'Delta',
-      width: '6%',
-      align: 'right',
-      render: (value) => (
-        <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.small) }}>
-          {value.toFixed(3)}
-        </Text>
-      ),
-    },
-    {
-      key: 'vega',
-      title: 'Vega',
-      width: '6%',
-      align: 'right',
-      render: (value, row) => (
-        <Text style={{ 
-          color: value > 0.25 ? colors.textPrimary : colors.textSecondary, 
-          fontSize: parseInt(typography.fontSize.small),
-          fontWeight: value > 0.25 ? '600' : '400'
-        }}>
-          {value.toFixed(3)}
-        </Text>
-      ),
-    },
-    {
-      key: 'enhancedMetrics.volSpread' as any,
-      title: 'Vol Spread',
-      width: '7%',
-      align: 'right',
-      render: (value, row) => {
-        const volSpread = (row as BondWithEnhancedMetrics).enhancedMetrics.volSpread;
-        if (volSpread === null) return <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.xsmall) }}>N/A</Text>;
-        return (
-          <Text style={{ 
-            color: volSpread < 0 ? colors.success : volSpread >= 8 ? colors.danger : volSpread >= 4 ? colors.warn : colors.textPrimary,
-            fontWeight: '600',
-            fontSize: parseInt(typography.fontSize.small) 
-          }}>
-            {volSpread.toFixed(2)}%
-          </Text>
-        );
-      },
-    },
-    {
-      key: 'enhancedMetrics.relativeSituation' as any,
-      title: 'Situation',
-      width: '9%',
-      align: 'center',
-      render: (value, row) => {
-        const situation = (row as BondWithEnhancedMetrics).enhancedMetrics.relativeSituation;
-        if (!situation) return null;
-        const bgColor = situation === 'underpriced' ? colors.success + '20' :
-                       situation === 'expensive' ? colors.danger + '30' :
-                       situation === 'overpriced' ? colors.warn + '20' :
-                       colors.textSecondary + '20';
-        const textColor = situation === 'underpriced' ? colors.success :
-                         situation === 'expensive' ? colors.danger :
-                         situation === 'overpriced' ? colors.warn :
-                         colors.textSecondary;
-        return (
-          <View style={{ backgroundColor: bgColor, padding: '4px 8px', borderRadius: parseInt(colors.borderRadius.small) }}>
-            <Text style={{ color: textColor, fontWeight: '600', fontSize: parseInt(typography.fontSize.xsmall) }}>
-              {situation}
-            </Text>
-          </View>
-        );
-      },
-    },
-    {
-      key: 'enhancedMetrics.downsideRisk' as any,
-      title: 'Downside Risk',
-      width: '8%',
-      align: 'right',
-      render: (value, row) => {
-        const risk = (row as BondWithEnhancedMetrics).enhancedMetrics.downsideRisk;
-        if (risk === null) return <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.xsmall) }}>-</Text>;
-        return (
-          <Text style={{ 
-            color: risk > 1.5 ? colors.danger : risk > 0.5 ? colors.warn : colors.textPrimary,
-            fontWeight: '600',
-            fontSize: parseInt(typography.fontSize.small) 
-          }}>
-            {risk.toFixed(2)}%
-          </Text>
-        );
-      },
-    },
-    {
-      key: 'enhancedMetrics.zScore' as any,
-      title: 'Z-Score',
-      width: '7%',
-      align: 'right',
-      render: (value, row) => {
-        const zScore = (row as BondWithEnhancedMetrics).enhancedMetrics.zScore;
-        if (zScore === null) return <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.xsmall) }}>N/A</Text>;
-        const absZScore = Math.abs(zScore);
-        return (
-          <Text style={{ 
-            color: absZScore > 2 ? colors.danger : absZScore > 1 ? colors.warn : colors.textPrimary,
-            fontWeight: absZScore > 1 ? '600' : '400',
-            fontSize: parseInt(typography.fontSize.small) 
-          }}>
-            {zScore.toFixed(2)}
-          </Text>
-        );
-      },
-    },
-    {
-      key: 'rating',
-      title: 'Rating',
-      width: '7%',
-      align: 'center',
-      render: (value) => (
-        <View
-          style={{
-            backgroundColor: value.startsWith('A') ? colors.success + '30' : value.startsWith('B') ? colors.warn + '30' : colors.danger + '30',
-            padding: '4px 8px',
-            borderRadius: parseInt(colors.borderRadius.small),
-          }}
-        >
-          <Text
-            style={{
-              color: value.startsWith('A') ? colors.success : value.startsWith('B') ? colors.warn : colors.danger,
-              fontWeight: '600',
-              fontSize: parseInt(typography.fontSize.xsmall),
-            }}
-          >
-            {value}
-          </Text>
-        </View>
-      ),
-    },
-    {
-      key: 'performance1M',
-      title: 'Perf 1M',
-      width: '8%',
-      align: 'right',
-      render: (value) => (
-        <Text
-          style={{
-            color: value >= 0 ? colors.success : colors.danger,
-            fontWeight: '600',
-            fontSize: parseInt(typography.fontSize.small),
-          }}
-        >
-          {formatPercentage(value)}
-        </Text>
-      ),
-    },
-  ];
+  const SectionTitle = ({ title }: { title: string }) => (
+    <Text style={{
+      color: colors.accent,
+      fontSize: parseInt(typography.fontSize.large),
+      fontWeight: '700',
+      fontFamily: typography.fontFamily.heading,
+      marginTop: 32,
+      marginBottom: 16,
+    }}>
+      {title}
+    </Text>
+  );
 
   return (
     <View
@@ -309,8 +82,8 @@ export const Universe: React.FC = () => {
     >
       {/* Fixed Header */}
       <DashboardHeader 
-        title={t('dashboard.universe')}
-        description={`${filteredData.length} ${t('of')} ${enhancedBonds.length} ${t('dashboard.universe_desc')}`}
+        title={language === 'fr' ? "Profil d'OC" : "CB Profile"}
+        description={language === 'fr' ? "Détails complets de l'obligation convertible" : "Complete convertible bond details"}
       />
       
       <View
@@ -318,128 +91,231 @@ export const Universe: React.FC = () => {
           flex: 1,
           marginLeft: isCollapsed ? 80 : 280,
           padding: 24,
-          paddingTop: 100, // Add padding for fixed header
+          paddingTop: 100,
           height: '100vh',
           overflow: 'auto' as any,
           backgroundColor: colors.background,
         }}
       >
-        <View style={{ gap: 24, paddingBottom: 40 }}>
-          {/* Export Button Section */}
-          <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
-            <button
-              onClick={handleExport}
+        <View style={{ maxWidth: 1200, paddingBottom: 40 }}>
+          {/* Dropdown Selector */}
+          <View style={{ marginBottom: 32 }}>
+            <Text style={{
+              color: colors.textPrimary,
+              fontSize: parseInt(typography.fontSize.default),
+              fontWeight: '600',
+              marginBottom: 12,
+              fontFamily: typography.fontFamily.body,
+            }}>
+              {language === 'fr' ? 'Sélectionner une obligation convertible' : 'Select Convertible Bond'}
+            </Text>
+            <select
+              value={selectedBond?.isin || ''}
+              onChange={handleBondSelect}
               style={{
-                padding: '12px 24px',
-                backgroundColor: colors.accent,
-                color: '#ffffff',
-                border: 'none',
+                width: '100%',
+                padding: '14px 16px',
+                backgroundColor: colors.surfaceCard,
+                color: colors.textPrimary,
+                border: `1px solid ${colors.border}`,
                 borderRadius: parseInt(colors.borderRadius.medium),
-                cursor: 'pointer',
-                fontFamily: typography.fontFamily.body,
                 fontSize: parseInt(typography.fontSize.default),
-                fontWeight: '600',
-                transition: 'all 0.3s ease',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = `0 4px 12px ${colors.accent}60`;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
+                fontFamily: typography.fontFamily.body,
+                cursor: 'pointer',
+                outline: 'none',
               }}
             >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path
-                  d="M8 11V3M8 11L5 8M8 11l3-3M2 13h12"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              {t('button.export_csv')}
-            </button>
+              <option value="">
+                {language === 'fr' ? '-- Choisir une obligation --' : '-- Choose a bond --'}
+              </option>
+              {sortedBonds.map(bond => (
+                <option key={bond.isin} value={bond.isin}>
+                  {bond.issuer} ({bond.isin})
+                </option>
+              ))}
+            </select>
           </View>
 
-          {/* Search Bar */}
-            <SearchBar
-              placeholder={t('search.placeholder')}
-              value={searchQuery}
-              onChange={setSearchQuery}
-              suggestions={enhancedBonds.map((b) => b.issuer)}
-            />
+          {/* Bond Details */}
+          {selectedBond && (
+            <View style={{ gap: 24 }}>
+              {/* Issue Characteristics Card */}
+              <View style={{
+                backgroundColor: colors.surfaceCard,
+                borderRadius: parseInt(colors.borderRadius.large),
+                padding: 24,
+                border: `1px solid ${colors.border}`,
+              }}>
+                <SectionTitle title={language === 'fr' ? 'Caractéristiques de l\'émission' : 'Issue Characteristics'} />
+                
+                <InfoRow label={language === 'fr' ? 'Nominal' : 'Nominal'} value={selectedBond.nominal} />
+                <InfoRow label={language === 'fr' ? 'Ratio de conversion' : 'Conversion Ratio'} value={selectedBond.conversionRatio.toFixed(4)} />
+                <InfoRow label={language === 'fr' ? 'Prix de conversion' : 'Conversion Price'} value={selectedBond.conversionPrice.toFixed(2)} />
+                <InfoRow label={language === 'fr' ? 'Prix d\'émission' : 'Issue Price'} value={selectedBond.issuePrice.toFixed(2)} />
+                <InfoRow label={language === 'fr' ? 'Coupon' : 'Coupon'} value={`${selectedBond.coupon.toFixed(2)}%`} />
+                <InfoRow label={language === 'fr' ? 'Date d\'émission' : 'Issue Date'} value={selectedBond.issueDate} />
+                <InfoRow label={language === 'fr' ? 'Date d\'échéance' : 'Maturity Date'} value={selectedBond.maturity} />
+                <InfoRow label={language === 'fr' ? 'Montant émis' : 'Amount Issued'} value={formatCurrency(selectedBond.amountIssued, selectedBond.currency)} />
+                <InfoRow label={language === 'fr' ? 'Devise' : 'Currency'} value={selectedBond.currency} />
+                <InfoRow label={language === 'fr' ? 'Notation' : 'Rating'} value={selectedBond.rating} />
+                <InfoRow label={language === 'fr' ? 'Sous-jacent' : 'Underlying'} value={selectedBond.underlyingTicker || 'N/A'} />
+              </View>
 
-          {/* Filters and Table */}
-          <View style={{ flexDirection: 'row', gap: 24 }}>
-            {/* Filters Sidebar */}
-            <View style={{ width: 280, gap: 16, flexShrink: 0 }}>
-              <FilterPanel
-                title="Sector"
-                options={sectors.map((s) => ({
-                  label: s,
-                  value: s,
-                  count: enhancedBonds.filter((b) => b.sector === s).length,
-                }))}
-                selectedValues={selectedSectors}
-                onChange={setSelectedSectors}
-                defaultCollapsed={false}
-              />
+              {/* Call & Put Options Card */}
+              <View style={{
+                backgroundColor: colors.surfaceCard,
+                borderRadius: parseInt(colors.borderRadius.large),
+                padding: 24,
+                border: `1px solid ${colors.border}`,
+              }}>
+                <SectionTitle title={language === 'fr' ? 'Options Call & Put' : 'Call & Put Options'} />
+                
+                <View style={{ marginBottom: 24 }}>
+                  <Text style={{
+                    color: colors.textPrimary,
+                    fontSize: parseInt(typography.fontSize.default),
+                    fontWeight: '700',
+                    marginBottom: 12,
+                    fontFamily: typography.fontFamily.body,
+                  }}>
+                    {language === 'fr' ? 'CALL' : 'CALL'}
+                  </Text>
+                  <InfoRow 
+                    label={language === 'fr' ? 'Date de début' : 'Start Date'} 
+                    value={selectedBond.callFirstDate || 'N/A'} 
+                  />
+                  <InfoRow 
+                    label={language === 'fr' ? 'Date de fin' : 'End Date'} 
+                    value={selectedBond.callSecondDate || 'N/A'} 
+                  />
+                  <InfoRow 
+                    label={language === 'fr' ? 'Déclencheur' : 'Trigger'} 
+                    value={selectedBond.callTrigger ? `${selectedBond.callTrigger.toFixed(2)}%` : 'N/A'} 
+                  />
+                  <InfoRow 
+                    label={language === 'fr' ? 'Distance au déclencheur' : 'Distance to Trigger'} 
+                    value={selectedBond.callTrigger ? `${(selectedBond.parityPercent - selectedBond.callTrigger).toFixed(2)}%` : 'N/A'} 
+                  />
+                </View>
 
-              <FilterPanel
-                title="Country"
-                options={countries.map((c) => ({
-                  label: c,
-                  value: c,
-                  count: enhancedBonds.filter((b) => b.country === c).length,
-                }))}
-                selectedValues={selectedCountries}
-                onChange={setSelectedCountries}
-              />
+                <View>
+                  <Text style={{
+                    color: colors.textPrimary,
+                    fontSize: parseInt(typography.fontSize.default),
+                    fontWeight: '700',
+                    marginBottom: 12,
+                    fontFamily: typography.fontFamily.body,
+                  }}>
+                    {language === 'fr' ? 'PUT' : 'PUT'}
+                  </Text>
+                  <InfoRow 
+                    label={language === 'fr' ? 'Date de put' : 'Put Date'} 
+                    value={selectedBond.putDate || 'N/A'} 
+                  />
+                  <InfoRow 
+                    label={language === 'fr' ? 'Prix de put' : 'Put Price'} 
+                    value={selectedBond.putPrice ? selectedBond.putPrice.toFixed(2) : 'N/A'} 
+                  />
+                  <InfoRow 
+                    label={language === 'fr' ? 'YTM à put (Bloomberg field)' : 'YTM to put (Bloomberg field)'} 
+                    value="N/A" 
+                  />
+                </View>
+              </View>
 
-              <FilterPanel
-                title="Rating"
-                options={ratingGroups.map((r) => ({
-                  label: r === 'Investment Grade' ? 'Investment Grade' : r === 'High Yield' ? 'High Yield' : 'Not Rated',
-                  value: r,
-                }))}
-                selectedValues={selectedRatings}
-                onChange={setSelectedRatings}
-              />
+              {/* Pricing & Greeks Card */}
+              <View style={{
+                backgroundColor: colors.surfaceCard,
+                borderRadius: parseInt(colors.borderRadius.large),
+                padding: 24,
+                border: `1px solid ${colors.border}`,
+              }}>
+                <SectionTitle title={language === 'fr' ? 'Prix & Grecques' : 'Pricing & Greeks'} />
+                
+                <InfoRow label={language === 'fr' ? 'Prix CB' : 'CB Price'} value={selectedBond.price.toFixed(2)} highlight />
+                <InfoRow label={language === 'fr' ? 'Valeur théorique' : 'Fair Value'} value={selectedBond.theoValue.toFixed(2)} />
+                <InfoRow label={language === 'fr' ? 'Valeur option' : 'Option Value'} value={(selectedBond.price - selectedBond.bondfloorPercent).toFixed(2)} />
+                <InfoRow label={language === 'fr' ? 'Delta' : 'Delta'} value={`${(selectedBond.delta * 100).toFixed(2)}%`} />
+                <InfoRow label={language === 'fr' ? 'Gamma' : 'Gamma'} value={selectedBond.gamma.toFixed(4)} />
+                <InfoRow label={language === 'fr' ? 'Vega' : 'Vega'} value={selectedBond.vega.toFixed(4)} />
+                <InfoRow label={language === 'fr' ? 'Rho' : 'Rho'} value={selectedBond.rho !== null ? selectedBond.rho.toFixed(4) : 'N/A'} />
+                <InfoRow label={language === 'fr' ? 'Theta' : 'Theta'} value={selectedBond.theta.toFixed(4)} />
+              </View>
 
-              <FilterPanel
-                title="Currency"
-                options={currencies.map((c) => ({
-                  label: c,
-                  value: c,
-                  count: enhancedBonds.filter((b) => b.currency === c).length,
-                }))}
-                selectedValues={selectedCurrencies}
-                onChange={setSelectedCurrencies}
-              />
+              {/* Sensitivities Card */}
+              <View style={{
+                backgroundColor: colors.surfaceCard,
+                borderRadius: parseInt(colors.borderRadius.large),
+                padding: 24,
+                border: `1px solid ${colors.border}`,
+              }}>
+                <SectionTitle title={language === 'fr' ? 'Sensibilités' : 'Sensitivities'} />
+                
+                <InfoRow label={language === 'fr' ? 'Prix de l\'action' : 'Stock Price'} value={selectedBond.stockPrice.toFixed(2)} />
+                <InfoRow label={language === 'fr' ? 'Volatilité historique' : 'Historical Volatility'} value={`${selectedBond.volatility.toFixed(2)}%`} />
+                <InfoRow label={language === 'fr' ? 'Volatilité implicite' : 'Implied Volatility'} value={`${selectedBond.impliedVol.toFixed(2)}%`} />
+                <InfoRow label={language === 'fr' ? 'Spread vol' : 'Vol Spread'} value={`${(selectedBond.impliedVol - selectedBond.volatility).toFixed(2)}%`} />
+                <InfoRow label={language === 'fr' ? 'Repo' : 'Repo'} value="N/A" />
+              </View>
+
+              {/* Valuation Card */}
+              <View style={{
+                backgroundColor: colors.surfaceCard,
+                borderRadius: parseInt(colors.borderRadius.large),
+                padding: 24,
+                border: `1px solid ${colors.border}`,
+              }}>
+                <SectionTitle title={language === 'fr' ? 'Valorisation' : 'Valuation'} />
+                
+                <InfoRow label={language === 'fr' ? 'Relative Valorisation' : 'Relative Valuation'} value={(selectedBond.price - selectedBond.theoValue).toFixed(2)} />
+                <InfoRow label={language === 'fr' ? 'Spread vol' : 'Vol Spread'} value={`${(selectedBond.impliedVol - selectedBond.volatility).toFixed(2)}%`} />
+                <InfoRow label={language === 'fr' ? 'Spread vol moyen' : 'Average Vol Spread'} value="N/A" />
+                <InfoRow label={language === 'fr' ? 'Écart type standard' : 'Standard Deviation'} value="N/A" />
+              </View>
+
+              {/* Profitability Card */}
+              <View style={{
+                backgroundColor: colors.surfaceCard,
+                borderRadius: parseInt(colors.borderRadius.large),
+                padding: 24,
+                border: `1px solid ${colors.border}`,
+              }}>
+                <SectionTitle title={language === 'fr' ? 'Richesse/Bon marché' : 'Richness/Cheapness'} />
+                
+                <InfoRow label={language === 'fr' ? 'VH' : 'VH'} value={`${selectedBond.volatility.toFixed(2)}%`} />
+                <InfoRow label={language === 'fr' ? 'VI' : 'VI'} value={`${selectedBond.impliedVol.toFixed(2)}%`} />
+                <InfoRow label={language === 'fr' ? 'SPREAD VOL' : 'SPREAD VOL'} value={`${(selectedBond.impliedVol - selectedBond.volatility).toFixed(2)}%`} />
+                <InfoRow label={language === 'fr' ? 'Valorisation relative' : 'Relative Valuation'} value={(selectedBond.price - selectedBond.theoValue).toFixed(2)} />
+                <InfoRow label={language === 'fr' ? 'Spread vol moyen' : 'Average Spread Vol'} value="N/A" />
+                <InfoRow label={language === 'fr' ? 'Écart type standard' : 'Standard Deviation'} value="N/A" />
+                <InfoRow label={language === 'fr' ? 'Spread implicite' : 'Implied Spread'} value={`${selectedBond.impliedSpread.toFixed(2)}`} />
+                <InfoRow label={language === 'fr' ? 'Spread implicite' : 'Implied Spread'} value={`${selectedBond.impliedSpread.toFixed(2)}`} />
+                <InfoRow label={language === 'fr' ? 'Valorisation' : 'Valuation'} value={selectedBond.valuation !== null ? formatPercentage(selectedBond.valuation) : 'N/A'} />
+              </View>
             </View>
+          )}
 
-            {/* Data Table */}
-            <View style={{ flex: 1 }}>
-              <DataTable
-                columns={columns}
-                data={paginatedData}
-                onRowClick={handleRowClick}
-                currentPage={currentPage}
-                pageSize={pageSize}
-                totalItems={filteredData.length}
-                onPageChange={setCurrentPage}
-                onPageSizeChange={setPageSize}
-                sortKey={sortKey}
-                sortDirection={sortDirection}
-                onSort={handleSort}
-              />
+          {!selectedBond && (
+            <View style={{
+              backgroundColor: colors.surfaceCard,
+              borderRadius: parseInt(colors.borderRadius.large),
+              padding: 48,
+              border: `1px solid ${colors.border}`,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <Text style={{
+                color: colors.textSecondary,
+                fontSize: parseInt(typography.fontSize.large),
+                fontFamily: typography.fontFamily.body,
+                textAlign: 'center',
+              }}>
+                {language === 'fr' 
+                  ? 'Sélectionnez une obligation convertible pour voir ses détails'
+                  : 'Select a convertible bond to view its details'}
+              </Text>
             </View>
-          </View>
+          )}
         </View>
       </View>
       
