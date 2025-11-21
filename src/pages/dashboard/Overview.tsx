@@ -16,7 +16,6 @@ import {
   aggregateByRating,
   aggregateByMaturity,
   aggregateByProfile,
-  generateMarketIndexData,
   formatLargeNumber, 
   formatPercentage,
   calculatePortfolioMetrics,
@@ -52,7 +51,6 @@ export const Overview: React.FC = () => {
   const ratingData = aggregateByRating(mockConvertibleBonds);
   const maturityData = aggregateByMaturity(mockConvertibleBonds);
   const profileData = aggregateByProfile(mockConvertibleBonds);
-  const marketIndexData = generateMarketIndexData();
 
   // Performance attribution data for waterfall chart
   const attributionData = [
@@ -137,21 +135,21 @@ export const Overview: React.FC = () => {
                 delay={getStaggerDelay(2)}
               />
               <KPICard
-                title="Avg Bondfloor"
-                value={portfolioMetrics.avgBondfloor.toFixed(1) + '%'}
-                subtitle="Downside Protection"
+                title="Avg YTM"
+                value={portfolioMetrics.avgYTM.toFixed(2) + '%'}
+                subtitle="Yield to Maturity"
                 delay={getStaggerDelay(3)}
               />
               <KPICard
                 title="Avg Implied Vol"
                 value={portfolioMetrics.avgImpliedVol.toFixed(1) + '%'}
-                subtitle={`Hist: ${portfolioMetrics.avgHistoricalVol.toFixed(1)}%`}
+                subtitle="Balanced Profile"
                 delay={getStaggerDelay(4)}
               />
               <KPICard
-                title="Distance to Floor"
-                value={portfolioMetrics.avgDistanceToBondfloor.toFixed(1) + '%'}
-                subtitle="Equity Cushion"
+                title="Portfolio Vega"
+                value={portfolioMetrics.portfolioVega.toFixed(4)}
+                subtitle="Vol Sensitivity"
                 delay={getStaggerDelay(5)}
               />
               <KPICard
@@ -161,10 +159,22 @@ export const Overview: React.FC = () => {
                 delay={getStaggerDelay(6)}
               />
               <KPICard
+                title="Avg Prime"
+                value={portfolioMetrics.avgPrime.toFixed(2) + '%'}
+                subtitle="Conversion Premium"
+                delay={getStaggerDelay(7)}
+              />
+              <KPICard
+                title="Avg Duration"
+                value={portfolioMetrics.avgDuration.toFixed(2)}
+                subtitle="Interest Rate Risk"
+                delay={getStaggerDelay(8)}
+              />
+              <KPICard
                 title="Avg Credit Spread"
                 value={portfolioMetrics.avgCreditSpread.toFixed(0) + ' bps'}
-                subtitle="Credit Risk"
-                delay={getStaggerDelay(7)}
+                subtitle="Bond Profile"
+                delay={getStaggerDelay(9)}
               />
             </View>
           </WidgetContainer>
@@ -239,111 +249,157 @@ export const Overview: React.FC = () => {
             </AnimatedCard>
           </WidgetContainer>
 
-          {/* Market Index Performance */}
-          <WidgetContainer id="overview-market-index" title={t('widget.market_index_performance')} storageKey="overviewWidgets">
+          {/* Top and Worst Performers */}
+          <WidgetContainer id="overview-performers" title="Top & Worst Performers" storageKey="overviewWidgets">
             <AnimatedCard delay={0.4} enableHover={false}>
-              <View style={{ gap: 16 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Text
-                    style={{
-                      color: colors.textSecondary,
-                      fontSize: parseInt(typography.fontSize.small),
-                      fontFamily: typography.fontFamily.body,
-                    }}
-                  >
-                    {t('widget.last_30_days')}
-                  </Text>
-                  <View style={{ flexDirection: 'row', gap: 16 }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <View style={{ gap: 24 }}>
+                {['1D', '1M', '3M', 'YTD'].map((period, periodIdx) => {
+                  // Get performance field based on period
+                  const perfField = period === '1D' ? 'performance1D' :
+                                   period === '1M' ? 'performance1M' :
+                                   period === '3M' ? 'performance3M' : 'performanceYTD';
+                  
+                  // Filter out null values and sort
+                  const validBonds = mockConvertibleBonds
+                    .filter(bond => bond[perfField] !== null && bond[perfField] !== undefined)
+                    .sort((a, b) => (b[perfField] as number) - (a[perfField] as number));
+                  
+                  const topBonds = validBonds.slice(0, 3);
+                  const worstBonds = validBonds.slice(-3).reverse();
+                  
+                  return (
+                    <View key={period} style={{ gap: 12 }}>
+                      <Text
+                        style={{
+                          color: colors.textPrimary,
+                          fontSize: parseInt(typography.fontSize.medium),
+                          fontWeight: '600',
+                          fontFamily: typography.fontFamily.heading,
+                        }}
+                      >
+                        {period} Performance
+                      </Text>
+                      
                       <View
                         style={{
-                          width: 12,
-                          height: 12,
-                          borderRadius: 6,
-                          backgroundColor: colors.chartColors.blue,
+                          display: 'grid',
+                          gridTemplateColumns: '1fr 1fr',
+                          gap: 16,
                         }}
-                      />
-                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.xsmall) }}>
-                        {t('legend.cb_index')}
-                      </Text>
-                    </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                      <View
-                        style={{
-                          width: 12,
-                          height: 12,
-                          borderRadius: 6,
-                          backgroundColor: colors.chartColors.green,
-                        }}
-                      />
-                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.xsmall) }}>
-                        {t('legend.equity_index')}
-                      </Text>
-                    </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                      <View
-                        style={{
-                          width: 12,
-                          height: 12,
-                          borderRadius: 6,
-                          backgroundColor: colors.chartColors.purple,
-                        }}
-                      />
-                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.xsmall) }}>
-                        {t('legend.delta_neutral')}
-                      </Text>
-                    </View>
-                  </View>
-                </View>
+                      >
+                        {/* Top 3 */}
+                        <View style={{ gap: 8 }}>
+                          <Text
+                            style={{
+                              color: colors.success,
+                              fontSize: parseInt(typography.fontSize.small),
+                              fontWeight: '600',
+                            }}
+                          >
+                            Top 3
+                          </Text>
+                          {topBonds.map((bond, idx) => (
+                            <View
+                              key={bond.isin}
+                              style={{
+                                backgroundColor: colors.surfaceCard,
+                                padding: 12,
+                                borderRadius: parseInt(colors.borderRadius.medium),
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <View style={{ flex: 1 }}>
+                                <Text
+                                  style={{
+                                    color: colors.textPrimary,
+                                    fontSize: parseInt(typography.fontSize.small),
+                                    fontWeight: '600',
+                                  }}
+                                >
+                                  {bond.issuer}
+                                </Text>
+                                <Text
+                                  style={{
+                                    color: colors.textSecondary,
+                                    fontSize: parseInt(typography.fontSize.xsmall),
+                                  }}
+                                >
+                                  {bond.isin}
+                                </Text>
+                              </View>
+                              <Text
+                                style={{
+                                  color: colors.success,
+                                  fontSize: parseInt(typography.fontSize.medium),
+                                  fontWeight: '700',
+                                }}
+                              >
+                                {formatPercentage(bond[perfField] as number, 2)}
+                              </Text>
+                            </View>
+                          ))}
+                        </View>
 
-                <ResponsiveContainer width="100%" height={320}>
-                  <LineChart data={marketIndexData} margin={{ left: 20, right: 20, top: 20, bottom: 20 }}>
-                    <XAxis
-                      dataKey="date"
-                      stroke={colors.muted}
-                      tick={{ fill: colors.textSecondary, fontSize: 11 }}
-                      tickFormatter={(value) => {
-                        const date = new Date(value);
-                        return `${date.getMonth() + 1}/${date.getDate()}`;
-                      }}
-                    />
-                    <YAxis stroke={colors.muted} tick={{ fill: colors.textSecondary, fontSize: 12 }} />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: colors.surfaceCard,
-                        border: `1px solid ${colors.border}`,
-                        borderRadius: '8px',
-                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
-                      }}
-                      labelStyle={{ color: colors.textPrimary, fontWeight: '600' }}
-                      itemStyle={{ color: colors.textSecondary }}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="cb"
-                      stroke={colors.chartColors.blue}
-                      dot={false}
-                      strokeWidth={3}
-                      name="CB Index"
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="equity"
-                      stroke={colors.chartColors.green}
-                      dot={false}
-                      strokeWidth={3}
-                      name="Equity Index"
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="deltaNeutral"
-                      stroke={colors.chartColors.purple}
-                      dot={false}
-                      strokeWidth={3}
-                      name="Delta Neutral"
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
+                        {/* Worst 3 */}
+                        <View style={{ gap: 8 }}>
+                          <Text
+                            style={{
+                              color: colors.danger,
+                              fontSize: parseInt(typography.fontSize.small),
+                              fontWeight: '600',
+                            }}
+                          >
+                            Worst 3
+                          </Text>
+                          {worstBonds.map((bond, idx) => (
+                            <View
+                              key={bond.isin}
+                              style={{
+                                backgroundColor: colors.surfaceCard,
+                                padding: 12,
+                                borderRadius: parseInt(colors.borderRadius.medium),
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <View style={{ flex: 1 }}>
+                                <Text
+                                  style={{
+                                    color: colors.textPrimary,
+                                    fontSize: parseInt(typography.fontSize.small),
+                                    fontWeight: '600',
+                                  }}
+                                >
+                                  {bond.issuer}
+                                </Text>
+                                <Text
+                                  style={{
+                                    color: colors.textSecondary,
+                                    fontSize: parseInt(typography.fontSize.xsmall),
+                                  }}
+                                >
+                                  {bond.isin}
+                                </Text>
+                              </View>
+                              <Text
+                                style={{
+                                  color: colors.danger,
+                                  fontSize: parseInt(typography.fontSize.medium),
+                                  fontWeight: '700',
+                                }}
+                              >
+                                {formatPercentage(bond[perfField] as number, 2)}
+                              </Text>
+                            </View>
+                          ))}
+                        </View>
+                      </View>
+                    </View>
+                  );
+                })}
               </View>
             </AnimatedCard>
           </WidgetContainer>

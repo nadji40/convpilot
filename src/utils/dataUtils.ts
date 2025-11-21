@@ -14,6 +14,9 @@ export interface PortfolioMetrics {
   avgDistanceToBondfloor: number;
   avgCreditSpread: number;
   totalDeltaAdjustedExposure: number;
+  avgYTM: number;
+  avgPrime: number;
+  avgDuration: number;
 }
 
 export const calculatePortfolioMetrics = (bonds: ConvertibleBond[]): PortfolioMetrics => {
@@ -28,17 +31,33 @@ export const calculatePortfolioMetrics = (bonds: ConvertibleBond[]): PortfolioMe
   const portfolioVega = bonds.reduce((sum, bond) => 
     sum + (bond.vega * bond.outstandingAmount), 0) / totalNotional;
   
-  // Average volatility metrics
-  const avgImpliedVol = bonds.reduce((sum, bond) => sum + bond.impliedVol, 0) / bonds.length;
-  const avgHistoricalVol = bonds.reduce((sum, bond) => sum + bond.volatility, 0) / bonds.length;
+  // Average volatility metrics - only for Balanced/Mixed profile
+  const balancedBonds = bonds.filter(bond => bond.profile === 'Mixed');
+  const avgImpliedVol = balancedBonds.length > 0
+    ? balancedBonds.reduce((sum, bond) => sum + bond.impliedVol, 0) / balancedBonds.length
+    : 0;
+  const avgHistoricalVol = balancedBonds.length > 0
+    ? balancedBonds.reduce((sum, bond) => sum + bond.volatility, 0) / balancedBonds.length
+    : bonds.reduce((sum, bond) => sum + bond.volatility, 0) / bonds.length;
   
   // Downside protection metrics
   const avgBondfloor = bonds.reduce((sum, bond) => sum + bond.bondfloorPercent, 0) / bonds.length;
   const avgDistanceToBondfloor = bonds.reduce((sum, bond) => 
     sum + bond.distanceToBondfloor, 0) / bonds.length;
   
-  // Credit metrics
-  const avgCreditSpread = bonds.reduce((sum, bond) => sum + bond.creditSpread, 0) / bonds.length;
+  // Credit metrics - only for Bond profile
+  const bondProfileBonds = bonds.filter(bond => bond.profile === 'Bond');
+  const avgCreditSpread = bondProfileBonds.length > 0
+    ? bondProfileBonds.reduce((sum, bond) => sum + bond.creditSpread, 0) / bondProfileBonds.length
+    : 0;
+  
+  // YTM, Prime, and Duration
+  const avgYTM = bonds.reduce((sum, bond) => sum + bond.ytm, 0) / bonds.length;
+  const avgPrime = bonds.reduce((sum, bond) => sum + bond.prime, 0) / bonds.length;
+  const bondsWithDuration = bonds.filter(bond => bond.duration !== null);
+  const avgDuration = bondsWithDuration.length > 0 
+    ? bondsWithDuration.reduce((sum, bond) => sum + (bond.duration as number), 0) / bondsWithDuration.length
+    : 0;
   
   // Delta-adjusted exposure
   const totalDeltaAdjustedExposure = bonds.reduce((sum, bond) => 
@@ -56,6 +75,9 @@ export const calculatePortfolioMetrics = (bonds: ConvertibleBond[]): PortfolioMe
     avgDistanceToBondfloor,
     avgCreditSpread,
     totalDeltaAdjustedExposure,
+    avgYTM,
+    avgPrime,
+    avgDuration,
   };
 };
 
