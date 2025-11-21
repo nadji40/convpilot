@@ -305,42 +305,7 @@ export const Aggregations: React.FC = () => {
                   </View>
                 )}
 
-                <View style={{ flex: 1, minWidth: 250, gap: 8 }}>
-                  <Text
-                    style={{
-                      color: colors.textPrimary,
-                      fontSize: parseInt(typography.fontSize.default),
-                      fontWeight: '600',
-                      fontFamily: typography.fontFamily.body,
-                    }}
-                  >
-                    View Mode
-                  </Text>
-                  <View
-                    onClick={() => setShowDetailedMetrics(!showDetailedMetrics)}
-                    style={{
-                      padding: 12,
-                      backgroundColor: showDetailedMetrics ? colors.accent : colors.surfaceCard,
-                      color: showDetailedMetrics ? '#fff' : colors.textPrimary,
-                      border: `1px solid ${colors.border}`,
-                      borderRadius: parseInt(colors.borderRadius.medium),
-                      fontSize: typography.fontSize.default,
-                      fontFamily: typography.fontFamily.body,
-                      cursor: 'pointer',
-                      outline: 'none',
-                      transition: 'all 0.2s ease',
-                      textAlign: 'center',
-                      userSelect: 'none',
-                    } as any}
-                  >
-                    <Text style={{ 
-                      color: showDetailedMetrics ? '#fff' : colors.textPrimary,
-                      fontSize: parseInt(typography.fontSize.default),
-                    }}>
-                      {showDetailedMetrics ? '📊 Detailed Metrics' : '📈 Simple View'}
-                    </Text>
-                  </View>
-                </View>
+            
               </View>
 
               {availableSecondaryDimensions.length === 0 ? (
