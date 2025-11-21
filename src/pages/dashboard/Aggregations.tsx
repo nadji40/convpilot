@@ -316,7 +316,7 @@ export const Aggregations: React.FC = () => {
                   >
                     View Mode
                   </Text>
-                  <button
+                  <View
                     onClick={() => setShowDetailedMetrics(!showDetailedMetrics)}
                     style={{
                       padding: 12,
@@ -329,10 +329,17 @@ export const Aggregations: React.FC = () => {
                       cursor: 'pointer',
                       outline: 'none',
                       transition: 'all 0.2s ease',
-                    }}
+                      textAlign: 'center',
+                      userSelect: 'none',
+                    } as any}
                   >
-                    {showDetailedMetrics ? '📊 Detailed Metrics' : '📈 Simple View'}
-                  </button>
+                    <Text style={{ 
+                      color: showDetailedMetrics ? '#fff' : colors.textPrimary,
+                      fontSize: parseInt(typography.fontSize.default),
+                    }}>
+                      {showDetailedMetrics ? '📊 Detailed Metrics' : '📈 Simple View'}
+                    </Text>
+                  </View>
                 </View>
               </View>
 
@@ -674,138 +681,6 @@ export const Aggregations: React.FC = () => {
               </View>
             </AnimatedCard>
           )}
-
-          {/* Validation Matrix Info */}
-          <AnimatedCard delay={0.6} enableHover={false}>
-            <View style={{ gap: 16 }}>
-              <Text
-                style={{
-                  color: colors.textPrimary,
-                  fontSize: parseInt(typography.fontSize.large),
-                  fontWeight: '600',
-                  fontFamily: typography.fontFamily.heading,
-                }}
-              >
-                Dimension Compatibility Matrix
-              </Text>
-              
-              <View style={{ overflowX: 'auto' as any }}>
-                <table
-                  style={{
-                    width: '100%',
-                    borderCollapse: 'collapse',
-                    fontSize: typography.fontSize.small,
-                  }}
-                >
-                  <thead>
-                    <tr style={{ backgroundColor: colors.surface }}>
-                      <th
-                        style={{
-                          padding: 12,
-                          textAlign: 'left',
-                          color: colors.textPrimary,
-                          fontWeight: '600',
-                          borderBottom: `2px solid ${colors.border}`,
-                        }}
-                      >
-                        Primary \ Secondary
-                      </th>
-                      {dimensions.map((dim) => (
-                        <th
-                          key={dim.value}
-                          style={{
-                            padding: 12,
-                            textAlign: 'center',
-                            color: colors.textPrimary,
-                            fontWeight: '600',
-                            borderBottom: `2px solid ${colors.border}`,
-                            fontSize: parseInt(typography.fontSize.small) - 1,
-                          }}
-                        >
-                          {dim.label.split(' ')[0]}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {dimensions.map((primaryDim) => (
-                      <tr key={primaryDim.value}>
-                        <td
-                          style={{
-                            padding: 12,
-                            color: colors.textPrimary,
-                            fontWeight: '600',
-                            borderBottom: `1px solid ${colors.border}`,
-                          }}
-                        >
-                          {primaryDim.label}
-                        </td>
-                        {dimensions.map((secondaryDim) => {
-                          const isAllowed = isCombinationAllowed(primaryDim.value, secondaryDim.value);
-                          const isSelf = primaryDim.value === secondaryDim.value;
-                          
-                          return (
-                            <td
-                              key={secondaryDim.value}
-                              style={{
-                                padding: 12,
-                                textAlign: 'center',
-                                borderBottom: `1px solid ${colors.border}`,
-                                backgroundColor: isSelf 
-                                  ? colors.surface 
-                                  : isAllowed 
-                                    ? `${colors.chartColors.green}20` 
-                                    : `${colors.chartColors.orange}20`,
-                                color: isSelf 
-                                  ? colors.muted 
-                                  : isAllowed 
-                                    ? colors.chartColors.green 
-                                    : colors.chartColors.orange,
-                                fontWeight: '600',
-                              }}
-                            >
-                              {isSelf ? '-' : isAllowed ? '✓' : '✗'}
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </View>
-              
-              <View style={{ flexDirection: 'row', gap: 24, flexWrap: 'wrap' }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                  <View
-                    style={{
-                      width: 20,
-                      height: 20,
-                      backgroundColor: `${colors.chartColors.green}20`,
-                      border: `2px solid ${colors.chartColors.green}`,
-                      borderRadius: 4,
-                    }}
-                  />
-                  <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small) }}>
-                    Allowed Combination
-                  </Text>
-                </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                  <View
-                    style={{
-                      width: 20,
-                      height: 20,
-                      backgroundColor: `${colors.chartColors.orange}20`,
-                      border: `2px solid ${colors.chartColors.orange}`,
-                      borderRadius: 4,
-                    }}
-                  />
-                  <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small) }}>
-                    Not Allowed
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </AnimatedCard>
         </View>
       </View>
       
