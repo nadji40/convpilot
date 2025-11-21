@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import { darkColors, lightColors, typography } from '../../theme';
 import { useTheme, useSidebar, useLanguage } from '../../contexts/AppContext';
@@ -19,7 +19,6 @@ import {
   formatLargeNumber, 
   formatPercentage,
   calculatePortfolioMetrics,
-  calculatePortfolioAttribution,
 } from '../../utils/dataUtils';
 import { getStaggerDelay } from '../../utils/animations';
 import {
@@ -43,25 +42,14 @@ export const Overview: React.FC = () => {
   const { isCollapsed } = useSidebar();
   const { t } = useLanguage();
   const colors = isDark ? darkColors : lightColors;
+  const [activePerformancePeriod, setActivePerformancePeriod] = useState<'1D' | '1M' | '3M' | 'YTD'>('1D');
 
   const marketSummary = calculateMarketSummary(mockConvertibleBonds);
   const portfolioMetrics = calculatePortfolioMetrics(mockConvertibleBonds);
-  const portfolioAttribution = calculatePortfolioAttribution(mockConvertibleBonds);
   const sectorData = aggregateBySector(mockConvertibleBonds);
   const ratingData = aggregateByRating(mockConvertibleBonds);
   const maturityData = aggregateByMaturity(mockConvertibleBonds);
   const profileData = aggregateByProfile(mockConvertibleBonds);
-
-  // Performance attribution data for waterfall chart
-  const attributionData = [
-    { name: 'Share', value: portfolioAttribution.shareContrib, fill: colors.chartColors.blue },
-    { name: 'Credit Spread', value: portfolioAttribution.creditSpreadContrib, fill: colors.chartColors.green },
-    { name: 'Carry', value: portfolioAttribution.carryContrib, fill: colors.chartColors.purple },
-    { name: 'Rate', value: portfolioAttribution.rateContrib, fill: colors.chartColors.orange },
-    { name: 'Valuation', value: portfolioAttribution.valuation, fill: colors.chartColors.pink },
-    { name: 'FX', value: portfolioAttribution.fxContrib, fill: colors.chartColors.cyan },
-    { name: 'Delta Neutral', value: portfolioAttribution.deltaNeutral, fill: colors.chartColors.yellow },
-  ];
 
   // Apply theme class to body for scrollbar styling
   useEffect(() => {
@@ -116,144 +104,115 @@ export const Overview: React.FC = () => {
               }}
             >
               <KPICard
-                title="Portfolio Value"
+                title={t('kpi.portfolio_value')}
                 value={formatLargeNumber(portfolioMetrics.totalNotional)}
-                subtitle="EUR"
+                subtitle={t('kpi.subtitle_eur')}
                 delay={getStaggerDelay(0)}
               />
               <KPICard
-                title="Daily P&L"
-                value={formatPercentage(portfolioAttribution.totalPerformance, 3)}
-                trend={portfolioAttribution.totalPerformance}
-                subtitle="vs Yesterday"
+                title={t('kpi.portfolio_delta')}
+                value={(portfolioMetrics.portfolioDelta * 100).toFixed(2) + '%'}
+                subtitle={t('kpi.subtitle_equity_exposure')}
                 delay={getStaggerDelay(1)}
               />
               <KPICard
-                title="Portfolio Delta"
-                value={(portfolioMetrics.portfolioDelta * 100).toFixed(2) + '%'}
-                subtitle="Equity Exposure"
+                title={t('kpi.avg_ytm')}
+                value={portfolioMetrics.avgYTM.toFixed(2) + '%'}
+                subtitle={t('kpi.subtitle_yield_to_maturity')}
                 delay={getStaggerDelay(2)}
               />
               <KPICard
-                title="Avg YTM"
-                value={portfolioMetrics.avgYTM.toFixed(2) + '%'}
-                subtitle="Yield to Maturity"
+                title={t('kpi.avg_implied_vol')}
+                value={portfolioMetrics.avgImpliedVol.toFixed(1) + '%'}
+                subtitle={t('kpi.subtitle_balanced_profile')}
                 delay={getStaggerDelay(3)}
               />
               <KPICard
-                title="Avg Implied Vol"
-                value={portfolioMetrics.avgImpliedVol.toFixed(1) + '%'}
-                subtitle="Balanced Profile"
+                title={t('kpi.portfolio_vega')}
+                value={portfolioMetrics.portfolioVega.toFixed(4)}
+                subtitle={t('kpi.subtitle_vol_sensitivity')}
                 delay={getStaggerDelay(4)}
               />
               <KPICard
-                title="Portfolio Vega"
-                value={portfolioMetrics.portfolioVega.toFixed(4)}
-                subtitle="Vol Sensitivity"
+                title={t('kpi.portfolio_gamma')}
+                value={portfolioMetrics.portfolioGamma.toFixed(4)}
+                subtitle={t('kpi.subtitle_convexity')}
                 delay={getStaggerDelay(5)}
               />
               <KPICard
-                title="Portfolio Gamma"
-                value={portfolioMetrics.portfolioGamma.toFixed(4)}
-                subtitle="Convexity"
+                title={t('kpi.avg_prime')}
+                value={portfolioMetrics.avgPrime.toFixed(2) + '%'}
+                subtitle={t('kpi.subtitle_conversion_premium')}
                 delay={getStaggerDelay(6)}
               />
               <KPICard
-                title="Avg Prime"
-                value={portfolioMetrics.avgPrime.toFixed(2) + '%'}
-                subtitle="Conversion Premium"
+                title={t('kpi.avg_duration')}
+                value={portfolioMetrics.avgDuration.toFixed(2)}
+                subtitle={t('kpi.subtitle_interest_rate_risk')}
                 delay={getStaggerDelay(7)}
               />
               <KPICard
-                title="Avg Duration"
-                value={portfolioMetrics.avgDuration.toFixed(2)}
-                subtitle="Interest Rate Risk"
+                title={t('kpi.avg_credit_spread')}
+                value={portfolioMetrics.avgCreditSpread.toFixed(0) + ' bps'}
+                subtitle={t('kpi.subtitle_bond_profile')}
                 delay={getStaggerDelay(8)}
               />
               <KPICard
-                title="Avg Credit Spread"
-                value={portfolioMetrics.avgCreditSpread.toFixed(0) + ' bps'}
-                subtitle="Bond Profile"
+                title="Avg Vol Spread"
+                value={portfolioMetrics.avgVolSpread !== null ? portfolioMetrics.avgVolSpread.toFixed(2) + '%' : 'N/A'}
+                subtitle={`${portfolioMetrics.countBalancedBonds} bonds (vega > 0.25)`}
                 delay={getStaggerDelay(9)}
+              />
+              <KPICard
+                title="Vol Spread Std Dev"
+                value={portfolioMetrics.stdDevVolSpread !== null ? portfolioMetrics.stdDevVolSpread.toFixed(2) + '%' : 'N/A'}
+                subtitle="Volatility spread deviation"
+                delay={getStaggerDelay(10)}
               />
             </View>
           </WidgetContainer>
 
-          {/* Performance Attribution - Waterfall Chart */}
-          <WidgetContainer id="overview-attribution" title="Daily Performance Attribution" storageKey="overviewWidgets">
-            <AnimatedCard delay={0.3} enableHover={false}>
-              <View style={{ gap: 16 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Text
-                    style={{
-                      color: colors.textSecondary,
-                      fontSize: parseInt(typography.fontSize.small),
-                      fontFamily: typography.fontFamily.body,
-                    }}
-                  >
-                    Breakdown of Daily P&L Sources
-                  </Text>
-                  <View style={{ 
-                    backgroundColor: portfolioAttribution.totalPerformance >= 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                    padding: 8,
-                    borderRadius: 6,
-                  }}>
-                    <Text style={{ 
-                      color: portfolioAttribution.totalPerformance >= 0 ? colors.success : colors.danger,
-                      fontSize: parseInt(typography.fontSize.medium),
-                      fontWeight: '700',
-                    }}>
-                      Total: {formatPercentage(portfolioAttribution.totalPerformance, 3)}
-                    </Text>
-                  </View>
+          {/* Top and Worst Performers */}
+          <WidgetContainer id="overview-performers" title={t('widget.top_worst_performers')} storageKey="overviewWidgets">
+            <AnimatedCard delay={0.4} enableHover={false}>
+              <View style={{ gap: 20 }}>
+                {/* Tabs */}
+                <View style={{ 
+                  flexDirection: 'row', 
+                  gap: 8,
+                  borderBottom: `1px solid ${colors.border}`,
+                  paddingBottom: 8,
+                }}>
+                  {(['1D', '1M', '3M', 'YTD'] as const).map((period) => (
+                    <View
+                      key={period}
+                      onClick={() => setActivePerformancePeriod(period)}
+                      style={{
+                        padding: '8px 20px',
+                        borderRadius: `${parseInt(colors.borderRadius.medium)}px ${parseInt(colors.borderRadius.medium)}px 0 0`,
+                        backgroundColor: activePerformancePeriod === period ? colors.accent + '20' : 'transparent',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        borderBottom: activePerformancePeriod === period ? `2px solid ${colors.accent}` : '2px solid transparent',
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: activePerformancePeriod === period ? colors.accent : colors.textSecondary,
+                          fontSize: parseInt(typography.fontSize.medium),
+                          fontWeight: activePerformancePeriod === period ? '700' : '500',
+                          fontFamily: typography.fontFamily.body,
+                        }}
+                      >
+                        {period}
+                      </Text>
+                    </View>
+                  ))}
                 </View>
 
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={attributionData} margin={{ left: 20, right: 20, top: 20, bottom: 40 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={colors.muted} opacity={0.3} />
-                    <XAxis 
-                      dataKey="name" 
-                      stroke={colors.muted}
-                      tick={{ fill: colors.textSecondary, fontSize: 11 }}
-                      angle={-45}
-                      textAnchor="end"
-                      height={80}
-                    />
-                    <YAxis 
-                      stroke={colors.muted} 
-                      tick={{ fill: colors.textSecondary, fontSize: 12 }}
-                      tickFormatter={(value) => `${value.toFixed(2)}%`}
-                    />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: colors.surfaceCard,
-                        border: `1px solid ${colors.border}`,
-                        borderRadius: '8px',
-                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
-                      }}
-                      labelStyle={{ color: colors.textPrimary, fontWeight: '600' }}
-                      itemStyle={{ color: colors.textSecondary }}
-                      formatter={(value: any) => [`${value.toFixed(3)}%`, 'Contribution']}
-                    />
-                    <Bar 
-                      dataKey="value" 
-                      radius={[4, 4, 0, 0]}
-                    >
-                      {attributionData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.fill} />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </View>
-            </AnimatedCard>
-          </WidgetContainer>
-
-          {/* Top and Worst Performers */}
-          <WidgetContainer id="overview-performers" title="Top & Worst Performers" storageKey="overviewWidgets">
-            <AnimatedCard delay={0.4} enableHover={false}>
-              <View style={{ gap: 24 }}>
-                {['1D', '1M', '3M', 'YTD'].map((period, periodIdx) => {
+                {/* Content for active tab */}
+                {(() => {
+                  const period = activePerformancePeriod;
                   // Get performance field based on period
                   const perfField = period === '1D' ? 'performance1D' :
                                    period === '1M' ? 'performance1M' :
@@ -268,138 +227,125 @@ export const Overview: React.FC = () => {
                   const worstBonds = validBonds.slice(-3).reverse();
                   
                   return (
-                    <View key={period} style={{ gap: 12 }}>
-                      <Text
-                        style={{
-                          color: colors.textPrimary,
-                          fontSize: parseInt(typography.fontSize.medium),
-                          fontWeight: '600',
-                          fontFamily: typography.fontFamily.heading,
-                        }}
-                      >
-                        {period} Performance
-                      </Text>
-                      
-                      <View
-                        style={{
-                          display: 'grid',
-                          gridTemplateColumns: '1fr 1fr',
-                          gap: 16,
-                        }}
-                      >
-                        {/* Top 3 */}
-                        <View style={{ gap: 8 }}>
-                          <Text
+                    <View
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: 16,
+                      }}
+                    >
+                      {/* Top 3 */}
+                      <View style={{ gap: 8 }}>
+                        <Text
+                          style={{
+                            color: colors.success,
+                            fontSize: parseInt(typography.fontSize.small),
+                            fontWeight: '600',
+                          }}
+                        >
+                          {t('widget.top_3')}
+                        </Text>
+                        {topBonds.map((bond, idx) => (
+                          <View
+                            key={bond.isin}
                             style={{
-                              color: colors.success,
-                              fontSize: parseInt(typography.fontSize.small),
-                              fontWeight: '600',
+                              backgroundColor: colors.surfaceCard,
+                              padding: 12,
+                              borderRadius: parseInt(colors.borderRadius.medium),
+                              flexDirection: 'row',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
                             }}
                           >
-                            Top 3
-                          </Text>
-                          {topBonds.map((bond, idx) => (
-                            <View
-                              key={bond.isin}
-                              style={{
-                                backgroundColor: colors.surfaceCard,
-                                padding: 12,
-                                borderRadius: parseInt(colors.borderRadius.medium),
-                                flexDirection: 'row',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                              }}
-                            >
-                              <View style={{ flex: 1 }}>
-                                <Text
-                                  style={{
-                                    color: colors.textPrimary,
-                                    fontSize: parseInt(typography.fontSize.small),
-                                    fontWeight: '600',
-                                  }}
-                                >
-                                  {bond.issuer}
-                                </Text>
-                                <Text
-                                  style={{
-                                    color: colors.textSecondary,
-                                    fontSize: parseInt(typography.fontSize.xsmall),
-                                  }}
-                                >
-                                  {bond.isin}
-                                </Text>
-                              </View>
+                            <View style={{ flex: 1 }}>
                               <Text
                                 style={{
-                                  color: colors.success,
-                                  fontSize: parseInt(typography.fontSize.medium),
-                                  fontWeight: '700',
+                                  color: colors.textPrimary,
+                                  fontSize: parseInt(typography.fontSize.small),
+                                  fontWeight: '600',
                                 }}
                               >
-                                {formatPercentage(bond[perfField] as number, 2)}
+                                {bond.issuer}
+                              </Text>
+                              <Text
+                                style={{
+                                  color: colors.textSecondary,
+                                  fontSize: parseInt(typography.fontSize.xsmall),
+                                }}
+                              >
+                                {bond.isin}
                               </Text>
                             </View>
-                          ))}
-                        </View>
+                            <Text
+                              style={{
+                                color: colors.success,
+                                fontSize: parseInt(typography.fontSize.medium),
+                                fontWeight: '700',
+                              }}
+                            >
+                              {formatPercentage(bond[perfField] as number, 2)}
+                            </Text>
+                          </View>
+                        ))}
+                      </View>
 
-                        {/* Worst 3 */}
-                        <View style={{ gap: 8 }}>
-                          <Text
+                      {/* Worst 3 */}
+                      <View style={{ gap: 8 }}>
+                        <Text
+                          style={{
+                            color: colors.danger,
+                            fontSize: parseInt(typography.fontSize.small),
+                            fontWeight: '600',
+                          }}
+                        >
+                          {t('widget.worst_3')}
+                        </Text>
+                        {worstBonds.map((bond, idx) => (
+                          <View
+                            key={bond.isin}
                             style={{
-                              color: colors.danger,
-                              fontSize: parseInt(typography.fontSize.small),
-                              fontWeight: '600',
+                              backgroundColor: colors.surfaceCard,
+                              padding: 12,
+                              borderRadius: parseInt(colors.borderRadius.medium),
+                              flexDirection: 'row',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
                             }}
                           >
-                            Worst 3
-                          </Text>
-                          {worstBonds.map((bond, idx) => (
-                            <View
-                              key={bond.isin}
-                              style={{
-                                backgroundColor: colors.surfaceCard,
-                                padding: 12,
-                                borderRadius: parseInt(colors.borderRadius.medium),
-                                flexDirection: 'row',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                              }}
-                            >
-                              <View style={{ flex: 1 }}>
-                                <Text
-                                  style={{
-                                    color: colors.textPrimary,
-                                    fontSize: parseInt(typography.fontSize.small),
-                                    fontWeight: '600',
-                                  }}
-                                >
-                                  {bond.issuer}
-                                </Text>
-                                <Text
-                                  style={{
-                                    color: colors.textSecondary,
-                                    fontSize: parseInt(typography.fontSize.xsmall),
-                                  }}
-                                >
-                                  {bond.isin}
-                                </Text>
-                              </View>
+                            <View style={{ flex: 1 }}>
                               <Text
                                 style={{
-                                  color: colors.danger,
-                                  fontSize: parseInt(typography.fontSize.medium),
-                                  fontWeight: '700',
+                                  color: colors.textPrimary,
+                                  fontSize: parseInt(typography.fontSize.small),
+                                  fontWeight: '600',
                                 }}
                               >
-                                {formatPercentage(bond[perfField] as number, 2)}
+                                {bond.issuer}
+                              </Text>
+                              <Text
+                                style={{
+                                  color: colors.textSecondary,
+                                  fontSize: parseInt(typography.fontSize.xsmall),
+                                }}
+                              >
+                                {bond.isin}
                               </Text>
                             </View>
-                          ))}
-                        </View>
+                            <Text
+                              style={{
+                                color: colors.danger,
+                                fontSize: parseInt(typography.fontSize.medium),
+                                fontWeight: '700',
+                              }}
+                            >
+                              {formatPercentage(bond[perfField] as number, 2)}
+                            </Text>
+                          </View>
+                        ))}
                       </View>
                     </View>
                   );
-                })}
+                })()}
               </View>
             </AnimatedCard>
           </WidgetContainer>

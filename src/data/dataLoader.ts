@@ -249,9 +249,10 @@ function loadHistoricalData(): Map<string, HistoricalDataPoint[]> {
 
 /**
  * Determine rating based on sector and country (simplified heuristic)
+ * Returns rating in format compatible with standardizeRating function
  */
 function determineRating(sector: string, country: string): string {
-  // Simplified rating logic
+  // Simplified rating logic - returns ratings that will be standardized
   const investmentGradeCountries = ['FRANCE', 'GERMANY', 'NETHERLANDS', 'BELGIUM', 'AUSTRIA'];
   const investmentGradeSectors = ['Utilities', 'Consumer, Non-cyclical', 'Financial'];
   
@@ -266,11 +267,24 @@ function determineRating(sector: string, country: string): string {
 }
 
 /**
- * Determine size category based on amount issued
+ * Determine size category based on market cap
+ * According to calcs.md:
+ * - Small Cap: < 2.5 billion EUR
+ * - Mid Cap: >= 2.5B and < 6.9 billion EUR
+ * - Large Cap: >= 6.9 billion EUR
+ * 
+ * For now, we approximate market cap using amount issued until we have actual equity market cap data
  */
-function determineSize(amountIssued: number): string {
-  if (amountIssued < 300000000) return 'Small Cap';
-  if (amountIssued < 700000000) return 'Mid Cap';
+function determineSize(amountIssued: number, stockPrice: number, conversionRatio: number): string {
+  // Approximate market cap: (Amount Issued / 100) * Conversion Ratio * Stock Price
+  // This is a rough estimate - ideally we'd have actual equity market cap data
+  const estimatedMarketCap = (amountIssued / 100) * conversionRatio * stockPrice;
+  
+  const SMALL_CAP_THRESHOLD = 2_500_000_000; // 2.5 billion EUR
+  const LARGE_CAP_THRESHOLD = 6_900_000_000; // 6.9 billion EUR
+  
+  if (estimatedMarketCap < SMALL_CAP_THRESHOLD) return 'Small Cap';
+  if (estimatedMarketCap < LARGE_CAP_THRESHOLD) return 'Mid Cap';
   return 'Large Cap';
 }
 
@@ -350,12 +364,12 @@ export function loadConvertibleBonds(): ConvertibleBond[] {
     const performance = calculatePerformance(history);
     
     // Determine profile based on delta and bondfloor
-    let profile = 'Mixed';
+    let profile = 'Balanced';
     const delta = latest["Delta%"];
     const bondfloorPercent = latest["Bondfloor % "];
     if (delta > 0.7) profile = 'Equity';
     else if (delta < 0.3) profile = 'Bond';
-    else if (bondfloorPercent < 70) profile = 'HY';
+    else if (bondfloorPercent < 70) profile = 'High Yield';
     
     // Extract underlying ticker from bond name (simplified)
     const underlyingTicker = staticBond.name.split(' ')[0];
@@ -378,7 +392,11 @@ export function loadConvertibleBonds(): ConvertibleBond[] {
       }),
       maturityDate: new Date(staticBond.bond_characteristics.maturity_date),
       rating: determineRating(staticBond.issuer.sector, staticBond.issuer.country),
-      size: determineSize(staticBond.bond_characteristics.amount_issued),
+      size: determineSize(
+        staticBond.bond_characteristics.amount_issued,
+        latest["Stock price"],
+        staticBond.bond_characteristics.conversion_ratio
+      ),
       profile: profile,
       conversionRatio: staticBond.bond_characteristics.conversion_ratio,
       nominal: staticBond.bond_characteristics.nominal,

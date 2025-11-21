@@ -1,5 +1,10 @@
 // Utility functions for data manipulation
 import { ConvertibleBond } from '../data/dataLoader';
+import {
+  calculateAverageVolatilitySpreads,
+  calculateEnhancedMetrics,
+  EnhancedBondMetrics,
+} from './calculations';
 
 // Calculate portfolio-level metrics
 export interface PortfolioMetrics {
@@ -17,6 +22,10 @@ export interface PortfolioMetrics {
   avgYTM: number;
   avgPrime: number;
   avgDuration: number;
+  // Enhanced volatility metrics according to calcs.md
+  avgVolSpread: number | null;
+  stdDevVolSpread: number | null;
+  countBalancedBonds: number;
 }
 
 export const calculatePortfolioMetrics = (bonds: ConvertibleBond[]): PortfolioMetrics => {
@@ -31,14 +40,17 @@ export const calculatePortfolioMetrics = (bonds: ConvertibleBond[]): PortfolioMe
   const portfolioVega = bonds.reduce((sum, bond) => 
     sum + (bond.vega * bond.outstandingAmount), 0) / totalNotional;
   
-  // Average volatility metrics - only for Balanced/Mixed profile
-  const balancedBonds = bonds.filter(bond => bond.profile === 'Mixed');
+  // Average volatility metrics - only for Balanced/Balanced profile
+  const balancedBonds = bonds.filter(bond => bond.profile === 'Balanced');
   const avgImpliedVol = balancedBonds.length > 0
     ? balancedBonds.reduce((sum, bond) => sum + bond.impliedVol, 0) / balancedBonds.length
     : 0;
   const avgHistoricalVol = balancedBonds.length > 0
     ? balancedBonds.reduce((sum, bond) => sum + bond.volatility, 0) / balancedBonds.length
     : bonds.reduce((sum, bond) => sum + bond.volatility, 0) / bonds.length;
+  
+  // Calculate average volatility spreads and standard deviation according to calcs.md
+  const volStats = calculateAverageVolatilitySpreads(bonds);
   
   // Downside protection metrics
   const avgBondfloor = bonds.reduce((sum, bond) => sum + bond.bondfloorPercent, 0) / bonds.length;
@@ -78,6 +90,9 @@ export const calculatePortfolioMetrics = (bonds: ConvertibleBond[]): PortfolioMe
     avgYTM,
     avgPrime,
     avgDuration,
+    avgVolSpread: volStats.averageVolSpread,
+    stdDevVolSpread: volStats.standardDeviation,
+    countBalancedBonds: volStats.count,
   };
 };
 
@@ -217,9 +232,9 @@ export const getUpcomingEvents = (bonds: ConvertibleBond[]): UpcomingEvent[] => 
   return events.sort((a, b) => a.daysToEvent - b.daysToEvent);
 };
 
-// Filter bonds by multiple criteria
-export const filterBonds = (
-  bonds: ConvertibleBond[],
+// Filter bonds by multiple criteria - works with enhanced bond metrics
+export const filterBonds = <T extends ConvertibleBond>(
+  bonds: T[],
   filters: {
     search?: string;
     sector?: string[];
@@ -229,7 +244,7 @@ export const filterBonds = (
     size?: string[];
     profile?: string[];
   }
-): ConvertibleBond[] => {
+): T[] => {
   return bonds.filter(bond => {
     // Search filter (ISIN, Issuer, Country)
     if (filters.search) {
@@ -276,12 +291,12 @@ export const filterBonds = (
   });
 };
 
-// Sort bonds by field
-export const sortBonds = (
-  bonds: ConvertibleBond[],
+// Sort bonds by field - works with enhanced bond metrics
+export const sortBonds = <T extends ConvertibleBond>(
+  bonds: T[],
   field: keyof ConvertibleBond,
   direction: 'asc' | 'desc'
-): ConvertibleBond[] => {
+): T[] => {
   return [...bonds].sort((a, b) => {
     const aVal = a[field];
     const bVal = b[field];
@@ -307,15 +322,20 @@ export const sortBonds = (
 };
 
 // Get rating group (IG, HY, NR)
+// Updated to use standardized ratings according to calcs.md formula
 export const getRatingGroup = (rating: string): string => {
-  if (rating === 'NR') return 'NR';
-  if (rating.startsWith('AAA') || rating.startsWith('AA') || rating.startsWith('A')) {
-    return 'IG';
+  if (rating === 'Not Rated' || rating === 'NR' || rating.startsWith('N')) {
+    return 'Not Rated';
   }
-  if (rating.startsWith('BB') || rating.startsWith('B')) {
-    return 'HY';
+  // Investment Grade: A ratings or BBB
+  if (rating.startsWith('AAA') || rating.startsWith('AA') || rating.startsWith('A') || rating === 'BBB') {
+    return 'Investment Grade';
   }
-  return 'NR';
+  // High Yield: BB, B, CCC, CC, C
+  if (rating.startsWith('BB') || rating.startsWith('B') || rating.startsWith('C')) {
+    return 'High Yield';
+  }
+  return 'Not Rated';
 };
 
 // Format currency
@@ -561,6 +581,23 @@ export const getUniqueValues = (bonds: ConvertibleBond[], field: keyof Convertib
   return Array.from(new Set(values)).sort();
 };
 
+// Get enhanced bond metrics with volatility analysis
+// Uses formulas from calcs.md
+export interface BondWithEnhancedMetrics extends ConvertibleBond {
+  enhancedMetrics: EnhancedBondMetrics;
+}
+
+export const getEnhancedBondMetrics = (bonds: ConvertibleBond[]): BondWithEnhancedMetrics[] => {
+  // First calculate market-wide statistics
+  const marketStats = calculateAverageVolatilitySpreads(bonds);
+  
+  // Then calculate enhanced metrics for each bond
+  return bonds.map(bond => ({
+    ...bond,
+    enhancedMetrics: calculateEnhancedMetrics(bond, marketStats),
+  }));
+};
+
 // Get unique sectors
 export const getUniqueSectors = (bonds: ConvertibleBond[]): string[] => {
   return getUniqueValues(bonds, 'sector');
@@ -583,12 +620,12 @@ export const getUniqueSizes = (bonds: ConvertibleBond[]): string[] => {
 
 // Get unique profiles
 export const getUniqueProfiles = (bonds: ConvertibleBond[]): string[] => {
-  return ['Bond', 'Mixed', 'Equity', 'HY', 'Distressed'];
+  return ['Bond', 'Balanced', 'Equity', 'High Yield', 'Distressed'];
 };
 
 // Get unique rating groups
 export const getUniqueRatingGroups = (): string[] => {
-  return ['IG', 'HY', 'NR'];
+  return ['Investment Grade', 'High Yield', 'Not Rated'];
 };
 
 // Paginate data
@@ -617,12 +654,13 @@ export const yearsToMaturity = (maturityDate: Date): number => {
 };
 
 // Get maturity bucket
+// Updated according to calcs.md formula: <1Y, ]1,2], ]2,5], >5Y
 export const getMaturityBucket = (maturityDate: Date): string => {
   const years = yearsToMaturity(maturityDate);
-  if (years < 1) return '< 1Y';
-  if (years < 2) return '1-2Y';
-  if (years < 5) return '2-5Y';
-  return '> 5Y';
+  if (years <= 1) return '<1Y';
+  if (years <= 2) return ']1,2]';
+  if (years <= 5) return ']2,5]';
+  return '>5Y';
 };
 
 // Cross-filter aggregations

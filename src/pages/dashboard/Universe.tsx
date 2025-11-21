@@ -20,6 +20,8 @@ import {
   getUniqueCountries,
   getUniqueCurrencies,
   getUniqueRatingGroups,
+  getEnhancedBondMetrics,
+  BondWithEnhancedMetrics,
 } from '../../utils/dataUtils';
 
 export const Universe: React.FC = () => {
@@ -57,9 +59,14 @@ export const Universe: React.FC = () => {
   const currencies = getUniqueCurrencies(mockConvertibleBonds);
   const ratingGroups = getUniqueRatingGroups();
 
+  // Get enhanced bond metrics with volatility analysis
+  const enhancedBonds = useMemo(() => {
+    return getEnhancedBondMetrics(mockConvertibleBonds);
+  }, []);
+
   // Filter and sort data
   const filteredData = useMemo(() => {
-    let result = filterBonds(mockConvertibleBonds, {
+    let result = filterBonds(enhancedBonds, {
       search: searchQuery,
       sector: selectedSectors,
       country: selectedCountries,
@@ -70,7 +77,7 @@ export const Universe: React.FC = () => {
     result = sortBonds(result, sortKey as keyof ConvertibleBond, sortDirection);
 
     return result;
-  }, [searchQuery, selectedSectors, selectedCountries, selectedRatings, selectedCurrencies, sortKey, sortDirection]);
+  }, [enhancedBonds, searchQuery, selectedSectors, selectedCountries, selectedRatings, selectedCurrencies, sortKey, sortDirection]);
 
   // Paginate data
   const paginatedData = useMemo(() => {
@@ -83,7 +90,7 @@ export const Universe: React.FC = () => {
   }, [searchQuery, selectedSectors, selectedCountries, selectedRatings, selectedCurrencies]);
 
   // Handle row click
-  const handleRowClick = (bond: ConvertibleBond) => {
+  const handleRowClick = (bond: BondWithEnhancedMetrics) => {
     navigate(`/dashboard/instrument/${bond.isin}`);
   };
 
@@ -98,12 +105,12 @@ export const Universe: React.FC = () => {
     exportToCSV(filteredData, `convertible-bonds-${new Date().toISOString().split('T')[0]}.csv`);
   };
 
-  // Table columns
-  const columns: Column<ConvertibleBond>[] = [
+  // Table columns with enhanced volatility metrics
+  const columns: Column<BondWithEnhancedMetrics>[] = [
     {
       key: 'isin',
       title: 'ISIN',
-      width: '10%',
+      width: '8%',
       render: (value) => (
         <Text style={{ color: colors.accent, fontWeight: '600', fontSize: parseInt(typography.fontSize.small) }}>
           {value}
@@ -113,7 +120,7 @@ export const Universe: React.FC = () => {
     {
       key: 'issuer',
       title: 'Issuer',
-      width: '18%',
+      width: '12%',
       render: (value) => (
         <Text style={{ color: colors.textPrimary, fontWeight: '600', fontSize: parseInt(typography.fontSize.small) }}>
           {value}
@@ -123,35 +130,15 @@ export const Universe: React.FC = () => {
     {
       key: 'sector',
       title: 'Sector',
-      width: '12%',
+      width: '10%',
       render: (value) => (
         <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small) }}>{value}</Text>
-      ),
-    },
-    {
-      key: 'currency',
-      title: 'Currency',
-      width: '8%',
-      align: 'center',
-      render: (value) => (
-        <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small) }}>{value}</Text>
-      ),
-    },
-    {
-      key: 'coupon',
-      title: 'Coupon',
-      width: '8%',
-      align: 'right',
-      render: (value) => (
-        <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.small) }}>
-          {value.toFixed(2)}%
-        </Text>
       ),
     },
     {
       key: 'price',
       title: 'Price',
-      width: '8%',
+      width: '6%',
       align: 'right',
       render: (value) => (
         <Text style={{ color: colors.textPrimary, fontWeight: '600', fontSize: parseInt(typography.fontSize.small) }}>
@@ -162,7 +149,7 @@ export const Universe: React.FC = () => {
     {
       key: 'delta',
       title: 'Delta',
-      width: '8%',
+      width: '6%',
       align: 'right',
       render: (value) => (
         <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.small) }}>
@@ -171,9 +158,107 @@ export const Universe: React.FC = () => {
       ),
     },
     {
+      key: 'vega',
+      title: 'Vega',
+      width: '6%',
+      align: 'right',
+      render: (value, row) => (
+        <Text style={{ 
+          color: value > 0.25 ? colors.textPrimary : colors.textSecondary, 
+          fontSize: parseInt(typography.fontSize.small),
+          fontWeight: value > 0.25 ? '600' : '400'
+        }}>
+          {value.toFixed(3)}
+        </Text>
+      ),
+    },
+    {
+      key: 'enhancedMetrics.volSpread' as any,
+      title: 'Vol Spread',
+      width: '7%',
+      align: 'right',
+      render: (value, row) => {
+        const volSpread = (row as BondWithEnhancedMetrics).enhancedMetrics.volSpread;
+        if (volSpread === null) return <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.xsmall) }}>N/A</Text>;
+        return (
+          <Text style={{ 
+            color: volSpread < 0 ? colors.success : volSpread >= 8 ? colors.danger : volSpread >= 4 ? colors.warn : colors.textPrimary,
+            fontWeight: '600',
+            fontSize: parseInt(typography.fontSize.small) 
+          }}>
+            {volSpread.toFixed(2)}%
+          </Text>
+        );
+      },
+    },
+    {
+      key: 'enhancedMetrics.relativeSituation' as any,
+      title: 'Situation',
+      width: '9%',
+      align: 'center',
+      render: (value, row) => {
+        const situation = (row as BondWithEnhancedMetrics).enhancedMetrics.relativeSituation;
+        if (!situation) return null;
+        const bgColor = situation === 'underpriced' ? colors.success + '20' :
+                       situation === 'expensive' ? colors.danger + '30' :
+                       situation === 'overpriced' ? colors.warn + '20' :
+                       colors.textSecondary + '20';
+        const textColor = situation === 'underpriced' ? colors.success :
+                         situation === 'expensive' ? colors.danger :
+                         situation === 'overpriced' ? colors.warn :
+                         colors.textSecondary;
+        return (
+          <View style={{ backgroundColor: bgColor, padding: '4px 8px', borderRadius: parseInt(colors.borderRadius.small) }}>
+            <Text style={{ color: textColor, fontWeight: '600', fontSize: parseInt(typography.fontSize.xsmall) }}>
+              {situation}
+            </Text>
+          </View>
+        );
+      },
+    },
+    {
+      key: 'enhancedMetrics.downsideRisk' as any,
+      title: 'Downside Risk',
+      width: '8%',
+      align: 'right',
+      render: (value, row) => {
+        const risk = (row as BondWithEnhancedMetrics).enhancedMetrics.downsideRisk;
+        if (risk === null) return <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.xsmall) }}>-</Text>;
+        return (
+          <Text style={{ 
+            color: risk > 1.5 ? colors.danger : risk > 0.5 ? colors.warn : colors.textPrimary,
+            fontWeight: '600',
+            fontSize: parseInt(typography.fontSize.small) 
+          }}>
+            {risk.toFixed(2)}%
+          </Text>
+        );
+      },
+    },
+    {
+      key: 'enhancedMetrics.zScore' as any,
+      title: 'Z-Score',
+      width: '7%',
+      align: 'right',
+      render: (value, row) => {
+        const zScore = (row as BondWithEnhancedMetrics).enhancedMetrics.zScore;
+        if (zScore === null) return <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.xsmall) }}>N/A</Text>;
+        const absZScore = Math.abs(zScore);
+        return (
+          <Text style={{ 
+            color: absZScore > 2 ? colors.danger : absZScore > 1 ? colors.warn : colors.textPrimary,
+            fontWeight: absZScore > 1 ? '600' : '400',
+            fontSize: parseInt(typography.fontSize.small) 
+          }}>
+            {zScore.toFixed(2)}
+          </Text>
+        );
+      },
+    },
+    {
       key: 'rating',
       title: 'Rating',
-      width: '8%',
+      width: '7%',
       align: 'center',
       render: (value) => (
         <View
@@ -196,17 +281,9 @@ export const Universe: React.FC = () => {
       ),
     },
     {
-      key: 'maturity',
-      title: 'Maturity',
-      width: '10%',
-      render: (value) => (
-        <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.xsmall) }}>{value}</Text>
-      ),
-    },
-    {
       key: 'performance1M',
       title: 'Perf 1M',
-      width: '10%',
+      width: '8%',
       align: 'right',
       render: (value) => (
         <Text
@@ -233,7 +310,7 @@ export const Universe: React.FC = () => {
       {/* Fixed Header */}
       <DashboardHeader 
         title={t('dashboard.universe')}
-        description={`${filteredData.length} ${t('of')} ${mockConvertibleBonds.length} ${t('dashboard.universe_desc')}`}
+        description={`${filteredData.length} ${t('of')} ${enhancedBonds.length} ${t('dashboard.universe_desc')}`}
       />
       
       <View
@@ -290,12 +367,12 @@ export const Universe: React.FC = () => {
           </View>
 
           {/* Search Bar */}
-          <SearchBar
-            placeholder={t('search.placeholder')}
-            value={searchQuery}
-            onChange={setSearchQuery}
-            suggestions={mockConvertibleBonds.map((b) => b.issuer)}
-          />
+            <SearchBar
+              placeholder={t('search.placeholder')}
+              value={searchQuery}
+              onChange={setSearchQuery}
+              suggestions={enhancedBonds.map((b) => b.issuer)}
+            />
 
           {/* Filters and Table */}
           <View style={{ flexDirection: 'row', gap: 24 }}>
@@ -306,7 +383,7 @@ export const Universe: React.FC = () => {
                 options={sectors.map((s) => ({
                   label: s,
                   value: s,
-                  count: mockConvertibleBonds.filter((b) => b.sector === s).length,
+                  count: enhancedBonds.filter((b) => b.sector === s).length,
                 }))}
                 selectedValues={selectedSectors}
                 onChange={setSelectedSectors}
@@ -318,7 +395,7 @@ export const Universe: React.FC = () => {
                 options={countries.map((c) => ({
                   label: c,
                   value: c,
-                  count: mockConvertibleBonds.filter((b) => b.country === c).length,
+                  count: enhancedBonds.filter((b) => b.country === c).length,
                 }))}
                 selectedValues={selectedCountries}
                 onChange={setSelectedCountries}
@@ -327,7 +404,7 @@ export const Universe: React.FC = () => {
               <FilterPanel
                 title="Rating"
                 options={ratingGroups.map((r) => ({
-                  label: r === 'IG' ? 'Investment Grade' : r === 'HY' ? 'High Yield' : 'Not Rated',
+                  label: r === 'Investment Grade' ? 'Investment Grade' : r === 'High Yield' ? 'High Yield' : 'Not Rated',
                   value: r,
                 }))}
                 selectedValues={selectedRatings}
@@ -339,7 +416,7 @@ export const Universe: React.FC = () => {
                 options={currencies.map((c) => ({
                   label: c,
                   value: c,
-                  count: mockConvertibleBonds.filter((b) => b.currency === c).length,
+                  count: enhancedBonds.filter((b) => b.currency === c).length,
                 }))}
                 selectedValues={selectedCurrencies}
                 onChange={setSelectedCurrencies}
