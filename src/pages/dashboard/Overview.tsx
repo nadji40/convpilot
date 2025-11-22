@@ -813,15 +813,21 @@ export const Overview: React.FC = () => {
                           </View>
                           <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.small) }}>{bond.issuer}</Text>
                           <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.xsmall) }}>{bond.isin}</Text>
-                          <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.small) }}>{bond.price.toFixed(2)}</Text>
-                          <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.small) }}>{(bond.delta * 100).toFixed(1)}%</Text>
-                          <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.small) }}>{bond.ytm.toFixed(2)}%</Text>
+                          <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.small) }}>
+                            {bond.price !== null && bond.price !== undefined ? bond.price.toFixed(2) : 'N/A'}
+                          </Text>
+                          <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.small) }}>
+                            {bond.delta !== null && bond.delta !== undefined ? (bond.delta * 100).toFixed(1) + '%' : 'N/A'}
+                          </Text>
+                          <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.small) }}>
+                            {bond.ytm !== null && bond.ytm !== undefined ? bond.ytm.toFixed(2) + '%' : 'N/A'}
+                          </Text>
                           <Text style={{ 
-                            color: bond.performance1M >= 0 ? colors.success : colors.danger, 
+                            color: bond.performance1M !== null && bond.performance1M >= 0 ? colors.success : colors.danger, 
                             fontSize: parseInt(typography.fontSize.small),
                             fontWeight: '600',
                           }}>
-                            {formatPercentage(bond.performance1M, 2)}
+                            {bond.performance1M !== null && bond.performance1M !== undefined ? formatPercentage(bond.performance1M, 2) : 'N/A'}
                           </Text>
                         </TouchableOpacity>
                       );

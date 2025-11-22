@@ -30,16 +30,42 @@ export interface PortfolioMetrics {
 }
 
 export const calculatePortfolioMetrics = (bonds: ConvertibleBond[]): PortfolioMetrics => {
+  // Handle empty portfolio
+  if (bonds.length === 0) {
+    return {
+      totalNotional: 0,
+      totalULExposure: 0,
+      portfolioDelta: 0,
+      portfolioGamma: 0,
+      portfolioVega: 0,
+      avgImpliedVol: 0,
+      avgHistoricalVol: 0,
+      avgBondfloor: 0,
+      avgDistanceToBondfloor: 0,
+      avgCreditSpread: 0,
+      totalDeltaAdjustedExposure: 0,
+      avgYTM: 0,
+      avgPrime: 0,
+      avgDuration: 0,
+      avgVolSpread: null,
+      stdDevVolSpread: null,
+      countBalancedBonds: 0,
+    };
+  }
+
   const totalNotional = bonds.reduce((sum, bond) => sum + bond.outstandingAmount, 0);
   const totalULExposure = bonds.reduce((sum, bond) => sum + bond.ulOutstanding, 0);
   
   // Portfolio Greeks (weighted by notional)
-  const portfolioDelta = bonds.reduce((sum, bond) => 
-    sum + (bond.delta * bond.outstandingAmount), 0) / totalNotional;
-  const portfolioGamma = bonds.reduce((sum, bond) => 
-    sum + (bond.gamma * bond.outstandingAmount), 0) / totalNotional;
-  const portfolioVega = bonds.reduce((sum, bond) => 
-    sum + (bond.vega * bond.outstandingAmount), 0) / totalNotional;
+  const portfolioDelta = totalNotional > 0 
+    ? bonds.reduce((sum, bond) => sum + (bond.delta * bond.outstandingAmount), 0) / totalNotional
+    : 0;
+  const portfolioGamma = totalNotional > 0
+    ? bonds.reduce((sum, bond) => sum + (bond.gamma * bond.outstandingAmount), 0) / totalNotional
+    : 0;
+  const portfolioVega = totalNotional > 0
+    ? bonds.reduce((sum, bond) => sum + (bond.vega * bond.outstandingAmount), 0) / totalNotional
+    : 0;
   
   // Average volatility metrics - only for Balanced/Balanced profile
   const balancedBonds = bonds.filter(bond => bond.profile === 'Balanced');
