@@ -295,7 +295,7 @@ export const Overview: React.FC = () => {
                   textAlign: 'center',
                 }}
               >
-                Trading Signals
+                Signals Analysis
               </Text>
             </TouchableOpacity>
           </View>
@@ -947,7 +947,7 @@ export const Overview: React.FC = () => {
           {activeTab === 'signals' && (
             <>
               {/* Trading Signals Table */}
-              <WidgetContainer id="trading-signals" title={`Trading Signals (${portfolioBonds.length} bonds)`} storageKey="overviewWidgets">
+              <WidgetContainer id="trading-signals" title={`Signals Analysis (${portfolioBonds.length} bonds)`} storageKey="overviewWidgets">
                 <AnimatedCard delay={0.2} enableHover={false}>
                   <View style={{ maxHeight: '700px', overflow: 'auto' }}>
                     <View style={{
@@ -1058,88 +1058,6 @@ export const Overview: React.FC = () => {
                         </View>
                       );
                     })}
-                  </View>
-                </AnimatedCard>
-              </WidgetContainer>
-
-              {/* Explanation Card */}
-              <WidgetContainer id="signals-explanation" title="How to Read Trading Signals" storageKey="overviewWidgets">
-                <AnimatedCard delay={0.3} enableHover={false}>
-                  <View style={{ gap: 16, padding: 16 }}>
-                    <View>
-                      <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.medium), fontWeight: '700', marginBottom: 8 }}>
-                        📊 Vol Spread
-                      </Text>
-                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), lineHeight: 1.6 }}>
-                        Difference between Implied Volatility and Historical Volatility (ImplVol - HistVol). Positive values suggest market expects higher volatility than history.
-                      </Text>
-                    </View>
-
-                    <View>
-                      <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.medium), fontWeight: '700', marginBottom: 8 }}>
-                        💰 Valuation
-                      </Text>
-                      <View style={{ gap: 4 }}>
-                        <Text style={{ color: colors.success, fontSize: parseInt(typography.fontSize.small) }}>
-                          • <Text style={{ fontWeight: '600' }}>underpriced</Text>: Vol Spread {'<'} 0 (Bond may be cheap)
-                        </Text>
-                        <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small) }}>
-                          • <Text style={{ fontWeight: '600' }}>fair value</Text>: Vol Spread 0-4% (Fairly priced)
-                        </Text>
-                        <Text style={{ color: colors.warning, fontSize: parseInt(typography.fontSize.small) }}>
-                          • <Text style={{ fontWeight: '600' }}>overpriced</Text>: Vol Spread 4-8% (Getting expensive)
-                        </Text>
-                        <Text style={{ color: colors.danger, fontSize: parseInt(typography.fontSize.small) }}>
-                          • <Text style={{ fontWeight: '600' }}>expensive</Text>: Vol Spread {'>'} 8% (Very expensive)
-                        </Text>
-                      </View>
-                    </View>
-
-                    <View>
-                      <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.medium), fontWeight: '700', marginBottom: 8 }}>
-                        ⚠️ Downside Risk
-                      </Text>
-                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), lineHeight: 1.6 }}>
-                        Potential loss if volatility corrects = Vol Spread × Vega. Only calculated when Vol Spread {'>'} 0. Higher values mean more downside if volatility normalizes.
-                      </Text>
-                    </View>
-
-                    <View>
-                      <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.medium), fontWeight: '700', marginBottom: 8 }}>
-                        📈 Z-Score
-                      </Text>
-                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), lineHeight: 1.6 }}>
-                        How many standard deviations from the average. |Z-Score| {'>'} 1 indicates statistically significant deviation. Used with other signals to identify trading opportunities.
-                      </Text>
-                    </View>
-
-                    <View>
-                      <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.medium), fontWeight: '700', marginBottom: 8 }}>
-                        🎯 Trading Signal
-                      </Text>
-                      <View style={{ gap: 4 }}>
-                        <Text style={{ color: colors.success, fontSize: parseInt(typography.fontSize.small), lineHeight: 1.6 }}>
-                          • <Text style={{ fontWeight: '700' }}>High probability of a rebound</Text>: Bond is underpriced/fair AND Spread/Avg {'<'} 0 AND |Z-Score| {'>'} 1 AND |Spread/Avg| {'>'} 2
-                        </Text>
-                        <Text style={{ color: colors.danger, fontSize: parseInt(typography.fontSize.small), lineHeight: 1.6 }}>
-                          • <Text style={{ fontWeight: '700' }}>High probability of downside</Text>: Bond is overpriced/expensive AND Spread/Avg {'>'} 0 AND |Z-Score| {'>'} 1 AND |Spread/Avg| {'>'} 2
-                        </Text>
-                      </View>
-                    </View>
-
-                    <View style={{ 
-                      padding: 12, 
-                      backgroundColor: colors.accent + '10', 
-                      borderRadius: parseInt(colors.borderRadius.medium),
-                      borderLeft: `4px solid ${colors.accent}`,
-                    }}>
-                      <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.small), fontWeight: '600', marginBottom: 4 }}>
-                        ℹ️ Note
-                      </Text>
-                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), lineHeight: 1.6 }}>
-                        All formulas are from calcs.md. Signals are calculated only for bonds with Vega {'>'} 0.25 (Balanced profile). Use these signals as inputs to your investment process, not as standalone trading decisions.
-                      </Text>
-                    </View>
                   </View>
                 </AnimatedCard>
               </WidgetContainer>
