@@ -706,7 +706,7 @@ export const Overview: React.FC = () => {
           {activeTab === 'portfolio' && (
             <>
               {/* Portfolio Performance Chart */}
-              <WidgetContainer id="portfolio-performance" title="Portfolio Performance" storageKey="overviewWidgets">
+              <WidgetContainer id="portfolio-performance" title="Portfolio Performance (Rebased to 100)" storageKey="overviewWidgets">
                 <AnimatedCard delay={0.2} enableHover={false}>
                   <ResponsiveContainer width="100%" height={300}>
                     <LineChart data={portfolioHistory}>
@@ -731,14 +731,63 @@ export const Overview: React.FC = () => {
                       <Legend />
                       <Line 
                         type="monotone" 
-                        dataKey="value" 
+                        dataKey="cb" 
                         stroke={colors.accent} 
                         strokeWidth={2}
                         dot={false}
-                        name="Portfolio (Rebased to 100)"
+                        name="CB Portfolio"
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="equity" 
+                        stroke={colors.chartColors.green} 
+                        strokeWidth={2}
+                        dot={false}
+                        name="Equity Performance"
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="deltaNeutral" 
+                        stroke={colors.chartColors.purple} 
+                        strokeWidth={2}
+                        dot={false}
+                        name="Delta Neutral"
                       />
                     </LineChart>
                   </ResponsiveContainer>
+                  
+                  {/* Performance Explanation */}
+                  <View style={{ marginTop: 16, padding: 16, backgroundColor: colors.surface, borderRadius: parseInt(colors.borderRadius.medium) }}>
+                    <View style={{ gap: 12 }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                        <View style={{ width: 20, height: 3, backgroundColor: colors.accent }} />
+                        <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.small), fontWeight: '600' }}>
+                          CB Portfolio:
+                        </Text>
+                        <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small) }}>
+                          Total convertible bond performance (weighted by notional)
+                        </Text>
+                      </View>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                        <View style={{ width: 20, height: 3, backgroundColor: colors.chartColors.green }} />
+                        <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.small), fontWeight: '600' }}>
+                          Equity Performance:
+                        </Text>
+                        <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small) }}>
+                          Underlying stock performance (weighted average of all stocks)
+                        </Text>
+                      </View>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                        <View style={{ width: 20, height: 3, backgroundColor: colors.chartColors.purple }} />
+                        <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.small), fontWeight: '600' }}>
+                          Delta Neutral:
+                        </Text>
+                        <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small) }}>
+                          CB performance minus delta-hedged equity (isolates credit + volatility)
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
                 </AnimatedCard>
               </WidgetContainer>
 

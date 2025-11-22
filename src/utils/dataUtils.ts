@@ -680,9 +680,12 @@ export const generateHistoricalData = (bond: ConvertibleBond): Array<{
 
 // Calculate portfolio historical performance from REAL cbhist.json data
 // Returns weighted portfolio performance rebased to 100 according to calcs.md
+// Now includes CB, Equity, and Delta Neutral performance
 export const calculatePortfolioHistory = (bonds: ConvertibleBond[]): Array<{
   date: string;
-  value: number;
+  cb: number;
+  equity: number;
+  deltaNeutral: number;
 }> => {
   if (bonds.length === 0) {
     return [];
@@ -713,36 +716,58 @@ export const calculatePortfolioHistory = (bonds: ConvertibleBond[]): Array<{
   // Calculate total notional for weighting
   const totalNotional = bonds.reduce((sum, bond) => sum + bond.outstandingAmount, 0);
   
-  // Calculate weighted portfolio performance for each date
-  const portfolioValues: number[] = [];
+  // Calculate weighted performance for each date
+  const cbValues: number[] = [];
+  const equityValues: number[] = [];
+  const deltaNeutralValues: number[] = [];
   const dates: string[] = [];
   
   commonDates.forEach(date => {
-    let portfolioValue = 0;
+    let cbValue = 0;
+    let equityValue = 0;
+    let deltaNeutralValue = 0;
     let totalWeight = 0;
     
     bondHistories.forEach(({ bond, history }) => {
       const dataPoint = history.find(h => h.DATE === date);
       if (dataPoint) {
         const weight = bond.outstandingAmount / totalNotional;
-        portfolioValue += dataPoint["CB Market Price %"] * weight;
+        
+        // CB Performance
+        cbValue += dataPoint["CB Market Price %"] * weight;
+        
+        // Equity Performance (underlying stock)
+        equityValue += dataPoint["Stock price"] * weight;
+        
+        // Delta Neutral Performance = CB - (Delta × Equity)
+        // This removes the equity component to isolate credit and volatility
+        const delta = dataPoint["Delta%"];
+        const deltaNeutralPerf = dataPoint["CB Market Price %"] - (delta * dataPoint["Stock price"]);
+        deltaNeutralValue += deltaNeutralPerf * weight;
+        
         totalWeight += weight;
       }
     });
     
     if (totalWeight > 0) {
-      portfolioValues.push(portfolioValue / totalWeight);
+      cbValues.push(cbValue / totalWeight);
+      equityValues.push(equityValue / totalWeight);
+      deltaNeutralValues.push(deltaNeutralValue / totalWeight);
       dates.push(date);
     }
   });
   
-  // Rebase to 100 according to calcs.md: Pt(rebased) = (Pt / P0) × 100
-  const rebasedValues = rebaseToBase100(portfolioValues, 0);
+  // Rebase all series to 100 according to calcs.md: Pt(rebased) = (Pt / P0) × 100
+  const rebasedCB = rebaseToBase100(cbValues, 0);
+  const rebasedEquity = rebaseToBase100(equityValues, 0);
+  const rebasedDeltaNeutral = rebaseToBase100(deltaNeutralValues, 0);
   
-  // Build final array
+  // Build final array with all three series
   return dates.map((date, i) => ({
     date,
-    value: Number(rebasedValues[i].toFixed(2)),
+    cb: Number(rebasedCB[i].toFixed(2)),
+    equity: Number(rebasedEquity[i].toFixed(2)),
+    deltaNeutral: Number(rebasedDeltaNeutral[i].toFixed(2)),
   }));
 };
 
