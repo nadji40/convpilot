@@ -1,6 +1,11 @@
 // Data loader for converting real JSON data to dashboard format
 import staticFieldsData from '../../static_fields.json';
 import cbHistData from '../../cbhist.json';
+import { 
+  calculateYTDPerformance, 
+  calculateMTDPerformance, 
+  calculate3MPerformance 
+} from '../utils/calculations';
 
 // Import types
 export interface StaticBondData {
@@ -293,6 +298,7 @@ function determineSize(amountIssued: number, stockPrice: number, conversionRatio
 
 /**
  * Calculate performance metrics from historical data
+ * Uses formulas from calcs.md for proper calculation
  */
 function calculatePerformance(history: HistoricalDataPoint[]): {
   performance1D: number | null;
@@ -320,15 +326,30 @@ function calculatePerformance(history: HistoricalDataPoint[]): {
   const find1MonthAgo = history.length > 20 ? history[history.length - 21] : history[0];
   const find3MonthsAgo = history.length > 60 ? history[history.length - 61] : history[0];
   
-  // Find year start
-  const currentYear = new Date(latest.DATE).getFullYear();
-  const yearStart = history.find(h => new Date(h.DATE).getFullYear() === currentYear) || history[0];
+  // Find year start and month start using proper date logic
+  const latestDate = new Date(latest.DATE);
+  const currentYear = latestDate.getFullYear();
+  const currentMonth = latestDate.getMonth();
   
-  const perf1D = latest["CB perf"] || ((latestPrice - find1DayAgo["CB Market Price %"]) / find1DayAgo["CB Market Price %"]) * 100;
-  const perf1W = ((latestPrice - find1WeekAgo["CB Market Price %"]) / find1WeekAgo["CB Market Price %"]) * 100;
-  const perf1M = ((latestPrice - find1MonthAgo["CB Market Price %"]) / find1MonthAgo["CB Market Price %"]) * 100;
-  const perf3M = ((latestPrice - find3MonthsAgo["CB Market Price %"]) / find3MonthsAgo["CB Market Price %"]) * 100;
-  const perfYTD = ((latestPrice - yearStart["CB Market Price %"]) / yearStart["CB Market Price %"]) * 100;
+  // Find start of year (January 1st)
+  const yearStart = history.find(h => {
+    const d = new Date(h.DATE);
+    return d.getFullYear() === currentYear;
+  }) || history[0];
+  
+  // Find start of month
+  const monthStart = history.find(h => {
+    const d = new Date(h.DATE);
+    return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
+  }) || history[0];
+  
+  // Calculate performance using formulas from calcs.md
+  // Performance = (P_current / P_start - 1) × 100
+  const perf1D = latest["CB perf"] || ((latestPrice / find1DayAgo["CB Market Price %"]) - 1) * 100;
+  const perf1W = ((latestPrice / find1WeekAgo["CB Market Price %"]) - 1) * 100;
+  const perf1M = calculateMTDPerformance(latestPrice, find1MonthAgo["CB Market Price %"]);
+  const perf3M = calculate3MPerformance(latestPrice, find3MonthsAgo["CB Market Price %"]);
+  const perfYTD = calculateYTDPerformance(latestPrice, yearStart["CB Market Price %"]);
   
   return {
     performance1D: perf1D,

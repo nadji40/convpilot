@@ -44,6 +44,8 @@ export const Overview: React.FC = () => {
   const colors = isDark ? darkColors : lightColors;
   const [activePerformancePeriod, setActivePerformancePeriod] = useState<'1D' | '1M' | '3M' | 'YTD'>('1D');
 
+  // Calculate metrics - performances are calculated using formulas from calcs.md
+  // Performance = (P_current / P_start - 1) × 100
   const marketSummary = calculateMarketSummary(mockConvertibleBonds);
   const portfolioMetrics = calculatePortfolioMetrics(mockConvertibleBonds);
   const sectorData = aggregateBySector(mockConvertibleBonds);

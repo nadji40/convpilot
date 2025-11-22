@@ -4,6 +4,7 @@ import {
   calculateAverageVolatilitySpreads,
   calculateEnhancedMetrics,
   EnhancedBondMetrics,
+  rebaseToBase100,
 } from './calculations';
 
 // Calculate portfolio-level metrics
@@ -531,32 +532,87 @@ export const calculateMarketSummary = (bonds: ConvertibleBond[]): MarketSummary 
   };
 };
 
-// Generate market index data (mock for now, could be calculated from historical data)
-export const generateMarketIndexData = (): Array<{ date: string; cb: number; equity: number; deltaNeutral: number }> => {
-  const data = [];
-  const today = new Date();
-  
-  for (let i = 29; i >= 0; i--) {
-    const date = new Date(today);
-    date.setDate(date.getDate() - i);
-    
-    // Mock index values (in production, calculate from actual data)
-    const cbValue = 100 + (29 - i) * 0.15 + Math.sin(i / 3) * 2;
-    const equityValue = 100 + (29 - i) * 0.25 + Math.sin(i / 2) * 3;
-    const deltaNeutralValue = 100 + (29 - i) * 0.08 + Math.sin(i / 4) * 1;
-    
-    data.push({
-      date: date.toISOString().split('T')[0],
-      cb: Number(cbValue.toFixed(2)),
-      equity: Number(equityValue.toFixed(2)),
-      deltaNeutral: Number(deltaNeutralValue.toFixed(2)),
-    });
+// Generate market index data from REAL cbhist.json aggregate data
+// Returns CB index and equity index rebased to 100 according to calcs.md
+export const generateMarketIndexData = (bonds: ConvertibleBond[]): Array<{ 
+  date: string; 
+  cb: number; 
+  equity: number; 
+  deltaNeutral: number 
+}> => {
+  if (bonds.length === 0) {
+    return [];
   }
   
-  return data;
+  // Import getBondHistory dynamically to avoid circular dependencies
+  const { getBondHistory } = require('../data/dataLoader');
+  
+  // Get historical data for all bonds
+  const bondHistories = bonds.map(bond => ({
+    bond,
+    history: getBondHistory(bond.bloombergCode),
+  })).filter(item => item.history.length > 0);
+  
+  if (bondHistories.length === 0) {
+    return [];
+  }
+  
+  // Find common dates (last 30 days)
+  const allDates = new Set<string>();
+  bondHistories.forEach(item => {
+    item.history.slice(-30).forEach(h => allDates.add(h.DATE));
+  });
+  const commonDates = Array.from(allDates).sort().slice(-30);
+  
+  // Calculate market-wide indices for each date
+  const cbIndexValues: number[] = [];
+  const equityIndexValues: number[] = [];
+  const deltaNeutralValues: number[] = [];
+  const dates: string[] = [];
+  
+  commonDates.forEach(date => {
+    let cbSum = 0;
+    let equitySum = 0;
+    let deltaNeutralSum = 0;
+    let count = 0;
+    
+    bondHistories.forEach(({ bond, history }) => {
+      const dataPoint = history.find(h => h.DATE === date);
+      if (dataPoint) {
+        cbSum += dataPoint["CB Market Price %"];
+        equitySum += dataPoint["Stock price"];
+        // Delta neutral = CB performance - (delta * equity performance)
+        const deltaNeutralPerf = dataPoint["CB Market Price %"] - 
+                                 (dataPoint["Delta%"] * dataPoint["Stock price"]);
+        deltaNeutralSum += deltaNeutralPerf;
+        count++;
+      }
+    });
+    
+    if (count > 0) {
+      cbIndexValues.push(cbSum / count);
+      equityIndexValues.push(equitySum / count);
+      deltaNeutralValues.push(deltaNeutralSum / count);
+      dates.push(date);
+    }
+  });
+  
+  // Rebase all series to 100 according to calcs.md: Pt(rebased) = (Pt / P0) × 100
+  const rebasedCB = rebaseToBase100(cbIndexValues, 0);
+  const rebasedEquity = rebaseToBase100(equityIndexValues, 0);
+  const rebasedDeltaNeutral = rebaseToBase100(deltaNeutralValues, 0);
+  
+  // Build final data array
+  return dates.map((date, i) => ({
+    date,
+    cb: Number(rebasedCB[i].toFixed(2)),
+    equity: Number(rebasedEquity[i].toFixed(2)),
+    deltaNeutral: Number(rebasedDeltaNeutral[i].toFixed(2)),
+  }));
 };
 
-// Generate historical data for a specific bond
+// Generate historical data for a specific bond using REAL cbhist.json data
+// Returns data rebased to 100 according to calcs.md
 export const generateHistoricalData = (bond: ConvertibleBond): Array<{
   date: string;
   cbPrice: number;
@@ -564,31 +620,104 @@ export const generateHistoricalData = (bond: ConvertibleBond): Array<{
   delta: number;
   volatility: number;
 }> => {
-  const data = [];
-  const today = new Date();
-  const currentPrice = bond.price;
-  const currentULPrice = bond.stockPrice;
+  // Import getBondHistory dynamically to avoid circular dependencies
+  const { getBondHistory } = require('../data/dataLoader');
   
-  for (let i = 29; i >= 0; i--) {
-    const date = new Date(today);
-    date.setDate(date.getDate() - i);
-    
-    // Calculate price based on performance
-    const daysElapsed = 29 - i;
-    const perfFactor = (bond.performance1M / 30) * daysElapsed;
-    const cbPrice = currentPrice * (1 - perfFactor / 100) * (1 + (Math.random() - 0.5) * 0.02);
-    const ulPrice = currentULPrice * (1 - perfFactor / 100) * (1 + (Math.random() - 0.5) * 0.03);
-    
-    data.push({
-      date: date.toISOString().split('T')[0],
-      cbPrice: Number(cbPrice.toFixed(2)),
-      underlyingPrice: Number(ulPrice.toFixed(2)),
-      delta: bond.delta * (1 + (Math.random() - 0.5) * 0.1),
-      volatility: bond.volatility * (1 + (Math.random() - 0.5) * 0.05),
-    });
+  // Get REAL historical data from cbhist.json
+  const history = getBondHistory(bond.bloombergCode);
+  
+  if (history.length === 0) {
+    console.warn(`No historical data for ${bond.bloombergCode}`);
+    return [];
   }
   
-  return data;
+  // Get last 30 days of data (or all available if less than 30)
+  const recentHistory = history.slice(-30);
+  
+  // Extract raw price series
+  const rawCBPrices = recentHistory.map(h => h["CB Market Price %"]);
+  const rawULPrices = recentHistory.map(h => h["Stock price"]);
+  
+  // Rebase to 100 according to calcs.md: Pt(rebased) = (Pt / P0) × 100
+  const rebasedCBPrices = rebaseToBase100(rawCBPrices, 0);
+  const rebasedULPrices = rebaseToBase100(rawULPrices, 0);
+  
+  // Build final data array with rebased values and real metrics
+  return recentHistory.map((point, i) => ({
+    date: point.DATE,
+    cbPrice: Number(rebasedCBPrices[i].toFixed(2)),
+    underlyingPrice: Number(rebasedULPrices[i].toFixed(2)),
+    delta: point["Delta%"],
+    volatility: point["His vol"],
+  }));
+};
+
+// Calculate portfolio historical performance from REAL cbhist.json data
+// Returns weighted portfolio performance rebased to 100 according to calcs.md
+export const calculatePortfolioHistory = (bonds: ConvertibleBond[]): Array<{
+  date: string;
+  value: number;
+}> => {
+  if (bonds.length === 0) {
+    return [];
+  }
+  
+  // Import getBondHistory dynamically to avoid circular dependencies
+  const { getBondHistory } = require('../data/dataLoader');
+  
+  // Get historical data for all bonds
+  const bondHistories = bonds.map(bond => ({
+    bond,
+    history: getBondHistory(bond.bloombergCode),
+  })).filter(item => item.history.length > 0);
+  
+  if (bondHistories.length === 0) {
+    return [];
+  }
+  
+  // Find common date range (dates that exist for all bonds)
+  // Get the last 30 available dates
+  const allDates = new Set<string>();
+  bondHistories.forEach(item => {
+    item.history.slice(-30).forEach(h => allDates.add(h.DATE));
+  });
+  
+  const commonDates = Array.from(allDates).sort().slice(-30);
+  
+  // Calculate total notional for weighting
+  const totalNotional = bonds.reduce((sum, bond) => sum + bond.outstandingAmount, 0);
+  
+  // Calculate weighted portfolio performance for each date
+  const portfolioValues: number[] = [];
+  const dates: string[] = [];
+  
+  commonDates.forEach(date => {
+    let portfolioValue = 0;
+    let totalWeight = 0;
+    
+    bondHistories.forEach(({ bond, history }) => {
+      const dataPoint = history.find(h => h.DATE === date);
+      if (dataPoint) {
+        const weight = bond.outstandingAmount / totalNotional;
+        portfolioValue += dataPoint["CB Market Price %"] * weight;
+        totalWeight += weight;
+      }
+    });
+    
+    if (totalWeight > 0) {
+      portfolioValues.push(portfolioValue / totalWeight);
+      dates.push(date);
+    }
+  });
+  
+  // Rebase to 100 according to calcs.md: Pt(rebased) = (Pt / P0) × 100
+  const rebasedValues = rebaseToBase100(portfolioValues, 0);
+  
+  // Build final array
+  return dates.map((date, i) => ({
+    date,
+    value: Number(rebasedValues[i].toFixed(2)),
+  }));
 };
 
 // Get unique values for filters

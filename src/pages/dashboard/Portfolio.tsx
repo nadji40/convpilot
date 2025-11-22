@@ -8,7 +8,8 @@ import { KPICard } from '../../components/KPICard';
 import { AIAgentBubble } from '../../components/AIAgentBubble';
 import { mockConvertibleBonds } from '../../data/mockData';
 import { ConvertibleBond } from '../../data/dataLoader';
-import { formatLargeNumber, formatPercentage } from '../../utils/dataUtils';
+import { formatLargeNumber, formatPercentage, calculatePortfolioHistory } from '../../utils/dataUtils';
+import { rebaseToBase100 } from '../../utils/calculations';
 import { getStaggerDelay } from '../../utils/animations';
 import {
   ResponsiveContainer,
@@ -154,26 +155,11 @@ export const Portfolio: React.FC = () => {
     }));
   }, [portfolioBonds, portfolioMetrics.totalMarketCap]);
 
-  // Generate historical portfolio performance (mock)
+  // Calculate historical portfolio performance from REAL cbhist.json data
+  // Rebased to 100 according to calcs.md: Pt(rebased) = (Pt / P0) × 100
   const portfolioHistory = useMemo(() => {
-    const history = [];
-    const today = new Date();
-    
-    for (let i = 29; i >= 0; i--) {
-      const date = new Date(today);
-      date.setDate(date.getDate() - i);
-      
-      const avgPerf = portfolioMetrics.totalPerf1M / 30;
-      const value = 100 + (29 - i) * avgPerf * 0.15 + (Math.random() - 0.5) * 1;
-      
-      history.push({
-        date: date.toISOString().split('T')[0],
-        value: Number(value.toFixed(2)),
-      });
-    }
-    
-    return history;
-  }, [portfolioMetrics.totalPerf1M]);
+    return calculatePortfolioHistory(portfolioBonds);
+  }, [portfolioBonds]);
 
   const CHART_COLORS = [
     colors.chartColors.blue,
