@@ -101,7 +101,8 @@ export interface ConvertibleBond {
   isin: string;
   issuer: string;
   bloombergCode: string;
-  sector: string;
+  sector: string; // Primary sector for display (first sector if multiple)
+  sectors: string[]; // All sectors (split from comma-separated values)
   country: string;
   currency: string;
   
@@ -376,12 +377,17 @@ export function loadConvertibleBonds(): ConvertibleBond[] {
     // Extract underlying ticker from bond name (simplified)
     const underlyingTicker = staticBond.name.split(' ')[0];
     
+    // Split comma-separated sectors into array and trim whitespace
+    const sectorsArray = staticBond.issuer.sector.split(',').map(s => s.trim());
+    const primarySector = sectorsArray[0]; // Use first sector as primary
+    
     const bond: ConvertibleBond = {
       // Core identifiers
       isin: bloombergCode,
       issuer: staticBond.name,
       bloombergCode: bloombergCode,
-      sector: staticBond.issuer.sector,
+      sector: primarySector,
+      sectors: sectorsArray,
       country: staticBond.issuer.country,
       currency: staticBond.bond_characteristics.currency,
       

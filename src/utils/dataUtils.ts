@@ -460,8 +460,11 @@ export const aggregateBySector = (bonds: ConvertibleBond[]): Array<{ name: strin
   const sectorMap = new Map<string, number>();
   
   bonds.forEach(bond => {
-    const sector = bond.sector; // Keep sector as-is (do not split on comma)
-    sectorMap.set(sector, (sectorMap.get(sector) || 0) + bond.outstandingAmount);
+    // Handle multiple sectors - each sector gets the full bond value
+    const sectors = bond.sectors || [bond.sector];
+    sectors.forEach(sector => {
+      sectorMap.set(sector, (sectorMap.get(sector) || 0) + bond.outstandingAmount);
+    });
   });
   
   return Array.from(sectorMap.entries()).map(([name, value]) => ({ name, value }));
@@ -693,62 +696,65 @@ export const getCrossFilterData = (
   const results: { [key: string]: CrossFilterData } = {};
   
   bonds.forEach(bond => {
-    let primaryValue = '';
-    let secondaryValue = '';
+    // Get primary dimension values (can be multiple for sectors)
+    const getPrimaryValues = (): string[] => {
+      switch (primaryDimension) {
+        case 'sector':
+          return bond.sectors || [bond.sector];
+        case 'rating':
+          return [getRatingGroup(bond.rating)];
+        case 'size':
+          return [bond.size];
+        case 'profile':
+          return [bond.profile];
+        case 'maturity':
+          return [getMaturityBucket(bond.maturityDate)];
+        default:
+          return ['Unknown'];
+      }
+    };
     
-    // Get primary dimension value
-    switch (primaryDimension) {
-      case 'sector':
-        primaryValue = bond.sector;
-        break;
-      case 'rating':
-        primaryValue = getRatingGroup(bond.rating);
-        break;
-      case 'size':
-        primaryValue = bond.size;
-        break;
-      case 'profile':
-        primaryValue = bond.profile;
-        break;
-      case 'maturity':
-        primaryValue = getMaturityBucket(bond.maturityDate);
-        break;
-    }
+    // Get secondary dimension values (can be multiple for sectors)
+    const getSecondaryValues = (): string[] => {
+      switch (secondaryDimension) {
+        case 'sector':
+          return bond.sectors || [bond.sector];
+        case 'rating':
+          return [getRatingGroup(bond.rating)];
+        case 'size':
+          return [bond.size];
+        case 'profile':
+          return [bond.profile];
+        case 'maturity':
+          return [getMaturityBucket(bond.maturityDate)];
+        default:
+          return ['Unknown'];
+      }
+    };
     
-    // Get secondary dimension value
-    switch (secondaryDimension) {
-      case 'sector':
-        secondaryValue = bond.sector;
-        break;
-      case 'rating':
-        secondaryValue = getRatingGroup(bond.rating);
-        break;
-      case 'size':
-        secondaryValue = bond.size;
-        break;
-      case 'profile':
-        secondaryValue = bond.profile;
-        break;
-      case 'maturity':
-        secondaryValue = getMaturityBucket(bond.maturityDate);
-        break;
-    }
+    const primaryValues = getPrimaryValues();
+    const secondaryValues = getSecondaryValues();
     
-    const key = `${primaryValue}|${secondaryValue}`;
-    
-    if (!results[key]) {
-      results[key] = {
-        primary: primaryValue,
-        secondary: secondaryValue,
-        value: 0,
-        marketCap: 0,
-        avgMetric: 0,
-      };
-    }
-    
-    results[key].value++;
-    results[key].marketCap! += bond.outstandingAmount;
-    results[key].avgMetric! += bond.delta;
+    // Create entries for all combinations
+    primaryValues.forEach(primaryValue => {
+      secondaryValues.forEach(secondaryValue => {
+        const key = `${primaryValue}|${secondaryValue}`;
+        
+        if (!results[key]) {
+          results[key] = {
+            primary: primaryValue,
+            secondary: secondaryValue,
+            value: 0,
+            marketCap: 0,
+            avgMetric: 0,
+          };
+        }
+        
+        results[key].value++;
+        results[key].marketCap! += bond.outstandingAmount;
+        results[key].avgMetric! += bond.delta;
+      });
+    });
   });
   
   // Calculate averages

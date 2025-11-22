@@ -7,7 +7,7 @@ import { AnimatedCard } from '../../components/AnimatedCard';
 import { CrossFilterChart } from '../../components/CrossFilterChart';
 import { AIAgentBubble } from '../../components/AIAgentBubble';
 import { mockConvertibleBonds } from '../../data/mockData';
-import { getCrossFilterData, formatLargeNumber, formatCurrency, formatPercentage } from '../../utils/dataUtils';
+import { getCrossFilterData, formatLargeNumber, formatCurrency, formatPercentage, yearsToMaturity } from '../../utils/dataUtils';
 import { ConvertibleBond } from '../../data/dataLoader';
 import {
   ResponsiveContainer,
@@ -69,18 +69,19 @@ export const Aggregations: React.FC = () => {
   }, [primaryDimension]);
 
   // Helper to get dimension value from bond
-  const getDimensionValue = (bond: ConvertibleBond, dimension: Dimension): string => {
+  const getDimensionValue = (bond: ConvertibleBond, dimension: Dimension): string | string[] => {
     switch (dimension) {
       case 'sector':
-        return bond.sector || 'Unknown';
+        // Return all sectors for proper counting in aggregations
+        return bond.sectors || [bond.sector || 'Unknown'];
       case 'rating':
-        return bond.creditRating || 'NR';
+        return bond.rating || 'NR';
       case 'size':
-        return bond.marketCapCategory || 'Unknown';
+        return bond.size || 'Unknown';
       case 'profile':
         return bond.profile || 'Unknown';
       case 'maturity':
-        const years = bond.yearsToMaturity || 0;
+        const years = yearsToMaturity(bond.maturityDate);
         if (years < 1) return '<1 year';
         if (years < 2) return '1-2 years';
         if (years < 5) return '2-5 years';
@@ -106,14 +107,22 @@ export const Aggregations: React.FC = () => {
     } } = {};
     
     mockConvertibleBonds.forEach((bond) => {
-      const key = getDimensionValue(bond, primaryDimension);
-      if (!aggregated[key]) {
-        aggregated[key] = { count: 0, cbMarketCap: 0, equityMarketCap: 0, bonds: [] };
-      }
-      aggregated[key].count += 1;
-      aggregated[key].cbMarketCap += bond.outstandingAmount || 0;
-      aggregated[key].equityMarketCap += bond.marketCap || 0;
-      aggregated[key].bonds.push(bond);
+      const dimensionValues = getDimensionValue(bond, primaryDimension);
+      const values = Array.isArray(dimensionValues) ? dimensionValues : [dimensionValues];
+      
+      // Calculate equity market cap from available data
+      const equityMarketCap = bond.ulOutstanding * bond.stockPrice;
+      
+      // For each dimension value (important for sectors with multiple values)
+      values.forEach((key) => {
+        if (!aggregated[key]) {
+          aggregated[key] = { count: 0, cbMarketCap: 0, equityMarketCap: 0, bonds: [] };
+        }
+        aggregated[key].count += 1;
+        aggregated[key].cbMarketCap += bond.outstandingAmount || 0;
+        aggregated[key].equityMarketCap += equityMarketCap || 0;
+        aggregated[key].bonds.push(bond);
+      });
     });
 
     return Object.entries(aggregated).map(([name, data]) => {
@@ -155,16 +164,25 @@ export const Aggregations: React.FC = () => {
     } } = {};
     
     mockConvertibleBonds.forEach((bond) => {
-      const primaryKey = getDimensionValue(bond, primaryDimension);
-      const secondaryKey = getDimensionValue(bond, secondaryDimension);
-      const key = `${primaryKey}|${secondaryKey}`;
+      const primaryValues = getDimensionValue(bond, primaryDimension);
+      const secondaryValues = getDimensionValue(bond, secondaryDimension);
       
-      if (!aggregated[key]) {
-        aggregated[key] = { count: 0, cbMarketCap: 0, bonds: [] };
-      }
-      aggregated[key].count += 1;
-      aggregated[key].cbMarketCap += bond.outstandingAmount || 0;
-      aggregated[key].bonds.push(bond);
+      const primaryArray = Array.isArray(primaryValues) ? primaryValues : [primaryValues];
+      const secondaryArray = Array.isArray(secondaryValues) ? secondaryValues : [secondaryValues];
+      
+      // Create entries for all combinations of primary and secondary values
+      primaryArray.forEach((primaryKey) => {
+        secondaryArray.forEach((secondaryKey) => {
+          const key = `${primaryKey}|${secondaryKey}`;
+          
+          if (!aggregated[key]) {
+            aggregated[key] = { count: 0, cbMarketCap: 0, bonds: [] };
+          }
+          aggregated[key].count += 1;
+          aggregated[key].cbMarketCap += bond.outstandingAmount || 0;
+          aggregated[key].bonds.push(bond);
+        });
+      });
     });
 
     return Object.entries(aggregated).map(([key, data]) => {
@@ -358,13 +376,13 @@ export const Aggregations: React.FC = () => {
                 <BarChart data={primaryData} margin={{ top: 20, right: 20, left: 20, bottom: 20 }}>
                   <XAxis
                     dataKey="name"
-                    stroke={colors.muted}
+                    stroke={colors.border}
                     tick={{ fill: colors.textSecondary, fontSize: 12 }}
                     angle={-45}
                     textAnchor="end"
                     height={100}
                   />
-                  <YAxis stroke={colors.muted} tick={{ fill: colors.textSecondary, fontSize: 12 }} />
+                  <YAxis stroke={colors.border} tick={{ fill: colors.textSecondary, fontSize: 12 }} />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: colors.surfaceCard,

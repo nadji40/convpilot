@@ -118,11 +118,15 @@ export const Portfolio: React.FC = () => {
     const attribution: { [key: string]: { marketCap: number; perf: number; contribution: number } } = {};
     
     portfolioBonds.forEach((bond) => {
-      if (!attribution[bond.sector]) {
-        attribution[bond.sector] = { marketCap: 0, perf: 0, contribution: 0 };
-      }
-      attribution[bond.sector].marketCap += bond.outstandingAmount;
-      attribution[bond.sector].perf += bond.performance1M * bond.outstandingAmount;
+      // Handle multiple sectors - each sector gets the full bond attribution
+      const sectors = bond.sectors || [bond.sector];
+      sectors.forEach((sector) => {
+        if (!attribution[sector]) {
+          attribution[sector] = { marketCap: 0, perf: 0, contribution: 0 };
+        }
+        attribution[sector].marketCap += bond.outstandingAmount;
+        attribution[sector].perf += bond.performance1M * bond.outstandingAmount;
+      });
     });
 
     return Object.entries(attribution).map(([name, data]) => ({
