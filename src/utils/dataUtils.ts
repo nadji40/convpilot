@@ -769,6 +769,45 @@ export const getEnhancedBondMetrics = (bonds: ConvertibleBond[]): BondWithEnhanc
   }));
 };
 
+// Get trading signals for portfolio bonds according to calcs.md
+export interface TradingSignal {
+  isin: string;
+  issuer: string;
+  volSpread: number | null;
+  relativeSituation: string;
+  downsideRisk: number | null;
+  spreadToAverage: number | null;
+  zScore: number | null;
+  observation: string;
+  vega: number;
+  impliedVol: number;
+  historicalVol: number;
+}
+
+export const getTradingSignals = (bonds: ConvertibleBond[]): TradingSignal[] => {
+  // Calculate market-wide statistics
+  const marketStats = calculateAverageVolatilitySpreads(bonds);
+  
+  // Calculate enhanced metrics for each bond
+  return bonds.map(bond => {
+    const metrics = calculateEnhancedMetrics(bond, marketStats);
+    
+    return {
+      isin: bond.isin,
+      issuer: bond.issuer,
+      volSpread: metrics.volSpread,
+      relativeSituation: metrics.relativeSituation,
+      downsideRisk: metrics.downsideRisk,
+      spreadToAverage: metrics.spreadToAverage,
+      zScore: metrics.zScore,
+      observation: metrics.observation,
+      vega: bond.vega,
+      impliedVol: bond.impliedVol,
+      historicalVol: bond.volatility,
+    };
+  });
+};
+
 // Get unique sectors
 export const getUniqueSectors = (bonds: ConvertibleBond[]): string[] => {
   return getUniqueValues(bonds, 'sector');

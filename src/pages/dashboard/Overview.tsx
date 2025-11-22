@@ -38,6 +38,7 @@ import {
   Bar,
   CartesianGrid,
 } from 'recharts';
+import { getTradingSignals } from '../../utils/dataUtils';
 
 export const Overview: React.FC = () => {
   const { isDark } = useTheme();
@@ -45,7 +46,7 @@ export const Overview: React.FC = () => {
   const { t } = useLanguage();
   const colors = isDark ? darkColors : lightColors;
   const [activePerformancePeriod, setActivePerformancePeriod] = useState<'1D' | '1M' | '3M' | 'YTD'>('1D');
-  const [activeTab, setActiveTab] = useState<'overview' | 'portfolio'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'portfolio' | 'signals'>('overview');
   
   // Portfolio selection state (persisted to localStorage)
   const [selectedISINs, setSelectedISINs] = useState<string[]>([]);
@@ -166,6 +167,11 @@ export const Overview: React.FC = () => {
     }));
   }, [portfolioBonds]);
 
+  // Trading signals for portfolio bonds (from calcs.md)
+  const tradingSignals = useMemo(() => {
+    return getTradingSignals(portfolioBonds);
+  }, [portfolioBonds]);
+
   return (
     <View style={{
       backgroundColor: colors.background,
@@ -261,6 +267,35 @@ export const Overview: React.FC = () => {
                 }}
               >
                 Portfolio Selection
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setActiveTab('signals')}
+              style={{
+                paddingVertical: 12,
+                paddingHorizontal: 32,
+                borderRadius: parseInt(colors.borderRadius.medium),
+                backgroundColor: activeTab === 'signals' ? colors.accent : 'transparent',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                minWidth: 160,
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: activeTab === 'signals' ? `0 4px 12px ${colors.accent}40` : 'none',
+                transform: activeTab === 'signals' ? 'translateY(-2px)' : 'translateY(0)',
+              }}
+            >
+              <Text
+                style={{
+                  color: activeTab === 'signals' ? '#FFFFFF' : colors.textSecondary,
+                  fontSize: parseInt(typography.fontSize.medium),
+                  fontWeight: '700',
+                  fontFamily: typography.fontFamily.body,
+                  textAlign: 'center',
+                }}
+              >
+                Trading Signals
               </Text>
             </TouchableOpacity>
           </View>
@@ -853,6 +888,209 @@ export const Overview: React.FC = () => {
                         </TouchableOpacity>
                       );
                     })}
+                  </View>
+                </AnimatedCard>
+              </WidgetContainer>
+            </>
+          )}
+
+          {/* Trading Signals Tab */}
+          {activeTab === 'signals' && (
+            <>
+              {/* Trading Signals Table */}
+              <WidgetContainer id="trading-signals" title={`Trading Signals (${portfolioBonds.length} bonds)`} storageKey="overviewWidgets">
+                <AnimatedCard delay={0.2} enableHover={false}>
+                  <View style={{ maxHeight: '700px', overflow: 'auto' }}>
+                    <View style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1.5fr 1fr 120px 100px 100px 100px 100px 1.5fr',
+                      gap: 12,
+                      padding: '12px 16px',
+                      backgroundColor: colors.surface,
+                      borderRadius: parseInt(colors.borderRadius.medium),
+                      marginBottom: 8,
+                      position: 'sticky',
+                      top: 0,
+                      zIndex: 1,
+                    }}>
+                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), fontWeight: '600' }}>Issuer</Text>
+                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), fontWeight: '600' }}>ISIN</Text>
+                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), fontWeight: '600' }}>Vol Spread</Text>
+                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), fontWeight: '600' }}>Valuation</Text>
+                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), fontWeight: '600' }}>Downside</Text>
+                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), fontWeight: '600' }}>Spread/Avg</Text>
+                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), fontWeight: '600' }}>Z-Score</Text>
+                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), fontWeight: '600' }}>Signal</Text>
+                    </View>
+                    
+                    {tradingSignals.map((signal) => {
+                      // Color coding for valuation
+                      let valuationColor = colors.textSecondary;
+                      if (signal.relativeSituation === 'underpriced') valuationColor = colors.success;
+                      else if (signal.relativeSituation === 'overpriced') valuationColor = colors.warning;
+                      else if (signal.relativeSituation === 'expensive') valuationColor = colors.danger;
+                      
+                      // Color for signal
+                      let signalColor = colors.textSecondary;
+                      let signalBg = 'transparent';
+                      if (signal.observation.includes('rebound')) {
+                        signalColor = colors.success;
+                        signalBg = colors.success + '15';
+                      } else if (signal.observation.includes('downside')) {
+                        signalColor = colors.danger;
+                        signalBg = colors.danger + '15';
+                      }
+                      
+                      return (
+                        <View
+                          key={signal.isin}
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: '1.5fr 1fr 120px 100px 100px 100px 100px 1.5fr',
+                            gap: 12,
+                            padding: '12px 16px',
+                            backgroundColor: colors.surfaceCard,
+                            borderRadius: parseInt(colors.borderRadius.medium),
+                            marginBottom: 4,
+                            alignItems: 'center',
+                          }}
+                        >
+                          <View>
+                            <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.small), fontWeight: '600' }}>
+                              {signal.issuer}
+                            </Text>
+                          </View>
+                          <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.xsmall) }}>
+                            {signal.isin}
+                          </Text>
+                          <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.small) }}>
+                            {signal.volSpread !== null ? signal.volSpread.toFixed(2) + '%' : 'N/A'}
+                          </Text>
+                          <View style={{
+                            padding: '4px 8px',
+                            borderRadius: parseInt(colors.borderRadius.small),
+                            backgroundColor: valuationColor + '20',
+                          }}>
+                            <Text style={{ 
+                              color: valuationColor, 
+                              fontSize: parseInt(typography.fontSize.xsmall),
+                              fontWeight: '600',
+                              textAlign: 'center',
+                            }}>
+                              {signal.relativeSituation || 'N/A'}
+                            </Text>
+                          </View>
+                          <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.small) }}>
+                            {signal.downsideRisk !== null ? signal.downsideRisk.toFixed(4) : 'N/A'}
+                          </Text>
+                          <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.small) }}>
+                            {signal.spreadToAverage !== null ? signal.spreadToAverage.toFixed(2) : 'N/A'}
+                          </Text>
+                          <Text style={{ 
+                            color: signal.zScore !== null && Math.abs(signal.zScore) > 1 ? colors.accent : colors.textPrimary, 
+                            fontSize: parseInt(typography.fontSize.small),
+                            fontWeight: signal.zScore !== null && Math.abs(signal.zScore) > 1 ? '700' : '400',
+                          }}>
+                            {signal.zScore !== null ? signal.zScore.toFixed(2) : 'N/A'}
+                          </Text>
+                          <View style={{
+                            padding: '4px 8px',
+                            borderRadius: parseInt(colors.borderRadius.small),
+                            backgroundColor: signalBg,
+                          }}>
+                            <Text style={{ 
+                              color: signalColor, 
+                              fontSize: parseInt(typography.fontSize.xsmall),
+                              fontWeight: signal.observation ? '700' : '400',
+                            }}>
+                              {signal.observation || '-'}
+                            </Text>
+                          </View>
+                        </View>
+                      );
+                    })}
+                  </View>
+                </AnimatedCard>
+              </WidgetContainer>
+
+              {/* Explanation Card */}
+              <WidgetContainer id="signals-explanation" title="How to Read Trading Signals" storageKey="overviewWidgets">
+                <AnimatedCard delay={0.3} enableHover={false}>
+                  <View style={{ gap: 16, padding: 16 }}>
+                    <View>
+                      <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.medium), fontWeight: '700', marginBottom: 8 }}>
+                        📊 Vol Spread
+                      </Text>
+                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), lineHeight: 1.6 }}>
+                        Difference between Implied Volatility and Historical Volatility (ImplVol - HistVol). Positive values suggest market expects higher volatility than history.
+                      </Text>
+                    </View>
+
+                    <View>
+                      <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.medium), fontWeight: '700', marginBottom: 8 }}>
+                        💰 Valuation
+                      </Text>
+                      <View style={{ gap: 4 }}>
+                        <Text style={{ color: colors.success, fontSize: parseInt(typography.fontSize.small) }}>
+                          • <Text style={{ fontWeight: '600' }}>underpriced</Text>: Vol Spread {'<'} 0 (Bond may be cheap)
+                        </Text>
+                        <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small) }}>
+                          • <Text style={{ fontWeight: '600' }}>fair value</Text>: Vol Spread 0-4% (Fairly priced)
+                        </Text>
+                        <Text style={{ color: colors.warning, fontSize: parseInt(typography.fontSize.small) }}>
+                          • <Text style={{ fontWeight: '600' }}>overpriced</Text>: Vol Spread 4-8% (Getting expensive)
+                        </Text>
+                        <Text style={{ color: colors.danger, fontSize: parseInt(typography.fontSize.small) }}>
+                          • <Text style={{ fontWeight: '600' }}>expensive</Text>: Vol Spread {'>'} 8% (Very expensive)
+                        </Text>
+                      </View>
+                    </View>
+
+                    <View>
+                      <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.medium), fontWeight: '700', marginBottom: 8 }}>
+                        ⚠️ Downside Risk
+                      </Text>
+                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), lineHeight: 1.6 }}>
+                        Potential loss if volatility corrects = Vol Spread × Vega. Only calculated when Vol Spread {'>'} 0. Higher values mean more downside if volatility normalizes.
+                      </Text>
+                    </View>
+
+                    <View>
+                      <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.medium), fontWeight: '700', marginBottom: 8 }}>
+                        📈 Z-Score
+                      </Text>
+                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), lineHeight: 1.6 }}>
+                        How many standard deviations from the average. |Z-Score| {'>'} 1 indicates statistically significant deviation. Used with other signals to identify trading opportunities.
+                      </Text>
+                    </View>
+
+                    <View>
+                      <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.medium), fontWeight: '700', marginBottom: 8 }}>
+                        🎯 Trading Signal
+                      </Text>
+                      <View style={{ gap: 4 }}>
+                        <Text style={{ color: colors.success, fontSize: parseInt(typography.fontSize.small), lineHeight: 1.6 }}>
+                          • <Text style={{ fontWeight: '700' }}>High probability of a rebound</Text>: Bond is underpriced/fair AND Spread/Avg {'<'} 0 AND |Z-Score| {'>'} 1 AND |Spread/Avg| {'>'} 2
+                        </Text>
+                        <Text style={{ color: colors.danger, fontSize: parseInt(typography.fontSize.small), lineHeight: 1.6 }}>
+                          • <Text style={{ fontWeight: '700' }}>High probability of downside</Text>: Bond is overpriced/expensive AND Spread/Avg {'>'} 0 AND |Z-Score| {'>'} 1 AND |Spread/Avg| {'>'} 2
+                        </Text>
+                      </View>
+                    </View>
+
+                    <View style={{ 
+                      padding: 12, 
+                      backgroundColor: colors.accent + '10', 
+                      borderRadius: parseInt(colors.borderRadius.medium),
+                      borderLeft: `4px solid ${colors.accent}`,
+                    }}>
+                      <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.small), fontWeight: '600', marginBottom: 4 }}>
+                        ℹ️ Note
+                      </Text>
+                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), lineHeight: 1.6 }}>
+                        All formulas are from calcs.md. Signals are calculated only for bonds with Vega {'>'} 0.25 (Balanced profile). Use these signals as inputs to your investment process, not as standalone trading decisions.
+                      </Text>
+                    </View>
                   </View>
                 </AnimatedCard>
               </WidgetContainer>
