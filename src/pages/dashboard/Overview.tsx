@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import React, { useEffect, useState, useMemo } from 'react';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { darkColors, lightColors, typography } from '../../theme';
 import { useTheme, useSidebar, useLanguage } from '../../contexts/AppContext';
 import { KPICard } from '../../components/KPICard';
@@ -10,6 +10,7 @@ import { AIAgentBubble } from '../../components/AIAgentBubble';
 import { 
   mockConvertibleBonds
 } from '../../data/mockData';
+import { ConvertibleBond } from '../../data/dataLoader';
 import { 
   calculateMarketSummary,
   aggregateBySector,
@@ -19,6 +20,7 @@ import {
   formatLargeNumber, 
   formatPercentage,
   calculatePortfolioMetrics,
+  calculatePortfolioHistory,
 } from '../../utils/dataUtils';
 import { getStaggerDelay } from '../../utils/animations';
 import {
@@ -43,15 +45,10 @@ export const Overview: React.FC = () => {
   const { t } = useLanguage();
   const colors = isDark ? darkColors : lightColors;
   const [activePerformancePeriod, setActivePerformancePeriod] = useState<'1D' | '1M' | '3M' | 'YTD'>('1D');
-
-  // Calculate metrics - performances are calculated using formulas from calcs.md
-  // Performance = (P_current / P_start - 1) × 100
-  const marketSummary = calculateMarketSummary(mockConvertibleBonds);
-  const portfolioMetrics = calculatePortfolioMetrics(mockConvertibleBonds);
-  const sectorData = aggregateBySector(mockConvertibleBonds);
-  const ratingData = aggregateByRating(mockConvertibleBonds);
-  const maturityData = aggregateByMaturity(mockConvertibleBonds);
-  const profileData = aggregateByProfile(mockConvertibleBonds);
+  const [activeTab, setActiveTab] = useState<'overview' | 'portfolio'>('overview');
+  
+  // Portfolio selection state (persisted to localStorage)
+  const [selectedISINs, setSelectedISINs] = useState<string[]>([]);
 
   // Apply theme class to body for scrollbar styling
   useEffect(() => {
@@ -59,6 +56,62 @@ export const Overview: React.FC = () => {
       document.body.className = isDark ? '' : 'light-theme';
     }
   }, [isDark]);
+
+  // Load portfolio from localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('portfolio-selection');
+      if (stored) {
+        try {
+          setSelectedISINs(JSON.parse(stored));
+        } catch (e) {
+          console.error('Error loading portfolio:', e);
+        }
+      } else {
+        // Default portfolio (first 5 bonds)
+        const defaultSelection = mockConvertibleBonds.slice(0, 5).map((b) => b.isin);
+        setSelectedISINs(defaultSelection);
+        localStorage.setItem('portfolio-selection', JSON.stringify(defaultSelection));
+      }
+    }
+  }, []);
+
+  // Save portfolio to localStorage
+  const updatePortfolio = (isins: string[]) => {
+    setSelectedISINs(isins);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('portfolio-selection', JSON.stringify(isins));
+    }
+  };
+
+  // Toggle bond selection
+  const toggleBond = (isin: string) => {
+    if (selectedISINs.includes(isin)) {
+      updatePortfolio(selectedISINs.filter((i) => i !== isin));
+    } else {
+      updatePortfolio([...selectedISINs, isin]);
+    }
+  };
+
+  // Get portfolio bonds
+  const portfolioBonds = useMemo(() => {
+    return mockConvertibleBonds.filter((b) => selectedISINs.includes(b.isin));
+  }, [selectedISINs]);
+
+  // Calculate metrics - performances are calculated using formulas from calcs.md
+  // Performance = (P_current / P_start - 1) × 100
+  // All calculations now based on selected portfolio bonds
+  const marketSummary = calculateMarketSummary(portfolioBonds);
+  const portfolioMetrics = calculatePortfolioMetrics(portfolioBonds);
+  const sectorData = aggregateBySector(portfolioBonds);
+  const ratingData = aggregateByRating(portfolioBonds);
+  const maturityData = aggregateByMaturity(portfolioBonds);
+  const profileData = aggregateByProfile(portfolioBonds);
+  
+  // Calculate historical portfolio performance from REAL cbhist.json data
+  const portfolioHistory = useMemo(() => {
+    return calculatePortfolioHistory(portfolioBonds);
+  }, [portfolioBonds]);
 
   const CHART_COLORS = [
     colors.chartColors.blue,
@@ -69,6 +122,50 @@ export const Overview: React.FC = () => {
     colors.chartColors.pink,
   ];
 
+  // Sector attribution for portfolio view
+  const sectorAttribution = useMemo(() => {
+    const attribution: { [key: string]: { marketCap: number; perf: number; contribution: number } } = {};
+    
+    portfolioBonds.forEach((bond) => {
+      const sectors = bond.sectors || [bond.sector];
+      sectors.forEach((sector) => {
+        if (!attribution[sector]) {
+          attribution[sector] = { marketCap: 0, perf: 0, contribution: 0 };
+        }
+        attribution[sector].marketCap += bond.outstandingAmount;
+        attribution[sector].perf += bond.performance1M * bond.outstandingAmount;
+      });
+    });
+
+    const totalMarketCap = portfolioBonds.reduce((sum, b) => sum + b.outstandingAmount, 0);
+
+    return Object.entries(attribution).map(([name, data]) => ({
+      name,
+      marketCap: data.marketCap,
+      contribution: totalMarketCap > 0 ? (data.perf / totalMarketCap) : 0,
+      weight: totalMarketCap > 0 ? (data.marketCap / totalMarketCap) * 100 : 0,
+    }));
+  }, [portfolioBonds]);
+
+  // Country attribution for portfolio view
+  const countryAttribution = useMemo(() => {
+    const attribution: { [key: string]: number } = {};
+    
+    portfolioBonds.forEach((bond) => {
+      if (!attribution[bond.country]) {
+        attribution[bond.country] = 0;
+      }
+      attribution[bond.country] += bond.outstandingAmount;
+    });
+
+    const totalMarketCap = portfolioBonds.reduce((sum, b) => sum + b.outstandingAmount, 0);
+
+    return Object.entries(attribution).map(([name, value]) => ({
+      name,
+      value: totalMarketCap > 0 ? (value / totalMarketCap) * 100 : 0,
+    }));
+  }, [portfolioBonds]);
+
   return (
     <View style={{
       backgroundColor: colors.background,
@@ -78,7 +175,7 @@ export const Overview: React.FC = () => {
       {/* Fixed Header */}
       <DashboardHeader 
         title={t('dashboard.overview')}
-        description={t('dashboard.overview_desc')}
+        description={`${portfolioBonds.length} bonds - ${formatLargeNumber(portfolioMetrics.totalNotional)}`}
       />
       
       <View
@@ -92,11 +189,70 @@ export const Overview: React.FC = () => {
           backgroundColor: colors.background,
         }}
       >
+        {/* Main Tabs */}
+        <View style={{
+          flexDirection: 'row',
+          gap: 8,
+          borderBottom: `2px solid ${colors.border}`,
+          marginBottom: 24,
+        }}>
+          <TouchableOpacity
+            onPress={() => setActiveTab('overview')}
+            style={{
+              padding: '12px 24px',
+              borderRadius: `${parseInt(colors.borderRadius.medium)}px ${parseInt(colors.borderRadius.medium)}px 0 0`,
+              backgroundColor: activeTab === 'overview' ? colors.accent + '20' : 'transparent',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              borderBottom: activeTab === 'overview' ? `3px solid ${colors.accent}` : '3px solid transparent',
+              marginBottom: '-2px',
+            }}
+          >
+            <Text
+              style={{
+                color: activeTab === 'overview' ? colors.accent : colors.textSecondary,
+                fontSize: parseInt(typography.fontSize.large),
+                fontWeight: activeTab === 'overview' ? '700' : '500',
+                fontFamily: typography.fontFamily.body,
+              }}
+            >
+              {t('dashboard.overview')}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => setActiveTab('portfolio')}
+            style={{
+              padding: '12px 24px',
+              borderRadius: `${parseInt(colors.borderRadius.medium)}px ${parseInt(colors.borderRadius.medium)}px 0 0`,
+              backgroundColor: activeTab === 'portfolio' ? colors.accent + '20' : 'transparent',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              borderBottom: activeTab === 'portfolio' ? `3px solid ${colors.accent}` : '3px solid transparent',
+              marginBottom: '-2px',
+            }}
+          >
+            <Text
+              style={{
+                color: activeTab === 'portfolio' ? colors.accent : colors.textSecondary,
+                fontSize: parseInt(typography.fontSize.large),
+                fontWeight: activeTab === 'portfolio' ? '700' : '500',
+                fontFamily: typography.fontFamily.body,
+              }}
+            >
+              Portfolio Details
+            </Text>
+          </TouchableOpacity>
+        </View>
+
         <ScrollView
           style={{ flex: 1, height: '100%' }}
           contentContainerStyle={{ gap: 32, paddingBottom: 40 }}
         >
-          {/* KPI Cards - Enhanced with Portfolio Metrics */}
+          {/* Overview Tab */}
+          {activeTab === 'overview' && (
+            <>
+              {/* KPI Cards - Enhanced with Portfolio Metrics */}
           <WidgetContainer id="overview-kpis" storageKey="overviewWidgets">
             <View
               style={{
@@ -220,8 +376,8 @@ export const Overview: React.FC = () => {
                                    period === '1M' ? 'performance1M' :
                                    period === '3M' ? 'performance3M' : 'performanceYTD';
                   
-                  // Filter out null values and sort
-                  const validBonds = mockConvertibleBonds
+                  // Filter out null values and sort - use portfolio bonds
+                  const validBonds = portfolioBonds
                     .filter(bond => bond[perfField] !== null && bond[perfField] !== undefined)
                     .sort((a, b) => (b[perfField] as number) - (a[perfField] as number));
                   
@@ -487,6 +643,194 @@ export const Overview: React.FC = () => {
               </AnimatedCard>
             </WidgetContainer>
           </View>
+          </>
+          )}
+
+          {/* Portfolio Tab */}
+          {activeTab === 'portfolio' && (
+            <>
+              {/* Portfolio Performance Chart */}
+              <WidgetContainer id="portfolio-performance" title="Portfolio Performance" storageKey="overviewWidgets">
+                <AnimatedCard delay={0.2} enableHover={false}>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={portfolioHistory}>
+                      <CartesianGrid strokeDasharray="3 3" stroke={colors.border} />
+                      <XAxis 
+                        dataKey="date" 
+                        stroke={colors.textSecondary}
+                        style={{ fontSize: '12px' }}
+                      />
+                      <YAxis 
+                        stroke={colors.textSecondary}
+                        style={{ fontSize: '12px' }}
+                      />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: colors.surfaceCard,
+                          border: `1px solid ${colors.border}`,
+                          borderRadius: '8px',
+                        }}
+                        labelStyle={{ color: colors.textPrimary }}
+                      />
+                      <Legend />
+                      <Line 
+                        type="monotone" 
+                        dataKey="value" 
+                        stroke={colors.accent} 
+                        strokeWidth={2}
+                        dot={false}
+                        name="Portfolio (Rebased to 100)"
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </AnimatedCard>
+              </WidgetContainer>
+
+              {/* Attribution Charts */}
+              <View
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                  gap: 24,
+                }}
+              >
+                {/* Sector Attribution */}
+                <WidgetContainer id="portfolio-sector-attr" title="Sector Attribution" storageKey="overviewWidgets">
+                  <AnimatedCard delay={0.3} enableHover={false}>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <BarChart data={sectorAttribution}>
+                        <CartesianGrid strokeDasharray="3 3" stroke={colors.border} />
+                        <XAxis 
+                          dataKey="name" 
+                          stroke={colors.textSecondary}
+                          style={{ fontSize: '11px' }}
+                          angle={-45}
+                          textAnchor="end"
+                          height={100}
+                        />
+                        <YAxis stroke={colors.textSecondary} style={{ fontSize: '12px' }} />
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: colors.surfaceCard,
+                            border: `1px solid ${colors.border}`,
+                            borderRadius: '8px',
+                          }}
+                          labelStyle={{ color: colors.textPrimary }}
+                        />
+                        <Bar dataKey="weight" fill={colors.chartColors.blue} name="Weight %" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </AnimatedCard>
+                </WidgetContainer>
+
+                {/* Country Distribution */}
+                <WidgetContainer id="portfolio-country" title="Country Distribution" storageKey="overviewWidgets">
+                  <AnimatedCard delay={0.4} enableHover={false}>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <PieChart>
+                        <Pie
+                          dataKey="value"
+                          data={countryAttribution}
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={100}
+                          label={({ name, value }) => `${name} (${value.toFixed(1)}%)`}
+                          labelStyle={{ fontSize: '11px', fill: colors.textPrimary, fontWeight: '600' }}
+                        >
+                          {countryAttribution.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: colors.surfaceCard,
+                            border: `1px solid ${colors.border}`,
+                            borderRadius: '8px',
+                          }}
+                          labelStyle={{ color: colors.textPrimary }}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </AnimatedCard>
+                </WidgetContainer>
+              </View>
+
+              {/* Bond Selection Table */}
+              <WidgetContainer id="portfolio-bonds" title={`Portfolio Bonds (${portfolioBonds.length} selected)`} storageKey="overviewWidgets">
+                <AnimatedCard delay={0.5} enableHover={false}>
+                  <View style={{ maxHeight: '500px', overflow: 'auto' }}>
+                    <View style={{
+                      display: 'grid',
+                      gridTemplateColumns: '40px 2fr 1.5fr 1fr 1fr 1fr 1fr',
+                      gap: 12,
+                      padding: '12px 16px',
+                      backgroundColor: colors.surface,
+                      borderRadius: parseInt(colors.borderRadius.medium),
+                      marginBottom: 8,
+                    }}>
+                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), fontWeight: '600' }}>✓</Text>
+                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), fontWeight: '600' }}>Issuer</Text>
+                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), fontWeight: '600' }}>ISIN</Text>
+                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), fontWeight: '600' }}>Price</Text>
+                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), fontWeight: '600' }}>Delta</Text>
+                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), fontWeight: '600' }}>YTM</Text>
+                      <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), fontWeight: '600' }}>Perf 1M</Text>
+                    </View>
+                    
+                    {mockConvertibleBonds.map((bond) => {
+                      const isSelected = selectedISINs.includes(bond.isin);
+                      return (
+                        <TouchableOpacity
+                          key={bond.isin}
+                          onPress={() => toggleBond(bond.isin)}
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: '40px 2fr 1.5fr 1fr 1fr 1fr 1fr',
+                            gap: 12,
+                            padding: '12px 16px',
+                            backgroundColor: isSelected ? colors.accent + '10' : colors.surfaceCard,
+                            borderRadius: parseInt(colors.borderRadius.medium),
+                            marginBottom: 4,
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease',
+                            borderLeft: isSelected ? `3px solid ${colors.accent}` : '3px solid transparent',
+                          }}
+                        >
+                          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                            <View style={{
+                              width: 20,
+                              height: 20,
+                              borderRadius: 4,
+                              backgroundColor: isSelected ? colors.accent : 'transparent',
+                              border: `2px solid ${isSelected ? colors.accent : colors.border}`,
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}>
+                              {isSelected && (
+                                <Text style={{ color: colors.background, fontSize: 12, fontWeight: '700' }}>✓</Text>
+                              )}
+                            </View>
+                          </View>
+                          <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.small) }}>{bond.issuer}</Text>
+                          <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.xsmall) }}>{bond.isin}</Text>
+                          <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.small) }}>{bond.price.toFixed(2)}</Text>
+                          <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.small) }}>{(bond.delta * 100).toFixed(1)}%</Text>
+                          <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.small) }}>{bond.ytm.toFixed(2)}%</Text>
+                          <Text style={{ 
+                            color: bond.performance1M >= 0 ? colors.success : colors.danger, 
+                            fontSize: parseInt(typography.fontSize.small),
+                            fontWeight: '600',
+                          }}>
+                            {formatPercentage(bond.performance1M, 2)}
+                          </Text>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+                </AnimatedCard>
+              </WidgetContainer>
+            </>
+          )}
         </ScrollView>
       </View>
       
