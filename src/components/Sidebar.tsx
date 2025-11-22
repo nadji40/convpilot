@@ -205,13 +205,6 @@ export function Sidebar({ children }: SidebarProps) {
           onClick={() => navigate('/dashboard/aggregations')}
         />
         <SidebarItem 
-          icon={<PerformanceIcon size={20} color={isActive('/dashboard/portfolio') ? activeIconColor : iconColor} />} 
-          label={t('nav.portfolio')}
-          active={isActive('/dashboard/portfolio')}
-          collapsed={isCollapsed}
-          onClick={() => navigate('/dashboard/portfolio')}
-        />
-        <SidebarItem 
           icon={<TrendingUpIcon size={20} color={isActive('/dashboard/performance') ? activeIconColor : iconColor} />} 
           label={t('nav.performance')}
           active={isActive('/dashboard/performance')}

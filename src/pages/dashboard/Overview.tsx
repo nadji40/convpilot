@@ -189,60 +189,81 @@ export const Overview: React.FC = () => {
           backgroundColor: colors.background,
         }}
       >
-        {/* Main Tabs */}
+        {/* Professional Centered Tabs */}
         <View style={{
-          flexDirection: 'row',
-          gap: 8,
-          borderBottom: `2px solid ${colors.border}`,
-          marginBottom: 24,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginBottom: 32,
         }}>
-          <TouchableOpacity
-            onPress={() => setActiveTab('overview')}
-            style={{
-              padding: '12px 24px',
-              borderRadius: `${parseInt(colors.borderRadius.medium)}px ${parseInt(colors.borderRadius.medium)}px 0 0`,
-              backgroundColor: activeTab === 'overview' ? colors.accent + '20' : 'transparent',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              borderBottom: activeTab === 'overview' ? `3px solid ${colors.accent}` : '3px solid transparent',
-              marginBottom: '-2px',
-            }}
-          >
-            <Text
+          <View style={{
+            display: 'inline-flex',
+            flexDirection: 'row',
+            gap: 16,
+            backgroundColor: colors.surface,
+            padding: 6,
+            borderRadius: parseInt(colors.borderRadius.large),
+            boxShadow: `0 2px 8px ${colors.shadow}`,
+            border: `1px solid ${colors.border}`,
+          }}>
+            <TouchableOpacity
+              onPress={() => setActiveTab('overview')}
               style={{
-                color: activeTab === 'overview' ? colors.accent : colors.textSecondary,
-                fontSize: parseInt(typography.fontSize.large),
-                fontWeight: activeTab === 'overview' ? '700' : '500',
-                fontFamily: typography.fontFamily.body,
+                paddingVertical: 12,
+                paddingHorizontal: 32,
+                borderRadius: parseInt(colors.borderRadius.medium),
+                backgroundColor: activeTab === 'overview' ? colors.accent : 'transparent',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                minWidth: 160,
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: activeTab === 'overview' ? `0 4px 12px ${colors.accent}40` : 'none',
+                transform: activeTab === 'overview' ? 'translateY(-2px)' : 'translateY(0)',
               }}
             >
-              {t('dashboard.overview')}
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={{
+                  color: activeTab === 'overview' ? '#FFFFFF' : colors.textSecondary,
+                  fontSize: parseInt(typography.fontSize.medium),
+                  fontWeight: '700',
+                  fontFamily: typography.fontFamily.body,
+                  textAlign: 'center',
+                }}
+              >
+                Overview
+              </Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => setActiveTab('portfolio')}
-            style={{
-              padding: '12px 24px',
-              borderRadius: `${parseInt(colors.borderRadius.medium)}px ${parseInt(colors.borderRadius.medium)}px 0 0`,
-              backgroundColor: activeTab === 'portfolio' ? colors.accent + '20' : 'transparent',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              borderBottom: activeTab === 'portfolio' ? `3px solid ${colors.accent}` : '3px solid transparent',
-              marginBottom: '-2px',
-            }}
-          >
-            <Text
+            <TouchableOpacity
+              onPress={() => setActiveTab('portfolio')}
               style={{
-                color: activeTab === 'portfolio' ? colors.accent : colors.textSecondary,
-                fontSize: parseInt(typography.fontSize.large),
-                fontWeight: activeTab === 'portfolio' ? '700' : '500',
-                fontFamily: typography.fontFamily.body,
+                paddingVertical: 12,
+                paddingHorizontal: 32,
+                borderRadius: parseInt(colors.borderRadius.medium),
+                backgroundColor: activeTab === 'portfolio' ? colors.accent : 'transparent',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                minWidth: 160,
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: activeTab === 'portfolio' ? `0 4px 12px ${colors.accent}40` : 'none',
+                transform: activeTab === 'portfolio' ? 'translateY(-2px)' : 'translateY(0)',
               }}
             >
-              Portfolio Details
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={{
+                  color: activeTab === 'portfolio' ? '#FFFFFF' : colors.textSecondary,
+                  fontSize: parseInt(typography.fontSize.medium),
+                  fontWeight: '700',
+                  fontFamily: typography.fontFamily.body,
+                  textAlign: 'center',
+                }}
+              >
+                Portfolio Selection
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         <ScrollView

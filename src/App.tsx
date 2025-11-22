@@ -14,7 +14,6 @@ import { Overview } from './pages/dashboard/Overview';
 import { Universe } from './pages/dashboard/Universe';
 import { Instrument } from './pages/dashboard/Instrument';
 import { Aggregations } from './pages/dashboard/Aggregations';
-import { Portfolio } from './pages/dashboard/Portfolio';
 import { PerformanceAttribution } from './pages/dashboard/PerformanceAttribution';
 
 // Protected route wrapper
@@ -76,14 +75,6 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <Aggregations />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/dashboard/portfolio" 
-        element={
-          <ProtectedRoute>
-            <Portfolio />
           </ProtectedRoute>
         } 
       />
