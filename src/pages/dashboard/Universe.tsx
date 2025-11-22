@@ -256,7 +256,7 @@ export const Universe: React.FC = () => {
       >
         <View style={{ maxWidth: 1600, paddingBottom: 40 }}>
           {/* Dropdown Selector */}
-          <View style={{ marginBottom: 32 }}>
+          <View style={{ marginBottom: 32, position: 'relative', zIndex: 1000 }}>
             <Text style={{
               color: colors.textPrimary,
               fontSize: parseInt(typography.fontSize.default),
@@ -278,6 +278,8 @@ export const Universe: React.FC = () => {
           {selectedBond && (
             <div style={{
               marginBottom: 32,
+              position: 'relative',
+              zIndex: 1,
             }}>
               <WidgetCard fullWidth>
                 <CardTitle title={language === 'fr' ? 'Performance' : 'Performance'} />
@@ -341,6 +343,8 @@ export const Universe: React.FC = () => {
               display: 'grid',
               gridTemplateColumns: 'repeat(2, 1fr)',
               gap: '24px',
+              position: 'relative',
+              zIndex: 1,
             }}>
               {/* Inputs Section */}
               <WidgetCard>
@@ -732,6 +736,8 @@ export const Universe: React.FC = () => {
               border: `1px solid ${colors.border}`,
               alignItems: 'center',
               justifyContent: 'center',
+              position: 'relative',
+              zIndex: 1,
             }}>
               <Text style={{
                 color: colors.textSecondary,
