@@ -44,6 +44,9 @@ export const Instrument: React.FC = () => {
   // Custom inputs state (persisted to localStorage)
   const [customVolatility, setCustomVolatility] = useState('');
   const [customSpread, setCustomSpread] = useState('');
+  const [customCBPrice, setCustomCBPrice] = useState('');
+  const [customStockPrice, setCustomStockPrice] = useState('');
+  const [customRepo, setCustomRepo] = useState('');
 
   useEffect(() => {
     if (typeof document !== 'undefined') {
@@ -60,6 +63,9 @@ export const Instrument: React.FC = () => {
           const data = JSON.parse(stored);
           setCustomVolatility(data.volatility || '');
           setCustomSpread(data.spread || '');
+          setCustomCBPrice(data.cbPrice || '');
+          setCustomStockPrice(data.stockPrice || '');
+          setCustomRepo(data.repo || '');
         } catch (e) {
           console.error('Error loading custom inputs:', e);
         }
@@ -73,11 +79,64 @@ export const Instrument: React.FC = () => {
       const data = {
         volatility: customVolatility,
         spread: customSpread,
+        cbPrice: customCBPrice,
+        stockPrice: customStockPrice,
+        repo: customRepo,
       };
       localStorage.setItem(`instrument-${bond.isin}`, JSON.stringify(data));
       alert('Custom inputs saved successfully!');
     }
   };
+
+  // Calculate VI vs VH historical data (simulated for now)
+  const viVhData = useMemo(() => {
+    if (!bond) return [];
+    
+    const data = [];
+    const today = new Date();
+    for (let i = 30; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      
+      // VI (Implied Volatility) - simulate with some variation
+      const vi = bond.impliedVol + (Math.random() - 0.5) * 3;
+      
+      // VH (Historical Volatility) - simulate with some variation
+      const vh = bond.volatility + (Math.random() - 0.5) * 2;
+      
+      data.push({
+        date: date.toISOString().split('T')[0],
+        VI: parseFloat(vi.toFixed(2)),
+        VH: parseFloat(vh.toFixed(2)),
+      });
+    }
+    return data;
+  }, [bond]);
+
+  // Calculate richness/cheapness metrics
+  const richnessMetrics = useMemo(() => {
+    if (!bond) return null;
+    
+    const spreadVol = bond.impliedVol - bond.volatility;
+    const avgSpreadVol = spreadVol; // Could be calculated from historical data
+    const stdDev = 2.5; // Simulated standard deviation
+    
+    // Determine if underpriced or overpriced
+    let valuation = 'Fair';
+    const relativeVal = bond.price - bond.fairValue;
+    if (relativeVal < -5) valuation = 'Underpriced';
+    else if (relativeVal > 5) valuation = 'Overpriced';
+    
+    return {
+      spread: bond.spread,
+      impliedSpread: bond.impliedSpread || bond.spread + 50,
+      valuation,
+      spreadVol,
+      avgSpreadVol,
+      stdDev,
+      relativeValuation: relativeVal,
+    };
+  }, [bond]);
 
   if (!bond) {
     return (
@@ -215,6 +274,93 @@ export const Instrument: React.FC = () => {
             />
           </View>
 
+          {/* Performance Section - Enhanced */}
+          <AnimatedCard delay={0.35} style={{
+            background: `linear-gradient(135deg, ${colors.surfaceCard} 0%, ${colors.surface} 100%)`,
+          }}>
+            <Text
+              style={{
+                color: colors.accent,
+                fontSize: parseInt(typography.fontSize.large),
+                fontWeight: '600',
+                fontFamily: typography.fontFamily.heading,
+                marginBottom: 24,
+              }}
+            >
+              Performance Overview
+            </Text>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
+              <div style={{
+                padding: '20px',
+                backgroundColor: colors.surface,
+                borderRadius: parseInt(colors.borderRadius.medium),
+                borderLeft: `4px solid ${bond.performance1D && bond.performance1D >= 0 ? colors.success : colors.danger}`,
+              }}>
+                <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), marginBottom: 8 }}>
+                  1 Day
+                </Text>
+                <Text style={{ 
+                  color: bond.performance1D && bond.performance1D >= 0 ? colors.success : colors.danger, 
+                  fontSize: parseInt(typography.fontSize.h3),
+                  fontWeight: '700',
+                }}>
+                  {bond.performance1D !== null && bond.performance1D !== undefined ? formatPercentage(bond.performance1D) : 'N/A'}
+                </Text>
+              </div>
+              <div style={{
+                padding: '20px',
+                backgroundColor: colors.surface,
+                borderRadius: parseInt(colors.borderRadius.medium),
+                borderLeft: `4px solid ${bond.performance1W >= 0 ? colors.success : colors.danger}`,
+              }}>
+                <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), marginBottom: 8 }}>
+                  1 Week
+                </Text>
+                <Text style={{ 
+                  color: bond.performance1W >= 0 ? colors.success : colors.danger, 
+                  fontSize: parseInt(typography.fontSize.h3),
+                  fontWeight: '700',
+                }}>
+                  {formatPercentage(bond.performance1W)}
+                </Text>
+              </div>
+              <div style={{
+                padding: '20px',
+                backgroundColor: colors.surface,
+                borderRadius: parseInt(colors.borderRadius.medium),
+                borderLeft: `4px solid ${bond.performance1M >= 0 ? colors.success : colors.danger}`,
+              }}>
+                <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), marginBottom: 8 }}>
+                  1 Month
+                </Text>
+                <Text style={{ 
+                  color: bond.performance1M >= 0 ? colors.success : colors.danger, 
+                  fontSize: parseInt(typography.fontSize.h3),
+                  fontWeight: '700',
+                }}>
+                  {formatPercentage(bond.performance1M)}
+                </Text>
+              </div>
+              <div style={{
+                padding: '20px',
+                backgroundColor: colors.surface,
+                borderRadius: parseInt(colors.borderRadius.medium),
+                borderLeft: `4px solid ${bond.performance3M >= 0 ? colors.success : colors.danger}`,
+              }}>
+                <Text style={{ color: colors.textSecondary, fontSize: parseInt(typography.fontSize.small), marginBottom: 8 }}>
+                  3 Months
+                </Text>
+                <Text style={{ 
+                  color: bond.performance3M >= 0 ? colors.success : colors.danger, 
+                  fontSize: parseInt(typography.fontSize.h3),
+                  fontWeight: '700',
+                }}>
+                  {formatPercentage(bond.performance3M)}
+                </Text>
+              </div>
+            </div>
+          </AnimatedCard>
+
           {/* Main Content Grid */}
           <View
             style={{
@@ -223,6 +369,116 @@ export const Instrument: React.FC = () => {
               gap: 24,
             }}
           >
+            {/* Inputs Section */}
+            <AnimatedCard delay={0.38}>
+              <View style={{ gap: 16 }}>
+                <Text
+                  style={{
+                    color: colors.textPrimary,
+                    fontSize: parseInt(typography.fontSize.large),
+                    fontWeight: '600',
+                    fontFamily: typography.fontFamily.heading,
+                  }}
+                >
+                  Inputs
+                </Text>
+
+                <View style={{ gap: 12 }}>
+                  <InputField
+                    label="CB Price"
+                    value={customCBPrice}
+                    onChange={setCustomCBPrice}
+                    placeholder={bond.price.toFixed(2)}
+                    colors={colors}
+                  />
+                  <InputField
+                    label="Spread"
+                    value={customSpread}
+                    onChange={setCustomSpread}
+                    placeholder={bond.spread.toString()}
+                    colors={colors}
+                    suffix="bp"
+                  />
+                  <InputField
+                    label="Volatility"
+                    value={customVolatility}
+                    onChange={setCustomVolatility}
+                    placeholder={bond.volatility.toFixed(1)}
+                    colors={colors}
+                    suffix="%"
+                  />
+                  <InputField
+                    label="Stock Price"
+                    value={customStockPrice}
+                    onChange={setCustomStockPrice}
+                    placeholder={bond.stockPrice.toFixed(2)}
+                    colors={colors}
+                  />
+                  <InputField
+                    label="Repo"
+                    value={customRepo}
+                    onChange={setCustomRepo}
+                    placeholder="0.0"
+                    colors={colors}
+                    suffix="%"
+                  />
+                </View>
+              </View>
+            </AnimatedCard>
+
+            {/* Richness/Cheapness Metrics */}
+            <AnimatedCard delay={0.39}>
+              <View style={{ gap: 16 }}>
+                <Text
+                  style={{
+                    color: colors.textPrimary,
+                    fontSize: parseInt(typography.fontSize.large),
+                    fontWeight: '600',
+                    fontFamily: typography.fontFamily.heading,
+                  }}
+                >
+                  Richness / Cheapness
+                </Text>
+
+                {richnessMetrics && (
+                  <View style={{ gap: 12 }}>
+                    <MetricDisplayRow
+                      label="VH"
+                      value={bond.volatility.toFixed(1) + '%'}
+                      colors={colors}
+                    />
+                    <MetricDisplayRow
+                      label="VI"
+                      value={bond.impliedVol.toFixed(1) + '%'}
+                      colors={colors}
+                    />
+                    <MetricDisplayRow
+                      label="Spread Vol"
+                      value={richnessMetrics.spreadVol.toFixed(1) + '%'}
+                      colors={colors}
+                      highlight={Math.abs(richnessMetrics.spreadVol) > 3}
+                    />
+                    <MetricDisplayRow
+                      label="Relative Valuation"
+                      value={richnessMetrics.relativeValuation.toFixed(2)}
+                      colors={colors}
+                      highlight={true}
+                    />
+                    <MetricDisplayRow
+                      label="Average Spread Vol"
+                      value={richnessMetrics.avgSpreadVol.toFixed(1) + '%'}
+                      colors={colors}
+                    />
+                    <MetricDisplayRow
+                      label="Standard Deviation"
+                      value={richnessMetrics.stdDev.toFixed(2)}
+                      colors={colors}
+                    />
+                  </View>
+                )}
+              </View>
+            </AnimatedCard>
+
             {/* Static Information */}
             <AnimatedCard delay={0.4}>
               <View style={{ gap: 16 }}>
@@ -250,6 +506,100 @@ export const Instrument: React.FC = () => {
                   <InfoRow label="Underlying" value={bond.underlyingTicker} colors={colors} />
                   <InfoRow label="Outstanding Amount" value={formatCurrency(bond.outstandingAmount, bond.currency)} colors={colors} />
                 </View>
+              </View>
+            </AnimatedCard>
+
+            {/* Richness Summary */}
+            <AnimatedCard delay={0.41}>
+              <View style={{ gap: 16 }}>
+                <Text
+                  style={{
+                    color: colors.textPrimary,
+                    fontSize: parseInt(typography.fontSize.large),
+                    fontWeight: '600',
+                    fontFamily: typography.fontFamily.heading,
+                  }}
+                >
+                  Richness / Cheapness Summary
+                </Text>
+
+                {richnessMetrics && (
+                  <View style={{ gap: 16 }}>
+                    <View style={{
+                      padding: 16,
+                      backgroundColor: colors.surface,
+                      borderRadius: parseInt(colors.borderRadius.medium),
+                      borderLeft: `4px solid ${colors.accent}`,
+                    }}>
+                      <Text style={{ 
+                        color: colors.textSecondary, 
+                        fontSize: parseInt(typography.fontSize.xsmall),
+                        marginBottom: 8,
+                      }}>
+                        Spread
+                      </Text>
+                      <Text style={{ 
+                        color: colors.textPrimary, 
+                        fontSize: parseInt(typography.fontSize.h3),
+                        fontWeight: '700',
+                      }}>
+                        {richnessMetrics.spread}
+                      </Text>
+                    </View>
+                    <View style={{
+                      padding: 16,
+                      backgroundColor: colors.surface,
+                      borderRadius: parseInt(colors.borderRadius.medium),
+                      borderLeft: `4px solid ${colors.accent}`,
+                    }}>
+                      <Text style={{ 
+                        color: colors.textSecondary, 
+                        fontSize: parseInt(typography.fontSize.xsmall),
+                        marginBottom: 8,
+                      }}>
+                        Implied Spread
+                      </Text>
+                      <Text style={{ 
+                        color: colors.textPrimary, 
+                        fontSize: parseInt(typography.fontSize.h3),
+                        fontWeight: '700',
+                      }}>
+                        {richnessMetrics.impliedSpread}
+                      </Text>
+                    </View>
+                    <View style={{
+                      padding: 20,
+                      backgroundColor: richnessMetrics.valuation === 'Underpriced' ? colors.success + '20' : 
+                                      richnessMetrics.valuation === 'Overpriced' ? colors.danger + '20' : 
+                                      colors.surface,
+                      borderRadius: parseInt(colors.borderRadius.medium),
+                      borderLeft: `4px solid ${
+                        richnessMetrics.valuation === 'Underpriced' ? colors.success : 
+                        richnessMetrics.valuation === 'Overpriced' ? colors.danger : 
+                        colors.textSecondary
+                      }`,
+                      alignItems: 'center',
+                    }}>
+                      <Text style={{ 
+                        color: colors.textSecondary, 
+                        fontSize: parseInt(typography.fontSize.xsmall),
+                        marginBottom: 8,
+                      }}>
+                        Valuation
+                      </Text>
+                      <Text style={{ 
+                        color: richnessMetrics.valuation === 'Underpriced' ? colors.success : 
+                               richnessMetrics.valuation === 'Overpriced' ? colors.danger : 
+                               colors.textPrimary,
+                        fontSize: parseInt(typography.fontSize.large),
+                        fontWeight: '700',
+                        textTransform: 'uppercase' as any,
+                      }}>
+                        {richnessMetrics.valuation}
+                      </Text>
+                    </View>
+                  </View>
+                )}
               </View>
             </AnimatedCard>
 
@@ -303,6 +653,64 @@ export const Instrument: React.FC = () => {
               gap: 24,
             }}
           >
+            {/* VI vs VH Chart */}
+            <AnimatedCard delay={0.55}>
+              <View style={{ gap: 16 }}>
+                <Text
+                  style={{
+                    color: colors.textPrimary,
+                    fontSize: parseInt(typography.fontSize.large),
+                    fontWeight: '600',
+                    fontFamily: typography.fontFamily.heading,
+                  }}
+                >
+                  VI vs VH
+                </Text>
+
+                <ResponsiveContainer width="100%" height={280}>
+                  <LineChart data={viVhData} margin={{ left: 20, right: 20, top: 20, bottom: 20 }}>
+                    <XAxis
+                      dataKey="date"
+                      stroke={colors.muted}
+                      tick={{ fill: colors.textSecondary, fontSize: 11 }}
+                      tickFormatter={(value) => {
+                        const date = new Date(value);
+                        return `${date.getMonth() + 1}/${date.getDate()}`;
+                      }}
+                    />
+                    <YAxis stroke={colors.muted} tick={{ fill: colors.textSecondary, fontSize: 12 }} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: colors.surfaceCard,
+                        border: `1px solid ${colors.border}`,
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+                      }}
+                      labelStyle={{ color: colors.textPrimary, fontWeight: '600' }}
+                      itemStyle={{ color: colors.textSecondary }}
+                    />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="VI"
+                      stroke={colors.chartColors.blue}
+                      dot={false}
+                      strokeWidth={3}
+                      name="Implied Vol"
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="VH"
+                      stroke={colors.chartColors.cyan}
+                      dot={false}
+                      strokeWidth={3}
+                      name="Historical Vol"
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </View>
+            </AnimatedCard>
+
             {/* Price History */}
             <AnimatedCard delay={0.6}>
               <View style={{ gap: 16 }}>
@@ -449,46 +857,55 @@ export const Instrument: React.FC = () => {
                 }}
               >
                 <View style={{ gap: 8 }}>
-                  <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.small), fontWeight: '600' }}>
-                    Custom Volatility (%)
-                  </Text>
-                  <input
-                    type="number"
-                    value={customVolatility}
-                    onChange={(e) => setCustomVolatility(e.target.value)}
-                    placeholder={bond.volatility.toFixed(1)}
-                    style={{
-                      padding: 12,
-                      backgroundColor: colors.surfaceCard,
-                      color: colors.textPrimary,
-                      border: `1px solid ${colors.border}`,
-                      borderRadius: parseInt(colors.borderRadius.medium),
-                      fontSize: typography.fontSize.default,
-                      fontFamily: typography.fontFamily.body,
-                      outline: 'none',
-                    }}
+                  <InputField
+                    label="CB Price"
+                    value={customCBPrice}
+                    onChange={setCustomCBPrice}
+                    placeholder={bond.price.toFixed(2)}
+                    colors={colors}
                   />
                 </View>
 
                 <View style={{ gap: 8 }}>
-                  <Text style={{ color: colors.textPrimary, fontSize: parseInt(typography.fontSize.small), fontWeight: '600' }}>
-                    Custom Spread (bp)
-                  </Text>
-                  <input
-                    type="number"
+                  <InputField
+                    label="Spread (bp)"
                     value={customSpread}
-                    onChange={(e) => setCustomSpread(e.target.value)}
+                    onChange={setCustomSpread}
                     placeholder={bond.spread.toString()}
-                    style={{
-                      padding: 12,
-                      backgroundColor: colors.surfaceCard,
-                      color: colors.textPrimary,
-                      border: `1px solid ${colors.border}`,
-                      borderRadius: parseInt(colors.borderRadius.medium),
-                      fontSize: typography.fontSize.default,
-                      fontFamily: typography.fontFamily.body,
-                      outline: 'none',
-                    }}
+                    colors={colors}
+                    suffix="bp"
+                  />
+                </View>
+
+                <View style={{ gap: 8 }}>
+                  <InputField
+                    label="Volatility (%)"
+                    value={customVolatility}
+                    onChange={setCustomVolatility}
+                    placeholder={bond.volatility.toFixed(1)}
+                    colors={colors}
+                    suffix="%"
+                  />
+                </View>
+
+                <View style={{ gap: 8 }}>
+                  <InputField
+                    label="Stock Price"
+                    value={customStockPrice}
+                    onChange={setCustomStockPrice}
+                    placeholder={bond.stockPrice.toFixed(2)}
+                    colors={colors}
+                  />
+                </View>
+
+                <View style={{ gap: 8 }}>
+                  <InputField
+                    label="Repo (%)"
+                    value={customRepo}
+                    onChange={setCustomRepo}
+                    placeholder="0.0"
+                    colors={colors}
+                    suffix="%"
                   />
                 </View>
               </View>
@@ -580,5 +997,113 @@ const MetricBox: React.FC<{ label: string; value: string; colors: any }> = ({ la
       {value}
     </Text>
   </View>
+);
+
+const InputField: React.FC<{
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder: string;
+  colors: any;
+  suffix?: string;
+}> = ({ label, value, onChange, placeholder, colors, suffix }) => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Text style={{
+        color: colors.textPrimary,
+        fontSize: parseInt(typography.fontSize.small),
+        fontWeight: '600',
+        fontFamily: typography.fontFamily.body,
+      }}>
+        {label}
+      </Text>
+      <button
+        style={{
+          width: '24px',
+          height: '24px',
+          borderRadius: '50%',
+          backgroundColor: colors.accent + '20',
+          color: colors.accent,
+          border: 'none',
+          cursor: 'pointer',
+          fontSize: '12px',
+          fontWeight: '700',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+        title="Manual input"
+      >
+        m
+      </button>
+    </div>
+    <div style={{ position: 'relative' }}>
+      <input
+        type="number"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        style={{
+          width: '100%',
+          padding: '10px 12px',
+          paddingRight: suffix ? '40px' : '12px',
+          backgroundColor: colors.surface,
+          color: colors.textPrimary,
+          border: `1px solid ${colors.border}`,
+          borderRadius: parseInt(colors.borderRadius.small),
+          fontSize: parseInt(typography.fontSize.default),
+          fontFamily: typography.fontFamily.body,
+          outline: 'none',
+        }}
+      />
+      {suffix && (
+        <span style={{
+          position: 'absolute',
+          right: '12px',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          color: colors.textSecondary,
+          fontSize: parseInt(typography.fontSize.small),
+          pointerEvents: 'none',
+        }}>
+          {suffix}
+        </span>
+      )}
+    </div>
+  </div>
+);
+
+const MetricDisplayRow: React.FC<{
+  label: string;
+  value: string;
+  colors: any;
+  highlight?: boolean;
+}> = ({ label, value, colors, highlight = false }) => (
+  <div style={{
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '12px 16px',
+    backgroundColor: highlight ? colors.accent + '10' : colors.surface,
+    borderRadius: parseInt(colors.borderRadius.small),
+    borderLeft: highlight ? `3px solid ${colors.accent}` : '3px solid transparent',
+  }}>
+    <Text style={{
+      color: colors.textSecondary,
+      fontSize: parseInt(typography.fontSize.small),
+      fontWeight: '500',
+      fontFamily: typography.fontFamily.body,
+    }}>
+      {label}
+    </Text>
+    <Text style={{
+      color: highlight ? colors.accent : colors.textPrimary,
+      fontSize: parseInt(typography.fontSize.default),
+      fontWeight: '700',
+      fontFamily: typography.fontFamily.heading,
+    }}>
+      {value}
+    </Text>
+  </div>
 );
 
