@@ -117,15 +117,71 @@ export const Instrument: React.FC = () => {
   const richnessMetrics = useMemo(() => {
     if (!bond) return null;
     
+    // Vol spread = ImpVol (%) – VOLATILITY (input)
     const spreadVol = bond.impliedVol - bond.volatility;
-    const avgSpreadVol = spreadVol; // Could be calculated from historical data
-    const stdDev = 2.5; // Simulated standard deviation
     
-    // Determine if underpriced or overpriced
-    let valuation = 'Fair';
+    // Calculate average volatility spreads for all OCs where VEGA > 0.25
+    let viTotal = 0;
+    let nb = 0;
+    for (let i = 0; i < mockConvertibleBonds.length; i++) {
+      const bondItem = mockConvertibleBonds[i];
+      if (bondItem.vega > 0.25 && bondItem.impliedVol !== null && bondItem.impliedVol !== undefined) {
+        viTotal += (bondItem.impliedVol - bondItem.volatility);
+        nb += 1;
+      }
+    }
+    const avgSpreadVol = nb !== 0 ? viTotal / nb : 0;
+    
+    // Calculate standard deviation
+    let summe = 0;
+    for (let i = 0; i < mockConvertibleBonds.length; i++) {
+      const bondItem = mockConvertibleBonds[i];
+      if (bondItem.vega > 0.25 && bondItem.impliedVol !== null && bondItem.impliedVol !== undefined) {
+        const ecart = (bondItem.impliedVol - bondItem.volatility);
+        summe += Math.pow(ecart - avgSpreadVol, 2);
+      }
+    }
+    const stdDev = nb !== 0 ? Math.sqrt(summe / nb) : 0;
+    
+    // Spread to average
+    const spreadToAverage = spreadVol - avgSpreadVol;
+    
+    // Zscore
+    const zscore = stdDev !== 0 ? spreadToAverage / stdDev : 0;
+    
+    // Downside risk (Vol spread * vega %)
+    const downsideRisk = spreadVol > 0 ? spreadVol * (bond.vega * 100) : null;
+    
+    // Determine valuation based on Vol spread (from calcs.md)
+    let valuation = '';
+    let relativeValuation = '';
+    if (spreadVol < 0) {
+      relativeValuation = 'underpriced';
+    } else if (spreadVol >= 0 && spreadVol < 4) {
+      relativeValuation = 'fair value';
+    } else if (spreadVol >= 4 && spreadVol < 8) {
+      relativeValuation = 'overpriced';
+    } else if (spreadVol > 8) {
+      relativeValuation = 'expensive';
+    }
+    
+    // Observation logic
+    let observation = '';
+    if (Math.abs(spreadToAverage) > 2) {
+      if ((relativeValuation === 'fair value' || relativeValuation === 'underpriced') && 
+          spreadToAverage < 0 && Math.abs(zscore) > 1) {
+        observation = 'High probability of a rebound';
+      } else if ((relativeValuation === 'overpriced' || relativeValuation === 'expensive') && 
+                 spreadToAverage > 0 && Math.abs(zscore) > 1) {
+        observation = 'High probability of downside';
+      }
+    }
+    
+    // Keep old valuation for display compatibility
     const relativeVal = bond.price - bond.fairValue;
     if (relativeVal < -5) valuation = 'Underpriced';
     else if (relativeVal > 5) valuation = 'Overpriced';
+    else valuation = 'Fair';
     
     return {
       spread: bond.spread,
@@ -135,6 +191,11 @@ export const Instrument: React.FC = () => {
       avgSpreadVol,
       stdDev,
       relativeValuation: relativeVal,
+      spreadToAverage,
+      zscore,
+      downsideRisk,
+      relativeValuationText: relativeValuation,
+      observation,
     };
   }, [bond]);
 
@@ -474,6 +535,25 @@ export const Instrument: React.FC = () => {
                       value={richnessMetrics.stdDev.toFixed(2)}
                       colors={colors}
                     />
+                    <MetricDisplayRow
+                      label="Spread to Average"
+                      value={richnessMetrics.spreadToAverage.toFixed(2) + '%'}
+                      colors={colors}
+                    />
+                    <MetricDisplayRow
+                      label="Z-Score"
+                      value={richnessMetrics.zscore.toFixed(2)}
+                      colors={colors}
+                      highlight={Math.abs(richnessMetrics.zscore) > 1}
+                    />
+                    {richnessMetrics.downsideRisk !== null && (
+                      <MetricDisplayRow
+                        label="Downside Risk"
+                        value={richnessMetrics.downsideRisk.toFixed(2) + '%'}
+                        colors={colors}
+                        highlight={true}
+                      />
+                    )}
                   </View>
                 )}
               </View>
@@ -598,6 +678,29 @@ export const Instrument: React.FC = () => {
                         {richnessMetrics.valuation}
                       </Text>
                     </View>
+                    {richnessMetrics.observation && (
+                      <View style={{
+                        padding: 16,
+                        backgroundColor: richnessMetrics.observation.includes('rebound') ? colors.success + '15' : colors.danger + '15',
+                        borderRadius: parseInt(colors.borderRadius.medium),
+                        borderLeft: `4px solid ${richnessMetrics.observation.includes('rebound') ? colors.success : colors.danger}`,
+                      }}>
+                        <Text style={{ 
+                          color: colors.textSecondary, 
+                          fontSize: parseInt(typography.fontSize.xsmall),
+                          marginBottom: 8,
+                        }}>
+                          Observation
+                        </Text>
+                        <Text style={{ 
+                          color: colors.textPrimary,
+                          fontSize: parseInt(typography.fontSize.small),
+                          fontWeight: '600',
+                        }}>
+                          {richnessMetrics.observation}
+                        </Text>
+                      </View>
+                    )}
                   </View>
                 )}
               </View>
